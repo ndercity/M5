@@ -1,3 +1,4 @@
+```bash
 rmdir /s /q venv
 python -m venv venv
 .venv\Scripts\activate
