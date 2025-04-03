@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Mode Selection - Photo Booth{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/mode.css') }}">{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/mode.js') }}"></script>{% endblock %}
+
+{% block content %}
+    <main>
+        <h2>Select Your Photo Mode</h2>
+        <p>Choose how you want to take your photo:</p>
+        <div class="mode-buttons">
+            <a href="{{ url_for('formal') }}" class="btn-link">Formal Mode</a>
+            <a href="{{ url_for('casual') }}" class="btn-link">Casual Mode</a>
+        </div>
+        <a href="{{ url_for('home') }}" class="btn-link">Back to Home</a>
+    </main>
+{% endblock %}

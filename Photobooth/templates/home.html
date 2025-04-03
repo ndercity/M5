@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Photo Booth{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/home.js') }}"></script>{% endblock %}
+
+{% block content %}
+    <main>
+        <h2>Welcome to the Photo Booth</h2>
+        <p>Follow these guidelines for the best experience!</p>
+        <ul>
+            <li>Ensure good lighting for better image quality.</li>
+            <li>Stay within the frame before capturing.</li>
+            <li>Follow the instructions on each step.</li>
+        </ul>
+        <a href="{{ url_for('mode') }}" class="btn-link">Proceed to Mode Selection</a>
+    </main>
+{% endblock %}
