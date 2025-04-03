@@ -1,5 +1,5 @@
 ```bash
-rmdir /s /q venv
+rmdir /s /q .venv
 python -m venv venv
 .venv\Scripts\activate
 pip install flask
