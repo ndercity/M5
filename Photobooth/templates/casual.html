@@ -1,23 +1,87 @@
 {% extends "base.html" %}
 
-{% block title %}Casual Mode{% endblock %}
+{% block title %}Casual Mode - Photo Booth{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/casual.css') }}">
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/casual.js') }}"></script>
+{% endblock %}
 
 {% block content %}
-    <h2>Casual Mode</h2>
-    <p>Relax and have fun with this casual photo booth. Enjoy the lighthearted setup and take your best shot!</p>
-    <img src="{{ url_for('video_feed') }}" id="video-feed">
-    <button onclick="captureImage()">Capture</button>
-    <div id="captured-photo"></div>
+<main>
+    <h2>Casual Photo Session</h2>
+    <p>Choose a layout and capture 4 fun poses!</p>
 
-    <script>
-        // Stop the camera when leaving the casual page
-        window.onbeforeunload = function() {
-            fetch('/stop_camera'); // This will stop the camera
-        }
+    <!-- Layout Selection -->
+    <div id="layout-selection">
+        <h3>Choose Your Layout Style</h3>
+        <div class="layout-options">
+            <div class="layout-option" data-layout="grid">
+                <div class="layout-preview grid">
+                    <div class="slot"></div><div class="slot"></div>
+                    <div class="slot"></div><div class="slot"></div>
+                </div>
+                <span>2×2 Grid</span>
+            </div>
+            
+            <div class="layout-option" data-layout="vertical">
+                <div class="layout-preview vertical">
+                    <div class="slot"></div>
+                    <div class="slot"></div>
+                    <div class="slot"></div>
+                    <div class="slot"></div>
+                </div>
+                <span>Vertical Strip</span>
+            </div>
+            
+            <div class="layout-option" data-layout="horizontal">
+                <div class="layout-preview horizontal">
+                    <div class="slot"></div>
+                    <div class="slot"></div>
+                    <div class="slot"></div>
+                    <div class="slot"></div>
+                </div>
+                <span>Horizontal Strip</span>
+            </div>
+            
+            <div class="layout-option" data-layout="pyramid">
+                <div class="layout-preview pyramid">
+                    <div class="slot big"></div>
+                    <div class="slot small"></div>
+                    <div class="slot small"></div>
+                    <div class="slot small"></div>
+                </div>
+                <span>Featured + 3</span>
+            </div>
+        </div>
+    </div>
 
-        function captureImage() {
-            let img = document.getElementById("video-feed").src;
-            document.getElementById("captured-photo").innerHTML = `<img src="${img}">`;
-        }
-    </script>
+    <!-- Capture Section -->
+    <div id="capture-section" class="hidden">
+        <h3>Pose <span id="pose-number">1</span>/4</h3>
+        <button id="toggle-camera">Open Camera</button>
+        <div class="video-container">
+            <img id="video-feed" class="camera-feed" alt="Live camera feed">
+        </div>
+        <div class="capture-controls">
+            <button id="capture-btn">Capture Pose</button>
+            <button id="retake-btn" class="hidden">Retake</button>
+        </div>
+    </div>
+
+    <!-- Preview Section -->
+    <div id="preview-section" class="hidden">
+        <h3>Your <span id="layout-name">Layout</span> Photos</h3>
+        <div class="layout-container">
+            <!-- Dynamic layout will be inserted here -->
+        </div>
+        <div class="preview-controls">
+            <button id="save-layout">Save All</button>
+            <button id="start-over">Start Over</button>
+        </div>
+    </div>
+
+    <a href="{{ url_for('mode') }}" class="btn-link">Back to Mode Selection</a>
+</main>
 {% endblock %}
