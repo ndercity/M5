@@ -1,0 +1,34 @@
+main{
+    text-align: center;
+    padding: 20px;
+}
+
+.video-image-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    /* change max-width and height for camera */
+    max-width: 800px;
+    height: 400px;
+    background-color: black;
+    margin: 10px auto;
+}
+
+/* Buttons */
+button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}

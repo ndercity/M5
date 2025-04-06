@@ -1,23 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}Casual Mode{% endblock %}
+{% block title %}Casual Mode - Photo Booth{% endblock %}
+{%block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename = 'css/casual.css') }}">{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/formal.js') }}"></script>{% endblock %}
 
 {% block content %}
+<main>
     <h2>Casual Mode</h2>
     <p>Relax and have fun with this casual photo booth. Enjoy the lighthearted setup and take your best shot!</p>
-    <img src="{{ url_for('video_feed') }}" id="video-feed">
-    <button onclick="captureImage()">Capture</button>
-    <div id="captured-photo"></div>
 
-    <script>
-        // Stop the camera when leaving the casual page
-        window.onbeforeunload = function() {
-            fetch('/stop_camera'); // This will stop the camera
-        }
+    <div id="capture-section">
+        <h3>Camera Feed</h3>
+        <button id="toggle-camera">Open Camera</button>
+        <div class="video-image-container">
+            <img id="video-feed" class="camera-feed">
+        </div>
+        <button id="capture-btn">Capture</button>
+    </div>
 
-        function captureImage() {
-            let img = document.getElementById("video-feed").src;
-            document.getElementById("captured-photo").innerHTML = `<img src="${img}">`;
-        }
-    </script>
+    <!-- Back Button -->
+    <a href="{{ url_for('mode') }}" class="btn-link">Back to Mode Selection</a>
+</main>
 {% endblock %}
