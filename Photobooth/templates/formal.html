@@ -14,15 +14,21 @@
         <h3>Camera Feed</h3>
         <button id="toggle-camera">Open Camera</button>
         <div class="video-container">
-            <img id="video-feed" class="camera-feed" alt="Live camera feed">
+            <img id="video-feed" class="camera-feed">
         </div>
         <button id="capture-btn">Capture</button>
-        <button id="preview-btn">Go to Preview</button>
+        <button id="preview-btn">Preview & Customize</button>
     </div>
 
     <!-- Preview Section -->
-    <div id="preview-section">
-        <h3>Preview</h3>
+    <div id="preview-section" class="hidden">
+        <h3>Preview & Customization</h3>
+        
+        <!-- Main Preview Image -->
+        <img id="main-preview" class="main-preview" alt="Captured Photo">
+        
+        <!-- Grid View (Hidden by default) -->
+        <button id="show-grid-btn">Show Grid View</button>
         <div class="parent">
             <div class="div1"></div>
             <div class="div2"></div>
@@ -37,10 +43,27 @@
             <div class="div11"></div>
             <div class="div12"></div>
         </div>
-        <button id="capture-again-btn">Capture Again</button>
+        
+        <!-- Customization Controls -->
+        <div class="customization-options">
+            <h4>Edit Your Photo</h4>
+            <div class="control-group">
+                <label for="brightness">Brightness:</label>
+                <input type="range" id="brightness" min="-100" max="100" value="0">
+            </div>
+            <div class="control-group">
+                <label for="contrast">Contrast:</label>
+                <input type="range" id="contrast" min="-100" max="100" value="0">
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="preview-controls">
+            <button id="save-photo">Save Photo</button>
+            <button id="capture-again-btn">Capture Again</button>
+        </div>
     </div>
 
-    <!-- Back Button -->
     <a href="{{ url_for('mode') }}" class="btn-link">Back to Mode Selection</a>
 </main>
 {% endblock %}

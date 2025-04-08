@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const startOverBtn = document.getElementById('start-over');
     const layoutContainer = document.querySelector('.layout-container');
 
-    // Layout selection
+    //Event Listeners
+
     document.querySelectorAll('.layout-option').forEach(option => {
         option.addEventListener('click', () => {
             // Update UI
@@ -42,8 +43,11 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    // Camera control
     toggleCameraBtn.addEventListener('click', toggleCamera);
+    captureBtn.addEventListener('click', capturePose);
+    retakeBtn.addEventListener('click', retakePose);
+    saveBtn.addEventListener('click', saveLayout);
+    startOverBtn.addEventListener('click', startOver);
     
     function toggleCamera() {
         if (state.cameraActive) {
@@ -72,10 +76,6 @@ document.addEventListener("DOMContentLoaded", function() {
         state.cameraActive = false;
         fetch("/stop_camera");
     }
-
-    // Capture functionality
-    captureBtn.addEventListener('click', capturePose);
-    retakeBtn.addEventListener('click', retakePose);
 
     function capturePose() {
         if (!state.cameraActive) {
@@ -130,7 +130,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const layoutDiv = document.createElement('div');
         layoutDiv.className = `final-layout ${state.selectedLayout}`;
         
-        // Create slots based on layout type
         switch(state.selectedLayout) {
             case 'grid':
                 layoutDiv.innerHTML = `
@@ -158,18 +157,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="slot"><img src="${state.capturedImages[3] || ''}" alt="Pose 4"></div>
                 `;
                 break;
-                
-            case 'pyramid':
-                layoutDiv.innerHTML = `
-                    <div class="slot big"><img src="${state.capturedImages[0] || ''}" alt="Main Pose"></div>
-                    <div class="slot small"><img src="${state.capturedImages[1] || ''}" alt="Pose 2"></div>
-                    <div class="slot small"><img src="${state.capturedImages[2] || ''}" alt="Pose 3"></div>
-                    <div class="slot small"><img src="${state.capturedImages[3] || ''}" alt="Pose 4"></div>
-                `;
-                break;
         }
         
-        // Add retake buttons
         const slots = layoutDiv.querySelectorAll('.slot');
         slots.forEach((slot, index) => {
             if (state.capturedImages[index]) {
@@ -202,18 +191,9 @@ document.addEventListener("DOMContentLoaded", function() {
         retakeBtn.classList.toggle('hidden', !state.capturedImages[state.currentPose - 1]);
     }
 
-    // Controls
-    saveBtn.addEventListener('click', saveLayout);
-    startOverBtn.addEventListener('click', startOver);
-
     function saveLayout() {
         // Here you would implement actual saving logic
-        // For now we'll just show a confirmation
         alert("All 4 photos saved successfully!");
-        // In a real implementation, you might:
-        // 1. Combine the images into one
-        // 2. Send to server
-        // 3. Offer download
     }
 
     function startOver() {

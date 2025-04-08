@@ -64,14 +64,6 @@ main {
     gap: 5px;
 }
 
-.pyramid {
-    display: grid;
-    grid-template-areas: 
-        "big big"
-        "small small";
-    gap: 5px;
-}
-
 .slot {
     background: #ddd;
     border-radius: 5px;
@@ -159,26 +151,6 @@ main {
 .final-layout.horizontal .slot {
     width: 200px;
     height: 100%;
-}
-
-/* Pyramid Layout */
-.final-layout.pyramid {
-    display: grid;
-    grid-template-areas: 
-        "big big"
-        "small small";
-    gap: 10px;
-    max-width: 600px;
-}
-
-.final-layout.pyramid .big {
-    grid-area: big;
-    height: 300px;
-}
-
-.final-layout.pyramid .small {
-    grid-area: small;
-    height: 150px;
 }
 
 /* Slot Styles */
