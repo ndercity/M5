@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %} Edit Mode - Photo Booth {% endblock %}
+{% block extra_css %} <link rel = "stylesheet" href = "{{url_for('static', filename='css/edit.css')}}">{% endblock %}
+{% block extra_js %} <script src = "{{url_for('static', filename = 'js/edit.js')}}"></script>{% endblock %}
+
+{% block content %}
+<main>
+    <h2>Edit Photo</h2>
+    <div class="editor-container">
+        <div class="image-container">
+            <img class="image-feed">
+        </div>
+
+        <div class="filter-panel">
+            <div class="filter-section-button">
+                <button>Color Filter</button>
+                <button>Sticker Filter</button>
+            </div>
+
+            <div class="filters">
+                <button class="filter1-button">filter1</button>
+                <button class="filter2-button">filter2</button>
+                <button class="filter3-button">filter3</button>
+            </div>
+
+            <div class="cancel">
+                <button class="cancel-btn">Cancel</button>
+            </div>
+        </div>=
+    </div>
+</main>
+{% endblock %}
