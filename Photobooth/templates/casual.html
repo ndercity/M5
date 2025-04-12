@@ -11,44 +11,23 @@
 {% block content %}
 <main>
     <h2>Casual Photo Session</h2>
-    <p>Choose a layout and capture 4 fun poses!</p>
+    <p>Choose your favorite layout style!</p>
 
     <!-- Layout Selection -->
-    <div id="layout-selection">
-        <h3>Choose Your Layout Style</h3>
-        <div class="layout-options">
-            <div class="layout-option" data-layout="grid">
-                <div class="layout-preview grid">
-                    <div class="slot"></div><div class="slot"></div>
-                    <div class="slot"></div><div class="slot"></div>
-                </div>
-                <span>2×2 Grid</span>
+    <div id="layout-selection" class="section-active">
+        <h3>Select Your Layout</h3>
+        <div class="carousel-container">
+            <button class="carousel-button prev" aria-label="Previous template">&#10094;</button>
+            <div class="template-carousel" id="template-container">
+                <!-- Templates will be dynamically inserted here -->
             </div>
-            
-            <div class="layout-option" data-layout="vertical">
-                <div class="layout-preview vertical">
-                    <div class="slot"></div>
-                    <div class="slot"></div>
-                    <div class="slot"></div>
-                    <div class="slot"></div>
-                </div>
-                <span>Vertical Strip</span>
-            </div>
-            
-            <div class="layout-option" data-layout="horizontal">
-                <div class="layout-preview horizontal">
-                    <div class="slot"></div>
-                    <div class="slot"></div>
-                    <div class="slot"></div>
-                    <div class="slot"></div>
-                </div>
-                <span>Horizontal Strip</span>
-            </div>
+            <button class="carousel-button next" aria-label="Next template">&#10095;</button>
         </div>
+        <button id="confirm-layout" class="primary-button">Select Layout</button>
     </div>
 
     <!-- Capture Section -->
-    <div id="capture-section" class="hidden">
+    <div id="capture-section" class="section-inactive">
         <h3>Pose <span id="pose-number">1</span>/4</h3>
         <button id="toggle-camera">Open Camera</button>
         <div class="video-container">
@@ -61,10 +40,10 @@
     </div>
 
     <!-- Preview Section -->
-    <div id="preview-section" class="hidden">
+    <div id="preview-section" class="section-inactive">
         <h3>Your <span id="layout-name">Layout</span> Photos</h3>
-        <div class="layout-container">
-            <!-- Dynamic layout will be inserted here -->
+        <div class="canvas-container">
+            <canvas id="result-canvas" width="1800" height="1200"></canvas>
         </div>
         <div class="preview-controls">
             <button id="save-layout">Save All</button>
