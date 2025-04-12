@@ -15,6 +15,12 @@ main{
     margin: 10px auto;
 }
 
+.camera-feed {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover; /* Add this */
+}
+
 /* Buttons */
 button {
     display: block;
@@ -27,6 +33,19 @@ button {
     border: none;
     border-radius: 5px;
     transition: background 0.3s;
+}
+
+#button-section {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+#recapture-btn #confirm-btn{
+    display: none;
 }
 
 button:hover {

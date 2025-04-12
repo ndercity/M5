@@ -35,11 +35,24 @@ def generate_frames():
             continue
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+        
+#################################################################
+@app.route('/capture_image')
+def capture_image():
+    camera.start()
+    image = camera.capture_frame()
+    return Response(image, mimetype='image/jpeg')
 
 @app.route('/video_feed')
 def video_feed():
     """ Route to stream the video feed """
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/remove_image') #must optimize this shit
+def delete_curr_image():
+    camera.delete_image()
+    return "Image deleted", 200
+
 if __name__ == '__main__':
     app.run(debug=True)
+
