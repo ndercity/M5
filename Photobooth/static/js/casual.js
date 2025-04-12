@@ -208,5 +208,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Clean up
+    window.addEventListener('load', startCamera);
     window.addEventListener('beforeunload', stopCamera);
 });
