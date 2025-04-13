@@ -11,7 +11,8 @@ main{
     height: 297px;
     aspect-ratio: 4/3;
     background-color: black;
-    margin: 20px auto;
+    margin: 0 auto;
+    flex: 1;
     border-radius: 8px;
     overflow: hidden;
 }
@@ -60,7 +61,10 @@ main{
 .upper-container{
     display: flex;
     flex-direction: row;
-    gap:25px
+    gap:25px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 .middle-container{
