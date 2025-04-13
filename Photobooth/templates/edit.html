@@ -8,26 +8,41 @@
 <main>
     <h2>Edit Photo</h2>
     <div class="editor-container">
-        <div class="image-container">
-            <img class="image-feed">
+        <div class="upper-container">
+            <a href="return-button">Back</a>
+
+            <div class="image-container">
+                <img id="image-feed" class="image-preview">
+            </div>
+
+            <a href="next-button">Next</a>
         </div>
 
-        <div class="filter-panel">
-            <div class="filter-section-button">
-                <button>Color Filter</button>
-                <button>Sticker Filter</button>
+        <div class="mode-container">
+            <div id="stickers" class="mode-set visible">
+                <button class="circle-button">St1</button>
+                <button class="circle-button">St2</button>
+                <button class="circle-button">St3</button>
+                <button class="circle-button">St4</button>
+                <button class="circle-button">St5</button>
+                <button class="circle-button">St6</button>
             </div>
 
-            <div class="filters">
-                <button class="filter1-button">filter1</button>
-                <button class="filter2-button">filter2</button>
-                <button class="filter3-button">filter3</button>
+            <div id="colors" class="mode-set">
+                <button class="circle-button">filter</button>
+                <button class="circle-button">filter</button>
+                <button class="circle-button">filter</button>
+                <button class="circle-button">filter</button>
+                <button class="circle-button">filter</button>
+                <button class="circle-button">filter</button>
             </div>
-
-            <div class="cancel">
-                <button class="cancel-btn">Cancel</button>
-            </div>
-        </div>=
+        </div>
+        
+        <div class="lower-container">
+            <button data-target= "stickers" class="mode-selection-buttons active">Sticker Filter</button>
+            <button data-target = "colors" class="mode-selection-buttons">Color Filter</button>
+        </div>
+       
     </div>
 </main>
 {% endblock %}
