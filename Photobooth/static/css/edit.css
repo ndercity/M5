@@ -5,10 +5,16 @@ main{
     padding: 20px;
 }
 
+h2 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
 .image-container{
     width: 100%;
-    max-width: 498px;
-    height: 297px;
+    max-width: 520px;
+    height: 320px;
     aspect-ratio: 4/3;
     background-color: black;
     margin: 0 auto;
@@ -24,8 +30,8 @@ main{
     display: block;
 }
 .circle-button{
-    height: 72px;
-    width: 72px;
+    height: 60px;
+    width: 60px;
     background-color: grey;
     border-radius: 50%;
     display: inline-block
