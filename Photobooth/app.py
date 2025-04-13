@@ -20,6 +20,10 @@ def formal():
 def casual():
     return render_template('casual.html')
 
+@app.route('/edit')
+def edit():
+    return render_template('edit.html')
+
 @app.route('/stop_camera')
 def stop_camera():
     """ Stop the camera when leaving the capture page """
