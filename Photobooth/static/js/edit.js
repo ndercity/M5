@@ -19,8 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener("beforeunload", stopCamera);
     //end of test functions
 
-
-
     modeButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             modeButtons.forEach(b => b.classList.remove('active'));  

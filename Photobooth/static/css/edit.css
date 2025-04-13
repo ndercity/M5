@@ -2,7 +2,7 @@ main{
     max-width: 800px;
     height: 480px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 auto;
 }
 
 h2 {
@@ -26,7 +26,7 @@ h2 {
 .image-feed{
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
 }
 .circle-button{
