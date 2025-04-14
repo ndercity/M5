@@ -91,5 +91,6 @@ def save_casual_layout():
     
     return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
 
+
 if __name__ == '__main__':
     app.run(debug=True)

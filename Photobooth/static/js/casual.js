@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Edit Mode Elements
     const editControls = document.getElementById('edit-controls');
-    const editCanvas = document.getElementById('edit-canvas');
+    const editCanvas = document.getElementById('edit-canvas'); //ito ang container ng image sa editing
     const editCtx = editCanvas.getContext('2d');
     const backFromEditBtn = document.getElementById('back-from-edit');
     const applyEditBtn = document.getElementById('apply-edit');
@@ -324,10 +324,12 @@ document.addEventListener("DOMContentLoaded", function() {
         captureBtn.textContent = "Capturing...";
     
         fetch("/capture_snapshot")
+
             .then(handleCaptureResponse)
             .then(handleCaptureSuccess)
             .catch(handleCaptureError)
             .finally(resetCaptureButton);
+
     }
 
     function handleCaptureResponse(response) {
@@ -398,6 +400,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
         }
+
     }
 
     // =============================================
@@ -431,7 +434,8 @@ document.addEventListener("DOMContentLoaded", function() {
             selectedImagePreview.src = '';
         }
     }
-
+    
+    //ito yung taga display???????
     function editImage() {
         if (!capturedImages[currentlySelectedImageIndex]) return;
         enterEditMode(currentlySelectedImageIndex);
@@ -523,6 +527,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // =============================================
     function setupEditMode() {
         modeButtons.forEach(btn => {
+
             btn.addEventListener('click', () => activateMode(btn));
         });
     
@@ -531,12 +536,17 @@ document.addEventListener("DOMContentLoaded", function() {
         setupStickerAndFilterButtons();
     }
 
+
     function activateMode(btn) {
         modeButtons.forEach(b => b.classList.remove('active'));  
         btn.classList.add('active'); 
         modeFilter.forEach(set => set.classList.remove('visible'));
         document.getElementById(btn.getAttribute('data-target')).classList.add('visible');
     }
+
+    
+    //ito yung pagpasok mo mismo ng edit part ng site. ito na din ang responsible para maibigay
+    //ang image doon sa container
 
     function enterEditMode(index) {
         currentEditImageIndex = index;
