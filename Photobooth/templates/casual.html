@@ -32,22 +32,97 @@
         <button id="toggle-camera">Open Camera</button>
         <div class="video-container">
             <img id="video-feed" class="camera-feed" alt="Live camera feed">
+            <div class="camera-error-message hidden">
+                Could not access camera. Please check permissions and refresh the page.
+            </div>
         </div>
         <div class="capture-controls">
-            <button id="capture-btn">Capture Pose</button>
-            <button id="retake-btn" class="hidden">Retake</button>
+            <button id="back-to-layout" class="secondary-button">Back to Layout</button>
+            <button id="capture-btn" class="primary-button">Capture Pose</button>
         </div>
     </div>
 
     <!-- Preview Section -->
     <div id="preview-section" class="section-inactive">
         <h3>Your <span id="layout-name">Layout</span> Photos</h3>
+        
+        <!-- Image Selection and Preview -->
+        <div class="image-preview-container">
+            <!-- Edit Preview Area -->
+            <div class="edit-preview-wrapper">
+                <!-- added 4/14/2025 -->
+                <div class="image-preview">
+                    <img id="selected-image-preview" src="" alt="Selected image preview">
+                    <div class="preview-controls">
+                        <button id="edit-btn">Edit</button>
+                        <button id="retake-btn">Retake</button>
+                    </div>
+                </div>
+
+                <div class="preview-buttons"> 
+                    <div class="image-selector">
+                        <button class="image-select-btn" data-index="0">Image 1</button>
+                        <button class="image-select-btn" data-index="1">Image 2</button>
+                        <button class="image-select-btn" data-index="2">Image 3</button>
+                        <button class="image-select-btn" data-index="3">Image 4</button>
+                    </div>
+                    
+                    <div class="image-controls">
+                        <button id="save-layout">Save All</button>
+                        <button id="start-over">Retake All</button>
+                    </div>
+                </div>
+                
+                <!-- Edit Controls (hidden by default) -->
+                <div id="edit-controls" class="hidden">
+                    <div class="upper-container">
+                        <button id="back-from-edit" class="editor-nav-button">Back</button>
+                        
+                        <div class="image-container">
+                            <canvas id="edit-canvas" width="520" height="320"></canvas>
+                        </div>
+                        
+                        <button id="apply-edit" class="editor-nav-button">Apply</button>
+                    </div>
+
+                    <div class="mode-container">
+                        <div id="stickers" class="mode-set visible">
+                            <button class="circle-button">St1</button>
+                            <button class="circle-button">St2</button>
+                            <button class="circle-button">St3</button>
+                            <button class="circle-button">St4</button>
+                            <button class="circle-button">St5</button>
+                            <button class="circle-button">St6</button>
+                        </div>
+
+                        <div id="colors" class="mode-set">
+                            <button class="circle-button">filter</button>
+                            <button class="circle-button">filter</button>
+                            <button class="circle-button">filter</button>
+                            <button class="circle-button">filter</button>
+                            <button class="circle-button">filter</button>
+                            <button class="circle-button">filter</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lower-container">
+                        <button data-target="stickers" class="mode-selection-buttons active">Sticker Filter</button>
+                        <button data-target="colors" class="mode-selection-buttons">Color Filter</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- Final Result Section -->
+    <div id="final-result-section" class="section-inactive">
+        <h3>Your Final Photo</h3>
         <div class="canvas-container">
             <canvas id="result-canvas" width="1800" height="1200"></canvas>
         </div>
-        <div class="preview-controls">
-            <button id="save-layout">Save All</button>
-            <button id="start-over">Start Over</button>
+        <div class="final-controls">
+            <button id="download-btn" class="primary-button">Download Photo</button>
+            <button id="back-to-preview" class="secondary-button">Back to Preview</button>
         </div>
     </div>
 

@@ -55,16 +55,43 @@ document.addEventListener("DOMContentLoaded", function() {
     const resultCanvas = document.getElementById('result-canvas');
     const ctx = resultCanvas.getContext('2d');
     const videoContainer = document.querySelector('.video-container');
+    const backToLayoutBtn = document.getElementById('back-to-layout');
+
+    // Final Result Elements
+    const finalResultSection = document.getElementById('final-result-section');
+    const downloadBtn = document.getElementById('download-btn');
+    const backToPreviewBtn = document.getElementById('back-to-preview');
+
+    //image preview
+    const imageSelectBtns = document.querySelectorAll('.image-select-btn');
+    const selectedImagePreview = document.getElementById('selected-image-preview');
+    const editBtn = document.getElementById('edit-btn');
+    const retakeBtn = document.getElementById('retake-btn');
+    let currentlySelectedImageIndex = 0;
+
+    // Edit Mode Elements
+    const editControls = document.getElementById('edit-controls');
+    const editCanvas = document.getElementById('edit-canvas');
+    const editCtx = editCanvas.getContext('2d');
+    const backFromEditBtn = document.getElementById('back-from-edit');
+    const applyEditBtn = document.getElementById('apply-edit');
+    const modeButtons = document.querySelectorAll('.mode-selection-buttons');
+    const modeFilter = document.querySelectorAll('.mode-set');
+    let currentEditImageIndex = 0;
 
     // State
     let currentTemplate = null;
     let cameraActive = false;
     let capturedImages = Array(4).fill(null);
     let currentPose = 1;
+    let isRetaking = false;
+    let retakeIndex = -1;
 
     // Initialize
     resultCanvas.width = 1800;
     resultCanvas.height = 1200;
+
+    setupEditMode();
 
     // Template Selection
     document.querySelectorAll('.template-option').forEach(option => {
@@ -186,10 +213,10 @@ document.addEventListener("DOMContentLoaded", function() {
             alert("Please enable the camera first");
             return;
         }
-
+    
         captureBtn.disabled = true;
         captureBtn.textContent = "Capturing...";
-
+    
         fetch("/capture_snapshot")
             .then(response => {
                 if (!response.ok) throw new Error("Capture failed");
@@ -197,14 +224,37 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(imageBlob => {
                 const imageUrl = URL.createObjectURL(imageBlob);
-                capturedImages[currentPose - 1] = imageUrl;
                 
-                if (currentPose < 4) {
-                    currentPose++;
-                    updatePoseCounter();
-                } else {
+                // If we're retaking, only replace the specific image
+                if (isRetaking) {
+                    if (capturedImages[retakeIndex]) {
+                        URL.revokeObjectURL(capturedImages[retakeIndex]);
+                    }
+                    capturedImages[retakeIndex] = imageUrl;
+                    
+                    // Reset retaking state
+                    isRetaking = false;
+                    retakeIndex = -1;
+                    
+                    // Return to preview
                     renderTemplate();
                     showPreview();
+                    selectImage(currentPose - 1);
+                } 
+                // Normal capture flow
+                else {
+                    if (capturedImages[currentPose - 1]) {
+                        URL.revokeObjectURL(capturedImages[currentPose - 1]);
+                    }
+                    capturedImages[currentPose - 1] = imageUrl;
+                    
+                    if (currentPose < 4) {
+                        currentPose++;
+                        updatePoseCounter();
+                    } else {
+                        renderTemplate();
+                        showPreview();
+                    }
                 }
             })
             .catch(error => {
@@ -221,15 +271,17 @@ document.addEventListener("DOMContentLoaded", function() {
         poseNumber.textContent = currentPose;
         
         // Highlight the current pose in the layout markers
-        videoContainer.querySelectorAll('.layout-marker').forEach((marker, index) => {
-            if (index === currentPose - 1) {
-                marker.style.border = '2px solid #4CAF50';
-                marker.style.boxShadow = '0 0 10px rgba(76, 175, 80, 0.8)';
-            } else {
-                marker.style.border = '2px dashed rgba(255,255,255,0.7)';
-                marker.style.boxShadow = 'none';
-            }
-        });
+        if (videoContainer) {
+            videoContainer.querySelectorAll('.layout-marker').forEach((marker, index) => {
+                if (index === currentPose - 1) {
+                    marker.style.border = '2px solid #4CAF50';
+                    marker.style.boxShadow = '0 0 10px rgba(76, 175, 80, 0.8)';
+                } else {
+                    marker.style.border = '2px dashed rgba(255,255,255,0.7)';
+                    marker.style.boxShadow = 'none';
+                }
+            });
+        }
     }
 
     // Initialize
@@ -446,10 +498,25 @@ document.addEventListener("DOMContentLoaded", function() {
         captureSection.classList.add("section-inactive");
         previewSection.classList.remove("section-inactive");
         previewSection.classList.add("section-active");
+        
+        // If we were retaking, select the retaken image
+        if (isRetaking) {
+            selectImage(retakeIndex);
+            isRetaking = false;
+            retakeIndex = -1;
+        } else {
+            // Otherwise select first available image
+            const firstImageIndex = capturedImages.findIndex(img => img !== null);
+            if (firstImageIndex !== -1) {
+                selectImage(firstImageIndex);
+            }
+        }
+        
+        renderTemplate();
     }
 
-    startOverBtn.addEventListener('click', function() {
-        if (confirm("Are you sure you want to start over?")) {
+    backToLayoutBtn.addEventListener('click', function() {
+        if (confirm("Are you sure you want to go back to layout selection? All captured images will be lost.")) {
             // Clear images
             capturedImages.forEach(img => {
                 if (img) URL.revokeObjectURL(img);
@@ -457,23 +524,42 @@ document.addEventListener("DOMContentLoaded", function() {
             capturedImages = Array(4).fill(null);
             currentPose = 1;
             
+            // Reset retaking state if active
+            isRetaking = false;
+            retakeIndex = -1;
+            
             // Reset UI
-            previewSection.classList.remove("section-active");
-            previewSection.classList.add("section-inactive");
+            captureSection.classList.remove("section-active");
+            captureSection.classList.add("section-inactive");
             layoutSelection.classList.remove("section-inactive");
             layoutSelection.classList.add("section-active");
             
-            updatePoseCounter();
             stopCamera();
         }
     });
 
     // Save Functionality
     saveBtn.addEventListener('click', function() {
+        
+        renderTemplate();
+        previewSection.classList.remove("section-active");
+        previewSection.classList.add("section-inactive");
+        finalResultSection.classList.remove("section-inactive");
+        finalResultSection.classList.add("section-active");
+    });
+
+    downloadBtn.addEventListener('click', function() {
         const link = document.createElement('a');
-        link.download = `casual-${currentTemplate.name.toLowerCase().replace(/ /g, '-')}-${new Date().getTime()}.png`;
+        link.download = `photo-booth-${currentTemplate.name.toLowerCase().replace(/ /g, '-')}-${new Date().getTime()}.png`;
         link.href = resultCanvas.toDataURL('image/png');
         link.click();
+    });
+
+    backToPreviewBtn.addEventListener('click', function() {
+        finalResultSection.classList.remove("section-active");
+        finalResultSection.classList.add("section-inactive");
+        previewSection.classList.remove("section-inactive");
+        previewSection.classList.add("section-active");
     });
 
     // Clean up
@@ -485,4 +571,184 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         stopCamera();
     });
+
+    function setupImagePreview() {
+        // Set up image selection buttons
+        imageSelectBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const index = parseInt(this.dataset.index);
+                selectImage(index);
+            });
+        });
+    
+        // Set up edit and retake button
+        editBtn.addEventListener('click', editImage);
+        retakeBtn.addEventListener('click', retakeImage);
+    
+        // Select first image by default
+        if (capturedImages[0]) {
+            selectImage(0);
+        }
+    }
+    
+    function selectImage(index) {
+        currentlySelectedImageIndex = index;
+        
+        // Update button states
+        imageSelectBtns.forEach(btn => {
+            btn.classList.remove('active');
+            if (parseInt(btn.dataset.index) === index) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // Update preview image
+        if (capturedImages[index]) {
+            selectedImagePreview.src = capturedImages[index];
+        } else {
+            selectedImagePreview.src = '';
+        }
+    }
+    
+    function editImage() {
+        console.log("Editing")
+        if (!capturedImages[currentlySelectedImageIndex]) return;
+        enterEditMode(currentlySelectedImageIndex);
+    }
+    
+    function retakeImage() {
+        if (!capturedImages[currentlySelectedImageIndex]) {
+            alert("No image to retake");
+            return;
+        }
+    
+        if (confirm("Are you sure you want to retake this photo?")) {
+            // Set retaking state
+            isRetaking = true;
+            retakeIndex = currentlySelectedImageIndex;
+            
+            // Switch to capture section
+            previewSection.classList.remove("section-active");
+            previewSection.classList.add("section-inactive");
+            captureSection.classList.remove("section-inactive");
+            captureSection.classList.add("section-active");
+            
+            // Set current pose to the retaken image
+            currentPose = currentlySelectedImageIndex + 1;
+            updatePoseCounter();
+            
+            // Restart camera if not active
+            if (!cameraActive) {
+                startCamera();
+            }
+        }
+    }
+
+    function showPreview() {
+        captureSection.classList.remove("section-active");
+        captureSection.classList.add("section-inactive");
+        previewSection.classList.remove("section-inactive");
+        previewSection.classList.add("section-active");
+        
+        // Initialize the image preview system
+        setupImagePreview();
+        
+        // Select the first image by default
+        if (capturedImages[0]) {
+            selectImage(0);
+        }
+    }
+    
+    startOverBtn.addEventListener('click', function() {
+        if (confirm("Are you sure you want to retake all photos?")) {
+            // Clear images
+            capturedImages.forEach(img => {
+                if (img) URL.revokeObjectURL(img);
+            });
+            capturedImages = Array(4).fill(null);
+            currentPose = 1;
+            
+            // Reset retaking state if active
+            isRetaking = false;
+            retakeIndex = -1;
+            
+            // Reset UI
+            previewSection.classList.remove("section-active");
+            previewSection.classList.add("section-inactive");
+            captureSection.classList.remove("section-inactive");
+            captureSection.classList.add("section-active");
+            
+            updatePoseCounter();
+        }
+    });
+
+    //Edit
+
+    function setupEditMode() {
+        // Set up mode selection buttons
+        modeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeButtons.forEach(b => b.classList.remove('active'));  
+                btn.classList.add('active'); 
+    
+                modeFilter.forEach(set => set.classList.remove('visible'));
+                const target = btn.getAttribute('data-target');
+                document.getElementById(target).classList.add('visible');
+            });
+        });
+    
+        backFromEditBtn.addEventListener('click', exitEditMode);
+        applyEditBtn.addEventListener('click', applyEdit);
+    }
+    
+    function enterEditMode(index) {
+        currentEditImageIndex = index;
+
+        const img = new Image();
+        img.onload = function() {
+            editCanvas.width = img.width;
+            editCanvas.height = img.height;
+            editCtx.drawImage(img, 0, 0);
+        };
+        img.src = capturedImages[index];
+        
+        editControls.classList.remove('hidden');
+    }
+    
+    function exitEditMode() {
+        editControls.classList.add('hidden');
+    }
+    
+    function applyEdit() {
+        const editedImageData = editCanvas.toDataURL('image/png');
+
+        if (capturedImages[currentEditImageIndex]) {
+            URL.revokeObjectURL(capturedImages[currentEditImageIndex]);
+        }
+        capturedImages[currentEditImageIndex] = editedImageData;
+        selectedImagePreview.src = editedImageData;
+        renderTemplate();
+        exitEditMode();
+    }
+
+    //TEST FUNCTION FOR STICKER AND FILTER
+    document.querySelectorAll('#stickers .circle-button').forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+            // placeholder text muna
+            editCtx.fillStyle = 'white';
+            editCtx.font = '20px Arial';
+            editCtx.fillText(`Sticker ${index + 1}`, 50, 50);
+        });
+    });
+
+    // Similarly for color filters
+    document.querySelectorAll('#colors .circle-button').forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+            // some color
+            editCtx.fillStyle = `rgba(${index * 40}, ${index * 30}, ${index * 50}, 0.3)`;
+            editCtx.fillRect(0, 0, editCanvas.width, editCanvas.height);
+        });
+    });
+    window.addEventListener('load', startCamera);
+    window.addEventListener('beforeunload', stopCamera);
 });
