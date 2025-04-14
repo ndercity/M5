@@ -17,17 +17,53 @@
             <img id="video-feed" class="camera-feed">
         </div>
         <button id="capture-btn">Capture</button>
-        <button id="preview-btn">Go to Preview</button>
+        <button id="preview-btn">Preview & Customize</button>
     </div>
 
     <!-- Preview Section -->
-    <div id="preview-section">
-        <h3>Preview</h3>
-        <div id="captured-photo"></div>
-        <button id="capture-again-btn">Capture Again</button>
+    <div id="preview-section" class="hidden">
+        <h3>Preview & Customization</h3>
+        
+        <!-- Main Preview Image -->
+        <img id="main-preview" class="main-preview" alt="Captured Photo">
+        
+        <!-- Grid View (Hidden by default) -->
+        <button id="show-grid-btn">Show Grid View</button>
+        <div class="parent">
+            <div class="div1"></div>
+            <div class="div2"></div>
+            <div class="div3"></div>
+            <div class="div4"></div>
+            <div class="div5"></div>
+            <div class="div6"></div>
+            <div class="div7"></div>
+            <div class="div8"></div>
+            <div class="div9"></div>
+            <div class="div10"></div>
+            <div class="div11"></div>
+            <div class="div12"></div>
+        </div>
+        
+        <!-- Customization Controls -->
+        <div class="customization-options">
+            <h4>Edit Your Photo</h4>
+            <div class="control-group">
+                <label for="brightness">Brightness:</label>
+                <input type="range" id="brightness" min="-100" max="100" value="0">
+            </div>
+            <div class="control-group">
+                <label for="contrast">Contrast:</label>
+                <input type="range" id="contrast" min="-100" max="100" value="0">
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="preview-controls">
+            <button id="save-photo">Save Photo</button>
+            <button id="capture-again-btn">Capture Again</button>
+        </div>
     </div>
 
-    <!-- Back Button -->
     <a href="{{ url_for('mode') }}" class="btn-link">Back to Mode Selection</a>
 </main>
 {% endblock %}
