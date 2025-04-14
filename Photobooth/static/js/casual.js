@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Edit Mode Elements
     const editControls = document.getElementById('edit-controls');
-    const editCanvas = document.getElementById('edit-canvas');
+    const editCanvas = document.getElementById('edit-canvas'); //ito ang container ng image sa editing
     const editCtx = editCanvas.getContext('2d');
     const backFromEditBtn = document.getElementById('back-from-edit');
     const applyEditBtn = document.getElementById('apply-edit');
@@ -254,6 +254,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     } else {
                         renderTemplate();
                         showPreview();
+                        stopCamera();
                     }
                 }
             })
@@ -564,7 +565,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Clean up
     window.addEventListener('load', startCamera);
-    window.addEventListener('beforeunload', stopCamera);
     window.addEventListener("beforeunload", function() {
         capturedImages.forEach(img => {
             if (img) URL.revokeObjectURL(img);
@@ -610,6 +610,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
     
+    //ito yung taga display???????
     function editImage() {
         console.log("Editing")
         if (!capturedImages[currentlySelectedImageIndex]) return;
@@ -682,15 +683,16 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Edit
 
+    //ito yung controls kung anong klase filter ilaalgay mo ito yung sticker and color filter
     function setupEditMode() {
         // Set up mode selection buttons
         modeButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 modeButtons.forEach(b => b.classList.remove('active'));  
                 btn.classList.add('active'); 
-    
                 modeFilter.forEach(set => set.classList.remove('visible'));
                 const target = btn.getAttribute('data-target');
                 document.getElementById(target).classList.add('visible');
@@ -701,6 +703,8 @@ document.addEventListener("DOMContentLoaded", function() {
         applyEditBtn.addEventListener('click', applyEdit);
     }
     
+    //ito yung pagpasok mo mismo ng edit part ng site. ito na din ang responsible para maibigay
+    //ang image doon sa container
     function enterEditMode(index) {
         currentEditImageIndex = index;
 
@@ -711,10 +715,10 @@ document.addEventListener("DOMContentLoaded", function() {
             editCtx.drawImage(img, 0, 0);
         };
         img.src = capturedImages[index];
-        
         editControls.classList.remove('hidden');
     }
     
+    //self explanatory, pag tapos mo mag edit or nagbago isip mo
     function exitEditMode() {
         editControls.classList.add('hidden');
     }

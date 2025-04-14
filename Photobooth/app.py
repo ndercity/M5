@@ -20,10 +20,6 @@ def formal():
 def casual():
     return render_template('casual.html')
 
-@app.route('/edit')
-def edit():
-    return render_template('edit.html')
-
 @app.route('/stop_camera')
 def stop_camera():
     """ Stop the camera when leaving the capture page """
@@ -94,6 +90,7 @@ def save_casual_layout():
             }), 500
     
     return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
+
 
 if __name__ == '__main__':
     app.run(debug=True)
