@@ -382,13 +382,6 @@ main {
     background: #45a049;
 }
 
-.capture-controls {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin: 20px 0;
-}
-
 /* Camera error state */
 .video-container.camera-error {
     display: flex;
