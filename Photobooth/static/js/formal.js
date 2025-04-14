@@ -1,29 +1,50 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // 4R Layout Template (1800×1200)
+    const template = {
+        width: 1800,
+        height: 1200,
+        areas: [
+            // 4 Large (2×2) Photos - Each 600×600
+            { x: 0, y: 0, width: 600, height: 600 },
+            { x: 600, y: 0, width: 600, height: 600 },
+            { x: 0, y: 600, width: 600, height: 600 },
+            { x: 600, y: 600, width: 600, height: 600 },
+            
+            // 8 Small (1×1) Photos - Each 300×300
+            { x: 1200, y: 0, width: 300, height: 300 },
+            { x: 1500, y: 0, width: 300, height: 300 },
+            { x: 1200, y: 300, width: 300, height: 300 },
+            { x: 1500, y: 300, width: 300, height: 300 },
+            { x: 1200, y: 600, width: 300, height: 300 },
+            { x: 1500, y: 600, width: 300, height: 300 },
+            { x: 1200, y: 900, width: 300, height: 300 },
+            { x: 1500, y: 900, width: 300, height: 300 }
+        ]
+    };
+
     // DOM Elements
-    const toggleCameraButton = document.getElementById("toggle-camera");
-    const videoFeed = document.getElementById("video-feed");
-    const previewButton = document.getElementById("preview-btn");
-    const captureAgainButton = document.getElementById("capture-again-btn");
-    const captureButton = document.getElementById("capture-btn");
-    const showGridButton = document.getElementById("show-grid-btn");
-    const saveButton = document.getElementById("save-photo");
-    const captureSection = document.getElementById("capture-section");
-    const previewSection = document.getElementById("preview-section");
-    const mainPreview = document.getElementById("main-preview");
-    const brightnessControl = document.getElementById("brightness");
-    const contrastControl = document.getElementById("contrast");
+    const captureSection = document.getElementById('capture-section');
+    const previewSection = document.getElementById('preview-section');
+    const toggleCameraBtn = document.getElementById('toggle-camera');
+    const videoFeed = document.getElementById('video-feed');
+    const captureBtn = document.getElementById('capture-btn');
+    const saveBtn = document.getElementById('save-photo');
+    const captureAgainBtn = document.getElementById('capture-again-btn');
+    const resultCanvas = document.getElementById('result-canvas');
+    const ctx = resultCanvas.getContext('2d');
 
+    // State
     let cameraActive = false;
-    let currentImageUrl = null;
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+    let capturedImageUrl = null;
 
-    // Initialize sections
-    captureSection.classList.add("section-active");
-    previewSection.classList.add("section-inactive");
+    // Initialize Canvas
+    resultCanvas.width = template.width;
+    resultCanvas.height = template.height;
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, template.width, template.height);
 
     // Camera Control
-    toggleCameraButton.addEventListener("click", toggleCamera);
+    toggleCameraBtn.addEventListener('click', toggleCamera);
     
     function toggleCamera() {
         if (cameraActive) {
@@ -36,28 +57,26 @@ document.addEventListener("DOMContentLoaded", function () {
     function startCamera() {
         videoFeed.onerror = null;
         videoFeed.src = "/video_feed?" + new Date().getTime();
-        
         videoFeed.onerror = () => {
             if (cameraActive) {
                 alert("Could not access camera. Please check permissions.");
                 stopCamera();
             }
         };
-        
-        toggleCameraButton.textContent = "Close Camera";
+        toggleCameraBtn.textContent = "Close Camera";
         cameraActive = true;
     }
 
     function stopCamera() {
         videoFeed.onerror = null;
         videoFeed.src = "";
-        toggleCameraButton.textContent = "Open Camera";
+        toggleCameraBtn.textContent = "Open Camera";
         cameraActive = false;
         fetch("/stop_camera");
     }
 
-    // Capture Functionality
-    captureButton.addEventListener("click", capturePhoto);
+    // Capture Functionality - Single Capture
+    captureBtn.addEventListener('click', capturePhoto);
     
     function capturePhoto() {
         if (!cameraActive) {
@@ -65,8 +84,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        captureButton.disabled = true;
-        captureButton.textContent = "Capturing...";
+        captureBtn.disabled = true;
+        captureBtn.textContent = "Capturing...";
 
         fetch("/capture_snapshot")
             .then(response => {
@@ -74,15 +93,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.blob();
             })
             .then(imageBlob => {
-                const newImageUrl = URL.createObjectURL(imageBlob);
+                // Release previous image if exists
+                if (capturedImageUrl) URL.revokeObjectURL(capturedImageUrl);
                 
-                // Clear previous image URL if exists
-                if (currentImageUrl) {
-                    URL.revokeObjectURL(currentImageUrl);
-                }
-                
-                currentImageUrl = newImageUrl;
-                updateImageDisplay();
+                capturedImageUrl = URL.createObjectURL(imageBlob);
+                renderTemplate();
                 showPreviewSection();
             })
             .catch(error => {
@@ -90,136 +105,72 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("Failed to capture photo. Please try again.");
             })
             .finally(() => {
-                captureButton.disabled = false;
-                captureButton.textContent = "Capture";
+                captureBtn.disabled = false;
+                captureBtn.textContent = "Capture";
             });
     }
 
-    function updateImageDisplay() {
-        // Update main preview
-        mainPreview.src = currentImageUrl;
-        applyEditsToMainPreview();
+    // Render Template with Single Image
+    function renderTemplate() {
+        // Clear canvas
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, template.width, template.height);
         
-        // Update grid if visible
-        if (document.querySelector(".parent").classList.contains("active")) {
-            updateGridWithCurrentImage();
-        }
+        if (!capturedImageUrl) return;
+        
+        const img = new Image();
+        img.onload = function() {
+            // Draw the same image in all slots
+            template.areas.forEach(area => {
+                ctx.drawImage(img, area.x, area.y, area.width, area.height);
+                
+                // Draw border
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(area.x, area.y, area.width, area.height);
+            });
+        };
+        img.src = capturedImageUrl;
     }
 
     // Navigation
-    previewButton.addEventListener("click", showPreviewSection);
-    captureAgainButton.addEventListener("click", showCaptureSection);
-
     function showPreviewSection() {
-        if (!currentImageUrl) {
-            alert("Please capture a photo first");
-            return;
-        }
         captureSection.classList.remove("section-active");
         captureSection.classList.add("section-inactive");
-        
         previewSection.classList.remove("section-inactive");
         previewSection.classList.add("section-active");
-        
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
     }
 
-    function showCaptureSection() {
-        // Clear previous image
-        if (currentImageUrl) {
-            URL.revokeObjectURL(currentImageUrl);
-            currentImageUrl = null;
-        }
+    captureAgainBtn.addEventListener('click', function() {
+        // Clear captured image
+        if (capturedImageUrl) URL.revokeObjectURL(capturedImageUrl);
+        capturedImageUrl = null;
         
+        // Reset UI
         previewSection.classList.remove("section-active");
         previewSection.classList.add("section-inactive");
-        
         captureSection.classList.remove("section-inactive");
         captureSection.classList.add("section-active");
         
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-        
-        // Reset grid view
-        document.querySelector(".parent").classList.remove("active");
-        showGridButton.textContent = "Show Grid View";
-        
         if (!cameraActive) startCamera();
-    }
+    });
 
-    // Grid Toggle
-    showGridButton.addEventListener("click", toggleGrid);
-    
-    function toggleGrid() {
-        const grid = document.querySelector(".parent");
-        grid.classList.toggle("active");
-        
-        if (grid.classList.contains("active")) {
-            updateGridWithCurrentImage();
-            showGridButton.textContent = "Hide Grid View";
-        } else {
-            showGridButton.textContent = "Show Grid View";
-        }
-    }
-
-    function updateGridWithCurrentImage() {
-        if (!currentImageUrl) return;
-        
-        const divs = document.querySelectorAll(".parent div");
-        divs.forEach(div => {
-            div.style.backgroundImage = `url(${currentImageUrl})`;
-            applyEditsToGrid(div);
-        });
-    }
-
-    // Image Editing
-    brightnessControl.addEventListener("input", applyEdits);
-    contrastControl.addEventListener("input", applyEdits);
-
-    function applyEdits() {
-        applyEditsToMainPreview();
-        
-        // Apply to grid if visible
-        if (document.querySelector(".parent").classList.contains("active")) {
-            const divs = document.querySelectorAll(".parent div");
-            divs.forEach(div => applyEditsToGrid(div));
-        }
-    }
-
-    function applyEditsToMainPreview() {
-        const brightness = brightnessControl.value;
-        const contrast = contrastControl.value;
-        mainPreview.style.filter = `brightness(${100 + parseInt(brightness)}%) contrast(${100 + parseInt(contrast)}%)`;
-    }
-
-    function applyEditsToGrid(element) {
-        const brightness = brightnessControl.value;
-        const contrast = contrastControl.value;
-        element.style.filter = `brightness(${100 + parseInt(brightness)}%) contrast(${100 + parseInt(contrast)}%)`;
-    }
-
-    // Save Functionality
-    saveButton.addEventListener("click", savePhoto);
-    
-    function savePhoto() {
-        if (!currentImageUrl) {
-            alert("No photo to save!");
+    // Save/Print Functionality
+    saveBtn.addEventListener('click', function() {
+        if (!capturedImageUrl) {
+            alert("No photo captured yet!");
             return;
         }
-        // Implement your save logic here
-        alert("Photo saved with current edits!");
-    }
+        
+        const link = document.createElement('a');
+        link.download = '4R-formal-layout.png';
+        link.href = resultCanvas.toDataURL('image/png');
+        link.click();
+    });
 
     // Clean up
     window.addEventListener("beforeunload", function() {
-        if (currentImageUrl) {
-            URL.revokeObjectURL(currentImageUrl);
-        }
+        if (capturedImageUrl) URL.revokeObjectURL(capturedImageUrl);
         stopCamera();
     });
 });
