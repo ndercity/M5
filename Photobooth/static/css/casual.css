@@ -10,75 +10,6 @@ main {
     display: none;
 }
 
-/* Layout Selection */
-.layout-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 25px;
-    margin: 30px 0;
-}
-
-.layout-option {
-    cursor: pointer;
-    padding: 15px;
-    border-radius: 10px;
-    background: white;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-}
-
-.layout-option:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.layout-option.selected {
-    border: 3px solid #3498db;
-    background: #f8fbff;
-}
-
-.layout-preview {
-    height: 150px;
-    background: #f5f5f5;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    padding: 5px;
-}
-
-/* Layout Previews */
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 5px;
-}
-
-.vertical {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.horizontal {
-    display: flex;
-    gap: 5px;
-}
-
-.slot {
-    background: #ddd;
-    border-radius: 5px;
-}
-
-.big {
-    grid-area: big;
-    height: 100px;
-}
-
-.small {
-    grid-area: small;
-    height: 40px;
-}
-
 /* Capture Section */
 .video-container {
     width: 100%;
@@ -88,6 +19,7 @@ main {
     margin: 20px auto;
     border-radius: 8px;
     overflow: hidden;
+    position: relative;
 }
 
 .camera-feed {
@@ -103,127 +35,147 @@ main {
     margin: 20px 0;
 }
 
-/* Preview Section - Layout Styles */
-.layout-container {
-    max-width: 800px;
+/* Canvas Container */
+.canvas-container {
+    max-width: 900px;
     margin: 20px auto;
-    padding: 20px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-}
-
-.final-layout {
-    display: flex;
-    gap: 10px;
-    margin: 0 auto;
-}
-
-/* Grid Layout */
-.final-layout.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    max-width: 600px;
-}
-
-.final-layout.grid .slot {
-    aspect-ratio: 1;
-}
-
-/* Vertical Layout */
-.final-layout.vertical {
-    flex-direction: column;
-    max-width: 400px;
-}
-
-.final-layout.vertical .slot {
-    height: 200px;
-    width: 100%;
-}
-
-/* Horizontal Layout */
-.final-layout.horizontal {
-    flex-direction: row;
-    max-height: 300px;
-}
-
-.final-layout.horizontal .slot {
-    width: 200px;
-    height: 100%;
-}
-
-/* Slot Styles */
-.slot {
-    position: relative;
-    background: #f0f0f0;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    background: white;
+    padding: 20px;
+}
+
+#result-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Sections */
+.section-active {
+    opacity: 1;
+    transform: translateY(0);
+    display: block;
+}
+
+.section-inactive {
+    opacity: 0;
+    transform: translateY(20px);
+    display: none;
+}
+
+/* Layout Markers */
+.layout-marker {
+    position: absolute;
+    border: 2px dashed rgba(255,255,255,0.7);
+    box-sizing: border-box;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Carousel Styles */
+.carousel-container {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.template-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    padding: 20px 0;
+    gap: 20px;
+    scrollbar-width: none; /* Firefox */
+}
+
+.template-carousel::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.carousel-button {
+    background: rgba(255,255,255,0.7);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+    z-index: 1;
+    transition: all 0.2s;
+}
+
+.carousel-button:hover {
+    background: rgba(255,255,255,0.9);
+    transform: scale(1.1);
+}
+
+.template-option {
+    scroll-snap-align: center;
+    flex: 0 0 auto;
+    width: 300px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.template-option:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.template-option.selected {
+    box-shadow: 0 0 0 3px #4CAF50, 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.template-preview {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     overflow: hidden;
 }
 
-.slot img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.retake-single {
+.template-area {
     position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 5px 10px;
-    background: rgba(255, 0, 0, 0.7);
+    border: 1px solid rgba(0,0,0,0.2);
+    box-sizing: border-box;
+}
+
+.template-label {
+    display: block;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    background: white;
+}
+
+.template-area-number {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: rgba(0,0,0,0.5);
     color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    z-index: 2;
-}
-
-/* Buttons */
-button {
-    padding: 10px 20px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-    font-size: 16px;
-}
-
-button:hover {
-    background-color: #2980b9;
-}
-
-#save-layout {
-    background-color: #2ecc71;
-}
-
-#save-layout:hover {
-    background-color: #27ae60;
-}
-
-#start-over {
-    background-color: #e74c3c;
-}
-
-#start-over:hover {
-    background-color: #c0392b;
-}
-
-.btn-link {
-    display: inline-block;
-    margin-top: 30px;
-    padding: 10px 20px;
-    background: #7f8c8d;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background 0.3s;
-}
-
-.btn-link:hover {
-    background: #6c757d;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
 }
