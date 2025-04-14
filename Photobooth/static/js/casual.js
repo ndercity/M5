@@ -747,4 +747,6 @@ document.addEventListener("DOMContentLoaded", function() {
             editCtx.fillRect(0, 0, editCanvas.width, editCanvas.height);
         });
     });
+    window.addEventListener('load', startCamera);
+    window.addEventListener('beforeunload', stopCamera);
 });

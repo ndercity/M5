@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %} Edit Mode - Photo Booth {% endblock %}
+{% block extra_css %} <link rel = "stylesheet" href = "{{url_for('static', filename='css/edit.css')}}">{% endblock %}
+{% block extra_js %} <script src = "{{url_for('static', filename = 'js/edit.js')}}"></script>{% endblock %}
+
+{% block content %}
+<main>
+    <div class="editor-container">
+        <h2>Edit Photo</h2>
+        <div class="upper-container">
+            <a href="return-button">Back</a>
+
+            <div class="image-container">
+                <img id="image-feed" class="image-preview">
+            </div>
+
+            <a href="next-button">Next</a>
+        </div>
+
+        <div class="mode-container">
+            <div id="stickers" class="mode-set visible">
+                <button class="circle-button">St1</button>
+                <button class="circle-button">St2</button>
+                <button class="circle-button">St3</button>
+                <button class="circle-button">St4</button>
+                <button class="circle-button">St5</button>
+                <button class="circle-button">St6</button>
+            </div>
+
+            <div id="colors" class="mode-set">
+                <button class="circle-button">filter</button>
+                <button class="circle-button">filter</button>
+                <button class="circle-button">filter</button>
+                <button class="circle-button">filter</button>
+                <button class="circle-button">filter</button>
+                <button class="circle-button">filter</button>
+            </div>
+        </div>
+        
+        <div class="lower-container">
+            <button data-target= "stickers" class="mode-selection-buttons active">Sticker Filter</button>
+            <button data-target = "colors" class="mode-selection-buttons">Color Filter</button>
+        </div>
+       
+    </div>
+</main>
+{% endblock %}
