@@ -299,7 +299,7 @@ main {
     display: block;
 }
 
-.circle-button {
+.circle-button-sticker {
     height: 60px;
     width: 60px;
     background-color: grey;
@@ -308,6 +308,17 @@ main {
     border: none;
     cursor: pointer;
 }
+
+.circle-button-color {
+    height: 60px;
+    width: 60px;
+    background-color: grey;
+    border-radius: 50%;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+}
+
 
 .mode-selection-buttons {
     background-color: white;
