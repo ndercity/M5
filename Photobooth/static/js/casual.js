@@ -688,18 +688,6 @@ document.addEventListener("DOMContentLoaded", function() {
         exitEditMode();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     function setupStickerAndFilterButtons() {
         document.querySelectorAll('#stickers .circle-button').forEach((btn, index) => {
             btn.addEventListener('click', () => addSticker(index));

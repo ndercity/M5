@@ -11,8 +11,8 @@ main {
     justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 640px;
-    height: 480px;
+    max-width: 1080px;
+    height: 1080px;
     background-color: black;
     margin: 10px auto;
 }
