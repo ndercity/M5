@@ -1,8 +1,10 @@
-from flask import Flask, render_template, Response, redirect, url_for
+from flask import Flask, render_template, Response, redirect, url_for, request, jsonify
 from camera import Camera
+from color_filter import Color_Filter
 
 app = Flask(__name__)
 camera = Camera()
+color_filter = Color_Filter()
 
 @app.route('/')
 def home():
@@ -90,6 +92,70 @@ def save_casual_layout():
             }), 500
     
     return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
+
+@app.route('/get_image_edit',  methods=['POST'])
+def get_image_edit():
+    image_file = request.files.get('image')
+
+    if not image_file:
+        print("error 1")
+        return jsonify({"error": "No image file received"}), 400
+    try:
+        color_filter.set_image_to_edit(image_file)
+        print("good ito")
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        print("may mali")
+        return jsonify({"status": "error", "message": str(e)}), 500
+   
+@app.route('/get_raw')
+def get_raw():
+    raw_image = color_filter.return_raw()
+    if raw_image:
+        return Response(raw_image, mimetype='image/jpeg')
+    return 'Failed to capture raw', 600
+
+@app.route('/get_grayscaled')
+def get_grayscale():
+    grayscale = color_filter.grayscale_image()
+    if grayscale:
+        return Response(grayscale, mimetype='image/jpeg')
+    return 'Failed to capture grayscale', 600
+
+@app.route('/get_sepia')
+def get_sepia():
+    sepia = color_filter.sepia_image()
+    if sepia:
+        return Response(sepia, mimetype='image/jpeg')
+    return 'Failed to capture sepia', 600
+
+@app.route('/get_inverted')
+def get_inverted():
+    inverted = color_filter.inverted_image()
+    if inverted:
+        return Response(inverted, mimetype='image/jpeg')
+    return 'Failed to capture inverted', 600
+
+@app.route('/get_sketched')
+def get_sketched():
+    sketched = color_filter.sketch_image()
+    if sketched:
+        return Response(sketched, mimetype='image/jpeg')
+    return 'Failed to capture sketched', 600
+
+@app.route('/get_warm')
+def get_warm():
+    warm = color_filter.warm_image()
+    if warm:
+        return Response(warm, mimetype='image/jpeg')
+    return 'Failed to capture warm', 600
+
+@app.route('/get_blue')
+def get_blue():
+    blue = color_filter.cool_blue_image()
+    if blue:
+        return Response(blue, mimetype='image/jpeg')
+    return 'Failed to capture blue', 600
 
 if __name__ == '__main__':
     app.run(debug=True)
