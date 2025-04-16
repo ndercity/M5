@@ -85,6 +85,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const applyEditBtn = document.getElementById('apply-edit');
     const modeButtons = document.querySelectorAll('.mode-selection-buttons');
     const modeFilter = document.querySelectorAll('.mode-set');
+    const colorButtons = document.querySelectorAll('.circle-button-color')
 
     // =============================================
     // STATE VARIABLES
@@ -100,10 +101,15 @@ document.addEventListener("DOMContentLoaded", function() {
     let carousel;
     let carouselItems = [];
     let currentIndex = 0;
+    let currentButtonIndex = -1; //negative 1 ang default value para walang ibalik
+    let filterButtonPressedAgain = false;
 
     // =============================================
     // INITIALIZATION
     // =============================================
+    window.addEventListener('load', startCamera);
+    window.addEventListener('beforeunload', stopCamera);
+    
     function initialize() {
         resultCanvas.width = 1800;
         resultCanvas.height = 1200;
@@ -329,7 +335,6 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(handleCaptureSuccess)
             .catch(handleCaptureError)
             .finally(resetCaptureButton);
-
     }
 
     function handleCaptureResponse(response) {
@@ -559,7 +564,111 @@ document.addEventListener("DOMContentLoaded", function() {
         };
         
         img.src = capturedImages[index];
+        insertSelectedImageInEditMode(capturedImages[index])
         editControls.classList.remove('hidden');
+    }
+
+    //saves sends the image to python for color manipulation
+    //magsesend ito ng blob image na dapat irereceive in flask
+    //optimize this
+    function insertSelectedImageInEditMode(urlBlob){
+        fetch(urlBlob)
+        .then(response=>response.blob())
+        .then(blob => {
+            const formData = new FormData();
+            formData.append("image", blob)
+            console.log("natawag ako")
+            fetch('get_image_edit', {
+                method: 'POST', 
+                body: formData,
+            })
+            .then(res => res.json())
+            .then(data => console.log("Response from Flask:", data))
+            .catch(err => console.error("Error:", err));
+        })
+        .catch(err => console.error("Error fetching blob:", err));
+    }
+
+    //kukunin nito yung index ng pinindot na button mula sa available na filters
+    colorButtons.forEach((btn, index)=>{
+        btn.addEventListener('click', () => {
+            //console.log('Clicked button index: ', index)
+            //currentButtonIndex = index;
+            displayFilterImage(index);
+        })
+    })
+
+    //convert blob to image url para madisplay
+    function getFilteredImage(index) {
+        let routeString;
+        console.log("Index received: ", index)
+        switch(index){
+            case -1:
+                routeString = '/get_raw';
+                break
+            case 0:
+                routeString = '/get_grayscaled';
+                break;
+            case 1:
+                routeString = '/get_sepia';
+                break;
+            case 2:
+                routeString = '/get_inverted';
+                break;
+            case 3:
+                routeString = '/get_sketched';
+                break;
+            case 4:
+                routeString = '/get_warm';
+                break;
+            case 5:
+                routeString = '/get_blue';
+                break;
+            default:
+                console.error("Invalid filter index:", index);
+                return Promise.resolve(null);  // Dunno how it works pero hayaan lang ito
+        }
+
+        return fetch(routeString)
+        .then(response =>{
+            if (!response .ok){
+                throw new Error('failed to fetch filtered image')
+            }
+            return response.blob(); 
+        })
+        .then(imageBlob=>{
+            const imageUrl = URL.createObjectURL(imageBlob);
+            return imageUrl;
+        })
+        .catch(error => {
+            console.error("Error fetching filtered image:", error);
+            return null;  // Return null if there's an error
+        });
+    }
+
+    // dinidisplay lang nito yung image na makukuha nya
+    function displayFilterImage(buttonIndex) {
+        if (currentButtonIndex === buttonIndex) {
+            currentButtonIndex = -1; //para makuha yung raw image ulit kailangan ito
+        } else {
+            currentButtonIndex = buttonIndex;
+        }
+        
+        //does the convertion of the blob to image url
+        getFilteredImage(currentButtonIndex).then(imageUrl => {
+            if (imageUrl) {
+                const img = new Image();
+                img.onload = function() {
+                    editCanvas.width = img.width;
+                    editCanvas.height = img.height;
+                    editCtx.drawImage(img, 0, 0);
+                };
+                img.src = imageUrl;
+            }
+            else {
+                console.warn("No image URL returned.");
+            }
+        });
     }
 
     function exitEditMode() {
