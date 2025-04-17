@@ -7,27 +7,59 @@
 {% block content %}
 <main>
     <h2>Formal Photo Session</h2>
-    <p>Capture once - we'll create your 4R layout automatically</p>
+    <p>Get ready for your formal photo session!</p>
 
     <!-- Capture Section -->
-    <div id="capture-section" class="section-active">
+    <div id="capture-section">
         <h3>Camera Feed</h3>
         <button id="toggle-camera">Open Camera</button>
         <div class="video-container">
             <img id="video-feed" class="camera-feed">
         </div>
-        <button id="capture-btn">Capture Photo</button>
+        <button id="capture-btn">Capture</button>
+        <button id="preview-btn">Preview & Customize</button>
     </div>
 
     <!-- Preview Section -->
-    <div id="preview-section" class="section-inactive">
-        <h3>Your 4R Formal Layout</h3>
-        <div class="canvas-container">
-            <canvas id="result-canvas" width="1800" height="1200"></canvas>
+    <div id="preview-section" class="hidden">
+        <h3>Preview & Customization</h3>
+        
+        <!-- Main Preview Image -->
+        <img id="main-preview" class="main-preview" alt="Captured Photo">
+        
+        <!-- Customization Controls -->
+        <div class="customization-options">
+            <h4>Edit Your Photo</h4>
+            <div class="control-group">
+                <label for="brightness">Brightness:</label>
+                <input type="range" id="brightness" min="-100" max="100" value="0">
+            </div>
+            <div class="control-group">
+                <label for="contrast">Contrast:</label>
+                <input type="range" id="contrast" min="-100" max="100" value="0">
+            </div>
         </div>
+        
+        <!-- Action Buttons -->
         <div class="preview-controls">
-            <button id="save-photo">Print/Save</button>
-            <button id="capture-again-btn">Take New Photo</button>
+            <button id="finalize-btn">Finalize</button>
+            <button id="capture-again-btn">Capture Again</button>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results-section" class="hidden">
+        <h3>Your Final 4R Template</h3>
+        
+        <!-- 4R Template Canvas -->
+        <div class="template-container">
+            <canvas id="result-canvas"></canvas>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="results-controls">
+            <button id="download-btn">Download Photo</button>
+            <button id="back-to-preview-btn">Back to Preview</button>
         </div>
     </div>
 
