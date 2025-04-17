@@ -300,6 +300,7 @@ main {
 }
 
 .circle-button-sticker {
+    all: unset;
     height: 60px;
     width: 60px;
     background-color: grey;
@@ -307,6 +308,18 @@ main {
     display: inline-block;
     border: none;
     cursor: pointer;
+}
+
+.circle-button-sticker img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover; 
+    -webkit-filter: drop-shadow(2px 1px 0 black)
+                    drop-shadow(-1px -1px 0 black);
+    filter: drop-shadow(2px 1px 0 black) 
+            drop-shadow(-1px -1px 0 black);
+    cursor: grab;
+    overflow: hidden;
 }
 
 .circle-button-color {
@@ -316,9 +329,7 @@ main {
     border-radius: 50%;
     display: inline-block;
     border: none;
-    cursor: pointer;
 }
-
 
 .mode-selection-buttons {
     background-color: white;

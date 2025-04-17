@@ -85,7 +85,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const applyEditBtn = document.getElementById('apply-edit');
     const modeButtons = document.querySelectorAll('.mode-selection-buttons');
     const modeFilter = document.querySelectorAll('.mode-set');
-    const colorButtons = document.querySelectorAll('.circle-button-color')
+    const colorButtons = document.querySelectorAll('.circle-button-color');
+
+    // Sticker Variables (dont delete anything pls)
+    const stickerImages = document.querySelectorAll('#stickers img[draggable="true"]');
 
     // =============================================
     // STATE VARIABLES
@@ -102,14 +105,15 @@ document.addEventListener("DOMContentLoaded", function() {
     let carouselItems = [];
     let currentIndex = 0;
     let currentButtonIndex = -1; //negative 1 ang default value para walang ibalik
-    let filterButtonPressedAgain = false;
 
     // =============================================
     // INITIALIZATION
     // =============================================
     window.addEventListener('load', startCamera);
     window.addEventListener('beforeunload', stopCamera);
-    
+    window.addEventListener('load', monitorEditSection);
+
+
     function initialize() {
         resultCanvas.width = 1800;
         resultCanvas.height = 1200;
@@ -707,6 +711,96 @@ document.addEventListener("DOMContentLoaded", function() {
     function applyColorFilter(index) {
         editCtx.fillStyle = `rgba(${index * 40}, ${index * 30}, ${index * 50}, 0.3)`;
         editCtx.fillRect(0, 0, editCanvas.width, editCanvas.height);
+    }
+
+    /*
+    ================================================
+    DRAG-DROP SECTION AND STCKER CONTROL
+    ================================================
+    */ 
+
+    function monitorEditSection() {
+        const observer = new MutationObserver(() => {
+            const isVisible = !editControls.classList.contains('hidden');
+            
+            if (isVisible) {
+                console.log('edit loaded');
+    
+                setTimeout(() => {
+                    console.log('50ms has passed');
+                    addStickerEventListener();
+                    addEditCanvaEventListener();
+                }, 50);
+    
+                observer.disconnect();
+            }
+        });
+    
+        observer.observe(editControls, {
+            attributes: true,
+            attributeFilter: ['class'],
+        });
+    
+        if (!editControls.classList.contains('hidden')) {
+            setTimeout(() => {
+                console.log('edit visible');
+                addStickerEventListener();
+            }, 50);
+        }
+    }
+    
+    //lahat ng exsisting stickers ay lalagyan ng draggable
+    function addStickerEventListener(){
+    
+        if (stickerImages.length === 0) {
+            console.log("No draggable stickers found.");
+            return;
+        }
+
+        stickerImages.forEach((sticker) => {
+            console.log(`Attaching dragstart to: ${sticker.id}`);
+
+            // Only attach if it hasn't been attached yet
+            sticker.addEventListener('dragstart', (event) => {
+                event.dataTransfer.setData('text/plain', sticker.src);
+                console.log(`Dragging ${sticker.id}`, event);
+            }, { once: true }); // optional: use once to avoid duplicate bindings
+        });
+    }
+
+    function addEditCanvaEventListener(){
+        if(editCanvas){
+            console.log("edit canvas now exists");
+
+            editCanvas.addEventListener('dragover', function(event){
+                console.log("dragover created");
+                event.preventDefault();
+            });
+
+            editCanvas.addEventListener('drop', function(event){
+                event.preventDefault();
+                const imageSrc = event.dataTransfer.getData('text/plain');
+                if(!imageSrc) return;
+                const img = new Image();
+                img.onload = function () {
+                    // Draw the image at the drop position
+                    const rect = editCanvas.getBoundingClientRect();
+                    const x = event.clientX - rect.left;
+                    const y = event.clientY - rect.top;
+
+                    console.log("Mouse Position to Canvas in X: ", x);
+                    console.log("Mouse Position to Canvas in Y: ", y);
+
+                    const desiredHeight = 100;
+                    const aspectRatio = img.width / img.height;
+                    const height = desiredHeight;
+                    const width = desiredHeight * aspectRatio;
+  
+                    editCtx.drawImage(img, x, y, width, height);
+                };
+                img.src = imageSrc;
+            });
+        }
     }
 
     // =============================================
