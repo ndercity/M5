@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const colorButtons = document.querySelectorAll('.circle-button-color');
 
     // Sticker Variables (dont delete anything pls)
-    const stickerImages = document.querySelectorAll('#stickers img[draggable="true"]');
+    let stickerImages = [];
 
     // =============================================
     // STATE VARIABLES
@@ -121,6 +121,10 @@ document.addEventListener("DOMContentLoaded", function() {
         setupEditMode();
         renderTemplates();
         setupEventListeners();
+        //
+        loadStickersDynamically();
+        groupColorButtonsIntoSlides();
+        setupColorCarousel();
     }
 
     // =============================================
@@ -542,18 +546,12 @@ document.addEventListener("DOMContentLoaded", function() {
     
         backFromEditBtn.addEventListener('click', exitEditMode);
         applyEditBtn.addEventListener('click', applyEdit);
-        setupStickerAndFilterButtons();
+        //Event listener for color filter buttons. possible malipat somewhere if ginawang dynamic si color filter
+        document.querySelectorAll('#colors .circle-button').forEach((btn, index) => {
+            btn.addEventListener('click', () => applyColorFilter(index));
+        });
     }
 
-
-    function activateMode(btn) {
-        modeButtons.forEach(b => b.classList.remove('active'));  
-        btn.classList.add('active'); 
-        modeFilter.forEach(set => set.classList.remove('visible'));
-        document.getElementById(btn.getAttribute('data-target')).classList.add('visible');
-    }
-
-    
     //ito yung pagpasok mo mismo ng edit part ng site. ito na din ang responsible para maibigay
     //ang image doon sa container
 
@@ -593,6 +591,168 @@ document.addEventListener("DOMContentLoaded", function() {
         .catch(err => console.error("Error fetching blob:", err));
     }
 
+    function activateMode(btn) {
+        modeButtons.forEach(b => b.classList.remove('active'));  
+        btn.classList.add('active'); 
+        modeFilter.forEach(set => set.classList.remove('visible'));
+        document.getElementById(btn.getAttribute('data-target')).classList.add('visible');
+    }
+
+    // --- Sticker functions
+    
+    //binabasa yung sticker folder then render the buttons. also gumagawa ng slide for sticker carousel.
+    function loadStickersDynamically() {
+        fetch('/api/stickers')
+            .then(res => {
+                if (!res.ok) throw new Error("Failed to fetch stickers");
+                return res.json();
+            })
+            .then(files => {
+                const stickerContainer = document.getElementById("stickers");
+                stickerContainer.innerHTML = `
+                    <div class="sticker-carousel-container">
+                        <button class="sticker-nav-button prev" aria-label="Previous stickers">&#10094;</button>
+                        <div class="sticker-carousel-track"></div>
+                        <button class="sticker-nav-button next" aria-label="Next stickers">&#10095;</button>
+                    </div>
+                `;
+                
+                const track = stickerContainer.querySelector('.sticker-carousel-track');
+                let currentPage = 0;
+                const stickersPerPage = 6;
+                const totalPages = Math.ceil(files.length / stickersPerPage);
+    
+                // Create all sticker slides
+                for (let i = 0; i < totalPages; i++) {
+                    const slide = document.createElement('div');
+                    slide.className = 'sticker-slide';
+                    slide.dataset.page = i;
+                    
+                    // Add stickers for this page (slides)
+                    const startIdx = i * stickersPerPage;
+                    const endIdx = startIdx + stickersPerPage;
+                    const pageFiles = files.slice(startIdx, endIdx);
+                    
+                    pageFiles.forEach(file => {
+                        const baseName = file.split('.')[0];
+                        const id = `${baseName}-sticker`;
+                        const src = `/static/stickers/${file}`;
+                        const alt = baseName.replace(/-/g, ' ');
+    
+                        const button = document.createElement("button");
+                        button.className = "circle-button-sticker";
+                        button.title = alt;
+                        button.dataset.stickerId = id;
+    
+                        const img = document.createElement("img");
+                        img.src = src;
+                        img.alt = alt;
+                        img.draggable = true;
+                        img.classList.add("sticker-img");
+    
+                        button.appendChild(img);
+                        slide.appendChild(button);
+                    });
+                    
+                    track.appendChild(slide);
+                }
+    
+                stickerImages = Array.from(document.querySelectorAll('.sticker-img'));
+                addStickerEventListener();
+                
+                setupStickerCarousel(stickerContainer, totalPages);
+            })
+            .catch(err => {
+                console.error("Failed to load stickers:", err);
+            });
+    }
+    //sticker carousel
+    function setupStickerCarousel(container, totalPages) {
+        const track = container.querySelector('.sticker-carousel-track');
+        const prevBtn = container.querySelector('.sticker-nav-button.prev');
+        const nextBtn = container.querySelector('.sticker-nav-button.next');
+        let currentPage = 0;
+    
+        function updateCarousel() {
+            track.style.transform = `translateX(-${currentPage * 100}%)`;
+            prevBtn.disabled = currentPage === 0;
+            nextBtn.disabled = currentPage === totalPages - 1;
+        }
+    
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 0) {
+                currentPage--;
+                updateCarousel();
+            }
+        });
+    
+        nextBtn.addEventListener('click', () => {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                updateCarousel();
+            }
+        });
+    
+        updateCarousel();
+    }
+
+    // --- Color Filter Functions
+    
+    //gumagawa ng slide for carousel function
+    function groupColorButtonsIntoSlides() {
+        const track = document.querySelector('.color-carousel-track');
+        const buttons = Array.from(track.querySelectorAll('.circle-button-color'));
+    
+        const buttonsPerSlide = 6;
+    
+        // Clear existing slides
+        track.innerHTML = '';
+    
+        for (let i = 0; i < buttons.length; i += buttonsPerSlide) {
+            const slide = document.createElement('div');
+            slide.className = 'color-slide';
+    
+            const group = buttons.slice(i, i + buttonsPerSlide);
+            group.forEach(btn => slide.appendChild(btn));
+            track.appendChild(slide);
+        }
+    }
+    //color carousel
+    function setupColorCarousel() {
+        const container = document.querySelector('#colors .color-carousel-container');
+        const track = container.querySelector('.color-carousel-track');
+        const prevBtn = container.querySelector('.color-nav-button.prev');
+        const nextBtn = container.querySelector('.color-nav-button.next');
+        const slides = container.querySelectorAll('.color-slide');
+        let currentPage = 0;
+        const totalPages = slides.length;
+    
+        function updateCarousel() {
+            track.style.transform = `translateX(-${currentPage * 100}%)`;
+            
+            // Disable buttons when at boundaries
+            prevBtn.disabled = currentPage === 0;
+            nextBtn.disabled = currentPage === totalPages - 1;
+        }
+    
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 0) {
+                currentPage--;
+                updateCarousel();
+            }
+        });
+    
+        nextBtn.addEventListener('click', () => {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                updateCarousel();
+            }
+        });
+    
+        // Initialize
+        updateCarousel();
+    }
+
     //kukunin nito yung index ng pinindot na button mula sa available na filters
     colorButtons.forEach((btn, index)=>{
         btn.addEventListener('click', () => {
@@ -627,6 +787,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 break;
             case 5:
                 routeString = '/get_blue';
+                break;
+            case 6:
+                routeString = '/get_bright';
+                break;
+            case 7:
+                routeString = '/get_cartoon';
+                break;
+            case 8:
+                routeString = '/get_green';
                 break;
             default:
                 console.error("Invalid filter index:", index);
@@ -692,16 +861,6 @@ document.addEventListener("DOMContentLoaded", function() {
         exitEditMode();
     }
 
-    function setupStickerAndFilterButtons() {
-        document.querySelectorAll('#stickers .circle-button').forEach((btn, index) => {
-            btn.addEventListener('click', () => addSticker(index));
-        });
-
-        document.querySelectorAll('#colors .circle-button').forEach((btn, index) => {
-            btn.addEventListener('click', () => applyColorFilter(index));
-        });
-    }
-
     function addSticker(index) {
         editCtx.fillStyle = 'white';
         editCtx.font = '20px Arial';
@@ -715,7 +874,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     /*
     ================================================
-    DRAG-DROP SECTION AND STCKER CONTROL
+    DRAG-DROP SECTION AND STICKER CONTROL
     ================================================
     */ 
 
