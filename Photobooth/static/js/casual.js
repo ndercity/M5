@@ -566,9 +566,9 @@ document.addEventListener("DOMContentLoaded", function() {
             editCanvas.height = img.height;
             editCtx.drawImage(img, 0, 0);
         };
-        
         img.src = capturedImages[index];
         insertSelectedImageInEditMode(capturedImages[index])
+        getImageForSticker(capturedImages[index])
         editControls.classList.remove('hidden');
     }
 
@@ -581,7 +581,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(blob => {
             const formData = new FormData();
             formData.append("image", blob)
-            console.log("natawag ako")
+            //console.log("natawag ako")
             fetch('get_image_edit', {
                 method: 'POST', 
                 body: formData,
@@ -674,6 +674,25 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+    //test method only
+    function getImageForSticker(urlBlob){
+        fetch(urlBlob)
+        .then(response=>response.blob())
+        .then(blob => {
+            const formData = new FormData();
+            formData.append("image", blob)
+            //console.log("natawag ako for sticekr")
+            fetch('/get_image_sticker', {
+                method: 'POST', 
+                body: formData,
+            })
+            .then(res => res.json())
+            .then(data => console.log("Response from Flask:", data))
+            .catch(err => console.error("Error:", err));
+        })
+        .catch(err => console.error("Error fetching blob:", err));
+    }
+
 
     function exitEditMode() {
         editControls.classList.add('hidden');
@@ -724,10 +743,10 @@ document.addEventListener("DOMContentLoaded", function() {
             const isVisible = !editControls.classList.contains('hidden');
             
             if (isVisible) {
-                console.log('edit loaded');
+                //console.log('edit loaded');
     
                 setTimeout(() => {
-                    console.log('50ms has passed');
+                    //console.log('50ms has passed');
                     addStickerEventListener();
                     addEditCanvaEventListener();
                 }, 50);
@@ -748,7 +767,22 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 50);
         }
     }
-    
+
+    function drawBoundingBoxes(boxes) {
+        const ctx = createOverlayCanvas()
+        //const ctx = editCtx;
+        ctx.strokeStyle = 'lime';
+        ctx.lineWidth = 2;
+
+        //create a new image?????????????
+        boxes.forEach(box => {
+            ctx.beginPath(); 
+            ctx.rect(box.x, box.y, box.w, box.h);  
+            ctx.stroke();  
+        });
+        
+    }
+        
     //lahat ng exsisting stickers ay lalagyan ng draggable
     function addStickerEventListener(){
     
@@ -758,19 +792,33 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         stickerImages.forEach((sticker) => {
-            console.log(`Attaching dragstart to: ${sticker.id}`);
+            //console.log(`Attaching dragstart to: ${sticker.id}`);
 
             // Only attach if it hasn't been attached yet
             sticker.addEventListener('dragstart', (event) => {
                 event.dataTransfer.setData('text/plain', sticker.src);
                 console.log(`Dragging ${sticker.id}`, event);
-            }, { once: true }); // optional: use once to avoid duplicate bindings
+
+                fetch('/set_face_boxes')
+                .then(res => res.json())
+                .then(data => {
+                    console.log("bounding boxes", data.boxes)
+                    drawBoundingBoxes(data.boxes)
+                    console.log("am i repeating?")
+                })
+                .catch(err => console.error("Failed to fetch face boxes", err));
+            });
+            sticker.addEventListener('dragend', ()=>{
+                //removeOverlayCanvas();
+            })
         });
     }
+    
 
+    //will change this to snap op
     function addEditCanvaEventListener(){
         if(editCanvas){
-            console.log("edit canvas now exists");
+            //console.log("edit canvas now exists");
 
             editCanvas.addEventListener('dragover', function(event){
                 console.log("dragover created");
@@ -800,6 +848,33 @@ document.addEventListener("DOMContentLoaded", function() {
                 };
                 img.src = imageSrc;
             });
+        }
+    }
+
+    function createOverlayCanvas(parentId = 'edit-canvas') {
+        const parent = document.getElementById(parentId);
+        const container = document.getElementById('image-div');
+        parent.style.position = 'relative';
+
+        const overlay = document.createElement('canvas');
+        overlay.id = 'overlay-canvas';
+        overlay.style.position = 'absolute';
+        
+        //nakukuha nito ay 640x420
+        overlay.width = parent.width;
+        overlay.height = parent.height;
+        overlay.style.pointerEvents = 'none'; // Allow drag to pass through
+        overlay.style.zIndex = '999';
+    
+        container.appendChild(overlay);
+        return overlay.getContext('2d');
+    }
+    
+    function removeOverlayCanvas() {
+        const overlay = document.getElementById('overlay-canvas');
+        if (overlay) {
+            console.log("removed");
+            overlay.remove();
         }
     }
 

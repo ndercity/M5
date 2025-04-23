@@ -1,10 +1,12 @@
 from flask import Flask, render_template, Response, redirect, url_for, request, jsonify
 from camera import Camera
 from color_filter import Color_Filter
+from sticker_filter import Sticker_Filter
 
 app = Flask(__name__)
 camera = Camera()
 color_filter = Color_Filter()
+sticker_filter = Sticker_Filter()
 
 @app.route('/')
 def home():
@@ -156,6 +158,29 @@ def get_blue():
     if blue:
         return Response(blue, mimetype='image/jpeg')
     return 'Failed to capture blue', 600
+
+
+@app.route('/get_image_sticker' , methods=['POST'])
+def get_sticker_filter():
+    image_file = request.files.get('image')
+
+    if not image_file:
+        print("error 1")
+        return jsonify({"error": "No image file received"}), 400
+    try:
+        sticker_filter.get_image_sticker(image_file)
+        print("good ito")
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        print("may mali sa sticker")
+        return jsonify({"status": "error", "message": str(e)}), 500   
+         
+@app.route('/set_face_boxes')
+def set_face_boxes():
+    boxes, image = sticker_filter.set_face_boxes()
+    return jsonify({
+        "boxes": boxes,
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)
