@@ -928,19 +928,20 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function drawBoundingBoxes(boxes) {
-        const ctx = createOverlayCanvas()
-        //const ctx = editCtx;
+        const ctx = createOverlayCanvas();
+        const overlay = document.getElementById('overlay-canvas');
+    
+        ctx.clearRect(0, 0, overlay.width, overlay.height);
         ctx.strokeStyle = 'lime';
         ctx.lineWidth = 2;
-
-        //create a new image?????????????
+    
         boxes.forEach(box => {
             ctx.beginPath(); 
             ctx.rect(box.x, box.y, box.w, box.h);  
             ctx.stroke();  
         });
-        
     }
+    
         
     //lahat ng exsisting stickers ay lalagyan ng draggable
     function addStickerEventListener(){
@@ -1012,22 +1013,29 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function createOverlayCanvas(parentId = 'edit-canvas') {
         const parent = document.getElementById(parentId);
-        const container = document.getElementById('image-div');
-        parent.style.position = 'relative';
-
-        const overlay = document.createElement('canvas');
-        overlay.id = 'overlay-canvas';
-        overlay.style.position = 'absolute';
-        
-        //nakukuha nito ay 640x480
-        overlay.width = '100%';
-        overlay.height = '100%';
-        overlay.style.pointerEvents = 'none'; // Allow drag to pass through
-        overlay.style.zIndex = '999';
+        let overlay = document.getElementById('overlay-canvas');
     
-        container.appendChild(overlay);
+        if (!overlay) {
+            overlay = document.createElement('canvas');
+            overlay.id = 'overlay-canvas';
+            overlay.style.position = 'absolute';
+            overlay.style.pointerEvents = 'none'; 
+            overlay.style.zIndex = '999';
+    
+            parent.parentElement.style.position = 'relative';
+            parent.parentElement.appendChild(overlay);
+        }
+    
+        overlay.width = parent.width;
+        overlay.height = parent.height;
+        overlay.style.width = parent.offsetWidth + 'px';
+        overlay.style.height = parent.offsetHeight + 'px';
+        overlay.style.left = parent.offsetLeft + 'px';
+        overlay.style.top = parent.offsetTop + 'px';
+    
         return overlay.getContext('2d');
     }
+    
     
     function removeOverlayCanvas() {
         const overlay = document.getElementById('overlay-canvas');
