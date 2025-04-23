@@ -1019,9 +1019,9 @@ document.addEventListener("DOMContentLoaded", function() {
         overlay.id = 'overlay-canvas';
         overlay.style.position = 'absolute';
         
-        //nakukuha nito ay 640x420
-        overlay.width = parent.width;
-        overlay.height = parent.height;
+        //nakukuha nito ay 640x480
+        overlay.width = '100%';
+        overlay.height = '100%';
         overlay.style.pointerEvents = 'none'; // Allow drag to pass through
         overlay.style.zIndex = '999';
     
