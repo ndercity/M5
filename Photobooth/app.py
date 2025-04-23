@@ -2,6 +2,8 @@ from flask import Flask, render_template, Response, redirect, url_for, request, 
 from camera import Camera
 from color_filter import Color_Filter
 from sticker_filter import Sticker_Filter
+import os
+
 
 app = Flask(__name__)
 camera = Camera()
@@ -159,6 +161,34 @@ def get_blue():
         return Response(blue, mimetype='image/jpeg')
     return 'Failed to capture blue', 600
 
+@app.route('/get_bright')
+def get_bright():
+    bright = color_filter.bright_image()
+    if bright:
+        return Response(bright, mimetype='image/jpeg')
+    return 'Failed to capture bright', 600
+
+@app.route('/get_cartoon')
+def get_cartoon():
+    cartoon = color_filter.cartoon_image()
+    if cartoon:
+        return Response(cartoon, mimetype='image/jpeg')
+    return 'Failed to capture cartoon', 600
+
+@app.route('/get_green')
+def get_green():
+    green = color_filter.green_vibe_image()
+    if green:
+        return Response(green, mimetype='image/jpeg')
+    return 'Failed to capture green vibe', 600
+
+# Test Dynamic stickers
+@app.route("/api/stickers")
+def get_stickers():
+    sticker_dir = os.path.join(app.static_folder, 'stickers')
+    sticker_files = [f for f in os.listdir(sticker_dir) if f.endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+    return jsonify(sticker_files)
+
 
 @app.route('/get_image_sticker' , methods=['POST'])
 def get_sticker_filter():
@@ -181,6 +211,7 @@ def set_face_boxes():
     return jsonify({
         "boxes": boxes,
     })
+
 
 if __name__ == '__main__':
     app.run(debug=True)

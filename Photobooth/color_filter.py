@@ -97,6 +97,50 @@ class Color_Filter:
       else:
          print("No image detected")
          return None
+   
+   # 3 new color filter (adjust na app.py + nailagay narin sa casual)
+   def bright_image(self):
+      if self.raw_image is not None:
+         image_copy = self.raw_image.copy()
+         hsv = cv2.cvtColor(image_copy, cv2.COLOR_BGR2HSV)
+         h, s, v = cv2.split(hsv)
+         v = cv2.add(v, 40)  # Increase brightness
+         final_hsv = cv2.merge((h, s, v))
+         bright = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
+         ret, jpeg = cv2.imencode('.jpg', bright)
+         return jpeg.tobytes()
+      else:
+         print("No image detected")
+         return None
+    
+   def cartoon_image(self):
+      if self.raw_image is not None:
+         image_copy = self.raw_image.copy()
+         gray = cv2.cvtColor(image_copy, cv2.COLOR_BGR2GRAY)
+         gray = cv2.medianBlur(gray, 5)
+         edges = cv2.adaptiveThreshold(gray, 255,
+                                       cv2.ADAPTIVE_THRESH_MEAN_C,
+                                       cv2.THRESH_BINARY, 9, 9)
+         color = cv2.bilateralFilter(image_copy, 9, 250, 250)
+         cartoon = cv2.bitwise_and(color, color, mask=edges)
+         ret, jpeg = cv2.imencode('.jpg', cartoon)
+         return jpeg.tobytes()
+      else:
+         print("No image detected")
+         return None
+      
+   def green_vibe_image(self):
+      if self.raw_image is not None:
+         image_copy = self.raw_image.copy()
+         image_copy[:, :, 1] = cv2.add(image_copy[:, :, 1], 40)  # Boost green
+         image_copy[:, :, 2] = cv2.subtract(image_copy[:, :, 2], 20)  # Lower red
+         ret, jpeg = cv2.imencode('.jpg', image_copy)
+         return jpeg.tobytes()
+      else:
+         print("No image detected")
+         return None
+
+
 
    #gagamitin ito kapag nagapply na si user ng filter per tinaggal nya magkakaroon pa ito ng another shit fix dahil possible na hindi makita ang sticker dito
    def return_raw(self):
