@@ -292,6 +292,9 @@ main {
     margin: 0 auto;
     border-radius: 8px;
     overflow: hidden;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #edit-canvas {
