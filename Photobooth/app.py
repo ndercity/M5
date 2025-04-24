@@ -220,6 +220,11 @@ def set_face_boxes():
         "boxes": boxes,
     })
 
+@app.route('/clear_boxes')
+def clear_boxes():
+    sticker_filter.clear_all()
+    return jsonify({"status": "cleared"}), 200
+
 # For the page before proceeding to tutorial [ email confirmation ]
 @app.route('/start_session', methods=['POST'])
 def start_session():

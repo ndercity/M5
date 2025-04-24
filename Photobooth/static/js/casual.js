@@ -865,11 +865,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function exitEditMode() {
         editControls.classList.add('hidden');
+        clearBoundingBoxes();
     }
 
     function applyEdit() {
         const editedImageData = editCanvas.toDataURL('image/png');
-
+        clearBoundingBoxes();
         if (capturedImages[currentEditImageIndex]) {
             URL.revokeObjectURL(capturedImages[currentEditImageIndex]);
         }
@@ -878,6 +879,7 @@ document.addEventListener("DOMContentLoaded", function() {
         selectedImagePreview.src = editedImageData;
         renderTemplate();
         exitEditMode();
+        clearBoundingBoxes();
     }
 
     function addSticker(index) {
@@ -969,7 +971,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .catch(err => console.error("Failed to fetch face boxes", err));
             });
             sticker.addEventListener('dragend', ()=>{
-                //removeOverlayCanvas();
+                removeOverlayCanvas();
             })
         });
     }
@@ -1045,6 +1047,16 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    function clearBoundingBoxes(){
+        console.log("boxes cleared")
+        fetch('/clear_boxes')
+        .then(response => response.json())
+        .then(data=>{
+            console.log(data.message);
+        })
+        .catch(err=>console.error("Error:", err));
+    }
+
     // =============================================
     // NAVIGATION AND FLOW CONTROL
     // =============================================
@@ -1103,6 +1115,7 @@ document.addEventListener("DOMContentLoaded", function() {
             switchToLayoutSelection();
         }
     }
+
 
     function resetCaptureState() {
         capturedImages.forEach(img => {

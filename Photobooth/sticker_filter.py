@@ -66,8 +66,9 @@ class Sticker_Filter:
     
     #must call this para safe ass shit
     def clear_all(self):
-        if self.buffer_image:
+        if self.buffer_image is not None:
             self.face_boxes = []
             self.buffer_image = None
+            print("boxes cleared")
         else:
             print("nothing to clear here")
