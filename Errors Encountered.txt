@@ -1,5 +1,3 @@
-.venv\Scripts\activate
-
 cannot be loaded because running scripts is disabled on 
 this system. For more information, see about_Execution_Policies
 
@@ -13,10 +11,14 @@ CSS ERRORS?
 Solution:
 https://stackoverflow.com/questions/14296866/multiple-css-files-in-flask
 
+Warning/"Problems" in Problems tab:
+
+Ctrl+Shift+P -> Python: Select Interpreter -> Browse to python exe in venv\Scripts folder
+
 ----------------
 HOW TO RUN:
 
 cd Photobooth
-.venv\Scripts\activate
+venv\Scripts\activate
 flask --app app run --debug
 http://127.0.0.1:5000

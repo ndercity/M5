@@ -3,9 +3,17 @@ from camera import Camera
 from color_filter import Color_Filter
 from sticker_filter import Sticker_Filter
 import os
-
+import time
+import uuid
+from db_functions import get_db, init_db, close_connection, insert_photo_session
+from session_flow import start_photo_session, finalize_session
 
 app = Flask(__name__)
+#---------
+with app.app_context():
+    init_db()
+app.teardown_appcontext(close_connection)
+#---------
 camera = Camera()
 color_filter = Color_Filter()
 sticker_filter = Sticker_Filter()
@@ -212,6 +220,58 @@ def set_face_boxes():
         "boxes": boxes,
     })
 
+# For the page before proceeding to tutorial [ email confirmation ]
+@app.route('/start_session', methods=['POST'])
+def start_session():
+    email = request.form.get('email')
+    if not email:
+        return jsonify({"status": "error", "message": "Email is required"}), 400
+    session_id = start_photo_session(email)
+    return jsonify({"session_id": session_id})
 
+# Finalization
+@app.route('/finalize_session', methods=['POST'])
+def finalize_session_route():
+    session_id = request.form.get('session_id')
+    pdf_file = request.files.get('pdf')
+
+    if not session_id or not pdf_file:
+        return jsonify({"status": "error", "message": "Missing session_id or PDF"}), 400
+
+    try:
+        pdf_data = pdf_file.read()
+        success = finalize_session(session_id, pdf_data)
+        status = "sent" if success else "failed"
+        return jsonify({"status": status}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+#TEST insert
+@app.route('/test_insert_session')
+def test_insert_session():
+    email = "testuser@example.com"
+    pdf_data = b"%PDF-1.4 dummy pdf binary data"
+    session_id = str(uuid.uuid4())
+
+    inserted_session_id = insert_photo_session(email, pdf_data, status="pending", session_id=session_id)
+
+    # Verify insertion by querying DB
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT email, status, session_id FROM photo_sessions WHERE session_id = ?", (session_id,))
+    row = cursor.fetchone()
+
+    if row:
+        return jsonify({
+            "message": "Test session inserted successfully",
+            "email": row[0],
+            "status": row[1],
+            "session_id": row[2]
+        })
+    else:
+        return jsonify({"message": "Failed to retrieve inserted session"}), 500
+
+#if using python app.py
 if __name__ == '__main__':
+    init_db()
     app.run(debug=True)
