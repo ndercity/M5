@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS photo_sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL,
+    pdf_data BLOB,
+    status TEXT NOT NULL,
+    session_id TEXT UNIQUE NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

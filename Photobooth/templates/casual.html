@@ -11,64 +11,122 @@
 {% block content %}
 <main>
     <h2>Casual Photo Session</h2>
-    <p>Choose a layout and capture 4 fun poses!</p>
+    <p>Choose your favorite layout style!</p>
 
     <!-- Layout Selection -->
-    <div id="layout-selection">
-        <h3>Choose Your Layout Style</h3>
-        <div class="layout-options">
-            <div class="layout-option" data-layout="grid">
-                <div class="layout-preview grid">
-                    <div class="slot"></div><div class="slot"></div>
-                    <div class="slot"></div><div class="slot"></div>
-                </div>
-                <span>2×2 Grid</span>
+    <div id="layout-selection" class="section-active">
+        <h3>Select Your Layout</h3>
+        <div class="carousel-container">
+            <button class="carousel-button prev" aria-label="Previous template">&#10094;</button>
+            <div class="template-carousel" id="template-container">
+                <!-- Templates will be dynamically inserted here -->
             </div>
-            
-            <div class="layout-option" data-layout="vertical">
-                <div class="layout-preview vertical">
-                    <div class="slot"></div>
-                    <div class="slot"></div>
-                    <div class="slot"></div>
-                    <div class="slot"></div>
-                </div>
-                <span>Vertical Strip</span>
-            </div>
-            
-            <div class="layout-option" data-layout="horizontal">
-                <div class="layout-preview horizontal">
-                    <div class="slot"></div>
-                    <div class="slot"></div>
-                    <div class="slot"></div>
-                    <div class="slot"></div>
-                </div>
-                <span>Horizontal Strip</span>
-            </div>
+            <button class="carousel-button next" aria-label="Next template">&#10095;</button>
         </div>
+        <button id="confirm-layout" class="primary-button">Select Layout</button>
     </div>
 
     <!-- Capture Section -->
-    <div id="capture-section" class="hidden">
+    <div id="capture-section" class="section-inactive">
         <h3>Pose <span id="pose-number">1</span>/4</h3>
         <button id="toggle-camera">Open Camera</button>
         <div class="video-container">
             <img id="video-feed" class="camera-feed" alt="Live camera feed">
+            <div class="camera-error-message hidden">
+                Could not access camera. Please check permissions and refresh the page.
+            </div>
         </div>
         <div class="capture-controls">
-            <button id="capture-btn">Capture Pose</button>
-            <button id="retake-btn" class="hidden">Retake</button>
+            <button id="back-to-layout" class="secondary-button">Back to Layout</button>
+            <button id="capture-btn" class="primary-button">Capture Pose</button>
         </div>
     </div>
 
     <!-- Preview Section -->
-    <div id="preview-section" class="hidden">
+    <div id="preview-section" class="section-inactive">
         <h3>Your <span id="layout-name">Layout</span> Photos</h3>
-        <div class="layout-container">
-            <!-- Dynamic layout will be inserted here -->
+        
+        <!-- Image Selection and Preview -->
+        <div class="image-preview-container">
+            <!-- Edit Preview Area -->
+            <div class="edit-preview-wrapper">
+                <!-- added 4/14/2025 -->
+                <div class="image-preview">
+                    <img id="selected-image-preview" src="" alt="Selected image preview"> <!-- ito ang container ng preview image-->
+                    <div class="preview-controls">
+                        <button id="edit-btn">Edit</button>
+                        <button id="retake-btn">Retake</button>
+                    </div>
+                </div>
+
+                <div class="preview-buttons"> 
+                    <div class="image-selector">
+                        <button class="image-select-btn" data-index="0">Image 1</button>
+                        <button class="image-select-btn" data-index="1">Image 2</button>
+                        <button class="image-select-btn" data-index="2">Image 3</button>
+                        <button class="image-select-btn" data-index="3">Image 4</button>
+                    </div>
+                    
+                    <div class="image-controls">
+                        <button id="save-layout">Save All</button>
+                        <button id="start-over">Retake All</button>
+                    </div>
+                </div>
+                
+                <!-- Edit Controls (hidden by default) -->
+                <div id="edit-controls" class="hidden">
+                    <div class="upper-container">
+                        <button id="back-from-edit" class="editor-nav-button">Back</button>
+                        
+                        <div id ="image-div" class="image-container">
+                            <canvas id="edit-canvas" width="520" height="320"></canvas> <!--ito ang pinaglalagyan ng image sa editing-->
+                        </div>
+                        
+                        <button id="apply-edit" class="editor-nav-button">Apply</button>
+                    </div>
+
+                    <div class="mode-container">
+                        <div id="stickers" class="mode-set visible"></div>
+                    
+                        <div id="colors" class="mode-set">
+                            <div class="color-carousel-container">
+                                <button class="color-nav-button prev" aria-label="Previous colors">&#10094;</button>
+                                <div class="color-carousel-track">
+                                    <div class="color-slide">
+                                        <button class="circle-button-color">filter</button>
+                                        <button class="circle-button-color">filter</button>
+                                        <button class="circle-button-color">filter</button>
+                                        <button class="circle-button-color">filter</button>
+                                        <button class="circle-button-color">filter</button>
+                                        <button class="circle-button-color">filter</button>
+                                        <button class="circle-button-color">filter</button>
+                                        <button class="circle-button-color">filter</button>
+                                        <button class="circle-button-color">filter</button>
+                                    </div>
+                                </div>
+                                <button class="color-nav-button next" aria-label="Next colors">&#10095;</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lower-container">
+                        <button data-target="stickers" class="mode-selection-buttons active">Sticker Filter</button>
+                        <button data-target="colors" class="mode-selection-buttons">Color Filter</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="preview-controls">
-            <button id="save-layout">Save All</button>
-            <button id="start-over">Start Over</button>
+
+    </div>
+    <!-- Final Result Section -->
+    <div id="final-result-section" class="section-inactive">
+        <h3>Your Final Photo</h3>
+        <div class="canvas-container">
+            <canvas id="result-canvas" width="1800" height="1200"></canvas>
+        </div>
+        <div class="final-controls">
+            <button id="download-btn" class="primary-button">Download Photo</button>
+            <button id="back-to-preview" class="secondary-button">Back to Preview</button>
         </div>
     </div>
 

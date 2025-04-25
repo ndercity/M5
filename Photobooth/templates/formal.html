@@ -15,6 +15,7 @@
         <button id="toggle-camera">Open Camera</button>
         <div class="video-container">
             <img id="video-feed" class="camera-feed">
+            <img id="formal-guide" src="/static/others/1x1and2x2guide.png" alt="guide">
         </div>
         <button id="capture-btn">Capture</button>
         <button id="preview-btn">Preview & Customize</button>
@@ -26,23 +27,6 @@
         
         <!-- Main Preview Image -->
         <img id="main-preview" class="main-preview" alt="Captured Photo">
-        
-        <!-- Grid View (Hidden by default) -->
-        <button id="show-grid-btn">Show Grid View</button>
-        <div class="parent">
-            <div class="div1"></div>
-            <div class="div2"></div>
-            <div class="div3"></div>
-            <div class="div4"></div>
-            <div class="div5"></div>
-            <div class="div6"></div>
-            <div class="div7"></div>
-            <div class="div8"></div>
-            <div class="div9"></div>
-            <div class="div10"></div>
-            <div class="div11"></div>
-            <div class="div12"></div>
-        </div>
         
         <!-- Customization Controls -->
         <div class="customization-options">
@@ -59,8 +43,24 @@
         
         <!-- Action Buttons -->
         <div class="preview-controls">
-            <button id="save-photo">Save Photo</button>
+            <button id="finalize-btn">Finalize</button>
             <button id="capture-again-btn">Capture Again</button>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results-section" class="hidden">
+        <h3>Your Final 4R Template</h3>
+        
+        <!-- 4R Template Canvas -->
+        <div class="template-container">
+            <canvas id="result-canvas"></canvas>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="results-controls">
+            <button id="download-btn">Download Photo</button>
+            <button id="back-to-preview-btn">Back to Preview</button>
         </div>
     </div>
 

@@ -1,8 +1,22 @@
-from flask import Flask, render_template, Response, redirect, url_for
+from flask import Flask, render_template, Response, redirect, url_for, request, jsonify
 from camera import Camera
+from color_filter import Color_Filter
+from sticker_filter import Sticker_Filter
+import os
+import time
+import uuid
+from db_functions import get_db, init_db, close_connection, insert_photo_session
+from session_flow import start_photo_session, finalize_session
 
 app = Flask(__name__)
+#---------
+with app.app_context():
+    init_db()
+app.teardown_appcontext(close_connection)
+#---------
 camera = Camera()
+color_filter = Color_Filter()
+sticker_filter = Sticker_Filter()
 
 @app.route('/')
 def home():
@@ -91,5 +105,173 @@ def save_casual_layout():
     
     return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
 
+@app.route('/get_image_edit',  methods=['POST'])
+def get_image_edit():
+    image_file = request.files.get('image')
+
+    if not image_file:
+        print("error 1")
+        return jsonify({"error": "No image file received"}), 400
+    try:
+        color_filter.set_image_to_edit(image_file)
+        print("good ito")
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        print("may mali")
+        return jsonify({"status": "error", "message": str(e)}), 500
+   
+@app.route('/get_raw')
+def get_raw():
+    raw_image = color_filter.return_raw()
+    if raw_image:
+        return Response(raw_image, mimetype='image/jpeg')
+    return 'Failed to capture raw', 600
+
+@app.route('/get_grayscaled')
+def get_grayscale():
+    grayscale = color_filter.grayscale_image()
+    if grayscale:
+        return Response(grayscale, mimetype='image/jpeg')
+    return 'Failed to capture grayscale', 600
+
+@app.route('/get_sepia')
+def get_sepia():
+    sepia = color_filter.sepia_image()
+    if sepia:
+        return Response(sepia, mimetype='image/jpeg')
+    return 'Failed to capture sepia', 600
+
+@app.route('/get_inverted')
+def get_inverted():
+    inverted = color_filter.inverted_image()
+    if inverted:
+        return Response(inverted, mimetype='image/jpeg')
+    return 'Failed to capture inverted', 600
+
+@app.route('/get_sketched')
+def get_sketched():
+    sketched = color_filter.sketch_image()
+    if sketched:
+        return Response(sketched, mimetype='image/jpeg')
+    return 'Failed to capture sketched', 600
+
+@app.route('/get_warm')
+def get_warm():
+    warm = color_filter.warm_image()
+    if warm:
+        return Response(warm, mimetype='image/jpeg')
+    return 'Failed to capture warm', 600
+
+@app.route('/get_blue')
+def get_blue():
+    blue = color_filter.cool_blue_image()
+    if blue:
+        return Response(blue, mimetype='image/jpeg')
+    return 'Failed to capture blue', 600
+
+@app.route('/get_bright')
+def get_bright():
+    bright = color_filter.bright_image()
+    if bright:
+        return Response(bright, mimetype='image/jpeg')
+    return 'Failed to capture bright', 600
+
+@app.route('/get_cartoon')
+def get_cartoon():
+    cartoon = color_filter.cartoon_image()
+    if cartoon:
+        return Response(cartoon, mimetype='image/jpeg')
+    return 'Failed to capture cartoon', 600
+
+@app.route('/get_green')
+def get_green():
+    green = color_filter.green_vibe_image()
+    if green:
+        return Response(green, mimetype='image/jpeg')
+    return 'Failed to capture green vibe', 600
+
+# Test Dynamic stickers
+@app.route("/api/stickers")
+def get_stickers():
+    sticker_dir = os.path.join(app.static_folder, 'stickers')
+    sticker_files = [f for f in os.listdir(sticker_dir) if f.endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+    return jsonify(sticker_files)
+
+
+@app.route('/get_image_sticker' , methods=['POST'])
+def get_sticker_filter():
+    image_file = request.files.get('image')
+
+    if not image_file:
+        print("error 1")
+        return jsonify({"error": "No image file received"}), 400
+    try:
+        sticker_filter.get_image_sticker(image_file)
+        print("good ito")
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        print("may mali sa sticker")
+        return jsonify({"status": "error", "message": str(e)}), 500   
+         
+@app.route('/set_face_boxes')
+def set_face_boxes():
+    boxes, image = sticker_filter.set_face_boxes()
+    return jsonify({
+        "boxes": boxes,
+    })
+
+# For the page before proceeding to tutorial [ email confirmation ]
+@app.route('/start_session', methods=['POST'])
+def start_session():
+    email = request.form.get('email')
+    if not email:
+        return jsonify({"status": "error", "message": "Email is required"}), 400
+    session_id = start_photo_session(email)
+    return jsonify({"session_id": session_id})
+
+# Finalization
+@app.route('/finalize_session', methods=['POST'])
+def finalize_session_route():
+    session_id = request.form.get('session_id')
+    pdf_file = request.files.get('pdf')
+
+    if not session_id or not pdf_file:
+        return jsonify({"status": "error", "message": "Missing session_id or PDF"}), 400
+
+    try:
+        pdf_data = pdf_file.read()
+        success = finalize_session(session_id, pdf_data)
+        status = "sent" if success else "failed"
+        return jsonify({"status": status}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+#TEST insert
+@app.route('/test_insert_session')
+def test_insert_session():
+    email = "testuser@example.com"
+    pdf_data = b"%PDF-1.4 dummy pdf binary data"
+    session_id = str(uuid.uuid4())
+
+    inserted_session_id = insert_photo_session(email, pdf_data, status="pending", session_id=session_id)
+
+    # Verify insertion by querying DB
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT email, status, session_id FROM photo_sessions WHERE session_id = ?", (session_id,))
+    row = cursor.fetchone()
+
+    if row:
+        return jsonify({
+            "message": "Test session inserted successfully",
+            "email": row[0],
+            "status": row[1],
+            "session_id": row[2]
+        })
+    else:
+        return jsonify({"message": "Failed to retrieve inserted session"}), 500
+
+#if using python app.py
 if __name__ == '__main__':
+    init_db()
     app.run(debug=True)
