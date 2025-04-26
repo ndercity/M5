@@ -882,12 +882,6 @@ document.addEventListener("DOMContentLoaded", function() {
         clearBoundingBoxes();
     }
 
-    function addSticker(index) {
-        editCtx.fillStyle = 'white';
-        editCtx.font = '20px Arial';
-        editCtx.fillText(`Sticker ${index + 1}`, 50, 50);
-    }
-
     function applyColorFilter(index) {
         editCtx.fillStyle = `rgba(${index * 40}, ${index * 30}, ${index * 50}, 0.3)`;
         editCtx.fillRect(0, 0, editCanvas.width, editCanvas.height);
@@ -977,38 +971,48 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
 
-    //will change this to snap op
+    //will the snap here 
     function addEditCanvaEventListener(){
         if(editCanvas){
             //console.log("edit canvas now exists");
 
             editCanvas.addEventListener('dragover', function(event){
-                console.log("dragover created");
+                //console.log("dragover created");
                 event.preventDefault();
             });
 
             editCanvas.addEventListener('drop', function(event){
                 event.preventDefault();
-                const imageSrc = event.dataTransfer.getData('text/plain');
-                if(!imageSrc) return;
-                const img = new Image();
-                img.onload = function () {
-                    // Draw the image at the drop position
-                    const rect = editCanvas.getBoundingClientRect();
-                    const x = event.clientX - rect.left;
-                    const y = event.clientY - rect.top;
 
-                    console.log("Mouse Position to Canvas in X: ", x);
-                    console.log("Mouse Position to Canvas in Y: ", y);
+                const rect = editCanvas.getBoundingClientRect();
+                const dropX = event.clientX - rect.left;
+                const dropY = event.clientY - rect.top;
 
-                    const desiredHeight = 100;
-                    const aspectRatio = img.width / img.height;
-                    const height = desiredHeight;
-                    const width = desiredHeight * aspectRatio;
-  
-                    editCtx.drawImage(img, x, y, width, height);
-                };
-                img.src = imageSrc;
+                fetch('/set_face_boxes')
+                .then(res=>res.json())
+                .then(data=>{
+                    const boxes = data.boxes;
+                    let faceIndex = -1;
+
+                    boxes.forEach((box, index) =>{
+                        if(
+                            dropX >= box.x &&
+                            dropX <= box.x + box.w &&
+                            dropY >= box.y &&
+                            dropY <= box.y + box.h
+                        ){
+                            faceIndex = index
+                        }
+                    });
+
+                    if(faceIndex !== -1){
+                        console.log("inside a face");
+                    }
+                    else{
+                        console.log("outside face")
+                    }
+                })
+                
             });
         }
     }
