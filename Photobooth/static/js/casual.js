@@ -960,12 +960,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(data => {
                     console.log("bounding boxes", data.boxes)
                     drawBoundingBoxes(data.boxes)
-                    console.log("am i repeating?")
+                    //console.log("am i repeating?")
                 })
                 .catch(err => console.error("Failed to fetch face boxes", err));
             });
             sticker.addEventListener('dragend', ()=>{
-                removeOverlayCanvas();
+                //removeOverlayCanvas();
             })
         });
     }
@@ -1017,6 +1017,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    //must fix this. Hindi umaallign sa mukha ng user kapag wala yung width and height
     function createOverlayCanvas(parentId = 'edit-canvas') {
         const parent = document.getElementById(parentId);
         let overlay = document.getElementById('overlay-canvas');
@@ -1029,7 +1030,6 @@ document.addEventListener("DOMContentLoaded", function() {
             overlay.style.zIndex = '999';
     
             parent.parentElement.style.position = 'relative';
-            parent.parentElement.appendChild(overlay);
         }
     
         overlay.width = parent.width;
@@ -1038,7 +1038,8 @@ document.addEventListener("DOMContentLoaded", function() {
         overlay.style.height = parent.offsetHeight + 'px';
         overlay.style.left = parent.offsetLeft + 'px';
         overlay.style.top = parent.offsetTop + 'px';
-    
+        parent.parentElement.appendChild(overlay);
+
         return overlay.getContext('2d');
     }
     

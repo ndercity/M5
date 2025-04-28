@@ -56,6 +56,7 @@ class Sticker_Filter:
                     h = int(bounding_box.height * ih)
                     self.face_boxes.append({'x': x, 'y': y, 'w': w, 'h': h})
                     #self.crop_faces_in_image(processed_image, x,y,w,h)
+                    print("face detected")
                     cv2.rectangle(processed_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
             
             _, self.buffer_image = cv2.imencode('.jpg', processed_image)
