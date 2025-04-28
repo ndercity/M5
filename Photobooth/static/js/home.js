@@ -57,4 +57,42 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // setInterval(nextSlide, 5000);
+
+    //HOLDS EMAIL VALUE
+    document.querySelector('.email-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const emailInput = document.getElementById('email');
+        const email = emailInput.value.trim();
+    
+        if (!email) {
+            alert('Please enter a valid email');
+            return;
+        }
+    
+        try {
+            const response = await fetch('/start_session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await response.json();
+    
+            if (data.session_id) {
+                localStorage.setItem('session_id', data.session_id);
+                localStorage.setItem('email', email);
+                //check kung present yung 2 data
+                console.log('Session started with ID:', data.session_id);
+                console.log('Session started with email:', email);
+    
+                // OPTIONAL: Redirect to mode selection if needed
+                // window.location.href = "/mode";
+            } else {
+                alert('Failed to start session');
+            }
+        } catch (err) {
+            console.error('Error starting session:', err);
+            alert('Server error');
+        }
+    });
+    
 });

@@ -5,7 +5,7 @@ from sticker_filter import Sticker_Filter
 import os
 import time
 import uuid
-from db_functions import get_db, init_db, close_connection, insert_photo_session
+from db_functions import get_db, init_db, close_connection, insert_photo_session, update_photo_blob
 from session_flow import start_photo_session, finalize_session
 
 app = Flask(__name__)
@@ -223,9 +223,11 @@ def set_face_boxes():
 # For the page before proceeding to tutorial [ email confirmation ]
 @app.route('/start_session', methods=['POST'])
 def start_session():
-    email = request.form.get('email')
-    if not email:
-        return jsonify({"status": "error", "message": "Email is required"}), 400
+    data = request.get_json()
+    if not data or 'email' not in data:
+        return jsonify({"error": "Email is required"}), 400
+
+    email = data['email']
     session_id = start_photo_session(email)
     return jsonify({"session_id": session_id})
 
@@ -233,18 +235,31 @@ def start_session():
 @app.route('/finalize_session', methods=['POST'])
 def finalize_session_route():
     session_id = request.form.get('session_id')
-    pdf_file = request.files.get('pdf')
+    if not session_id:
+        return jsonify({"status": "error", "message": "Session ID required"}), 400
+    
+    success = finalize_session(session_id)
+    if success:
+        return jsonify({"status": "sent"}), 200
+    else:
+        return jsonify({"status": "failed"}), 500
+    
+#Upload photo to db
+@app.route('/upload_photo', methods=['POST'])
+def upload_photo():
+    session_id = request.form.get('session_id')
+    photo_file = request.files.get('photo')
 
-    if not session_id or not pdf_file:
-        return jsonify({"status": "error", "message": "Missing session_id or PDF"}), 400
+    if not session_id or not photo_file:
+        return jsonify({"error": "Missing session_id or photo file"}), 400
+
+    photo_blob = photo_file.read()
 
     try:
-        pdf_data = pdf_file.read()
-        success = finalize_session(session_id, pdf_data)
-        status = "sent" if success else "failed"
-        return jsonify({"status": status}), 200
+        update_photo_blob(session_id, photo_blob)
+        return jsonify({"message": "Photo saved successfully"}), 200
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({"error": str(e)}), 500
     
 #TEST insert
 @app.route('/test_insert_session')
