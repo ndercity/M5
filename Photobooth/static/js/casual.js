@@ -107,6 +107,12 @@ document.addEventListener("DOMContentLoaded", function() {
     let currentButtonIndex = -1; //negative 1 ang default value para walang ibalik
 
     // =============================================
+    // VARIABLES
+    // =============================================
+    let sticker_alt = ""
+
+
+    // =============================================
     // INITIALIZATION
     // =============================================
     window.addEventListener('load', startCamera);
@@ -649,6 +655,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         img.alt = alt;
                         img.draggable = true;
                         img.classList.add("sticker-img");
+                        img.dataset.stickerType = alt;
     
                         button.appendChild(img);
                         slide.appendChild(button);
@@ -953,7 +960,9 @@ document.addEventListener("DOMContentLoaded", function() {
             // Only attach if it hasn't been attached yet
             sticker.addEventListener('dragstart', (event) => {
                 event.dataTransfer.setData('text/plain', sticker.src);
-                console.log(`Dragging ${sticker.id}`, event);
+                //console.log(`Dragging ${sticker.id}`, event);
+                //console.log(`Sticker Alt: ${sticker.alt}`)
+                sticker_alt = sticker.alt;
 
                 fetch('/set_face_boxes')
                 .then(res => res.json())
@@ -1005,13 +1014,29 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
                     });
 
-                    if(faceIndex !== -1){
+                    if (faceIndex !== -1) {
                         console.log("inside a face");
+
+                        let formData = new FormData();
+                        formData.append('faceIndex', faceIndex);
+                        formData.append('stickerType', sticker_alt);
+                    
+                        fetch('/set_face_index', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log('Data sent, response:', data);
+                        })
+                        .catch(error => {
+                            console.error('Request failed', error);
+                        });
+                    
+                    } else {
+                        console.log("outside face");
                     }
-                    else{
-                        console.log("outside face")
-                    }
-                })
+                });
                 
             });
         }

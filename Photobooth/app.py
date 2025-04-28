@@ -225,6 +225,16 @@ def clear_boxes():
     sticker_filter.clear_all()
     return jsonify({"status": "cleared"}), 200
 
+@app.route('/set_face_index', methods=['POST'])
+def set_face_index():
+    index = request.form.get('faceIndex')
+    sticker_type = request.form.get('stickerType')
+    if not index or not sticker_type:
+        return jsonify({"status": "error", "message": "No Index Received"}), 400
+    sticker_filter.set_face_index(index, sticker_type)
+    return jsonify({"status": "cleared"}), 200
+
+
 # For the page before proceeding to tutorial [ email confirmation ]
 @app.route('/start_session', methods=['POST'])
 def start_session():
