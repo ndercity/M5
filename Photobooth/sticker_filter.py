@@ -28,7 +28,7 @@ class Sticker_Filter:
         self.face_boxes = []
         self.cropped_faces = []
 
-        self.tarket_landmarks = {}
+        self.target_landmarks = {}
         self.face_index = -1
         self.sticker_type_path = None
         self.dest_points = []
@@ -55,48 +55,48 @@ class Sticker_Filter:
         if image:
             processed_image = np.frombuffer(image.read(), np.uint8)
             processed_image = cv2.imdecode(processed_image, cv2.IMREAD_COLOR)
+            self.raw_image = processed_image.copy()
 
             image_rgb = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)
-            results = self.face_detection.process(image_rgb)
+            results = self.face_mesh_images.process(image_rgb)
+
+            self.face_boxes = []
+            self.multi_face_landmarks = []
 
             if results.multi_face_landmarks:
+                ih, iw, _ = processed_image.shape
                 for landmarks in results.multi_face_landmarks:
-                    ih, iw, _ = self.raw_image.shape
+                    self.multi_face_landmarks.append(landmarks)
 
-                    # Define bounding box
-                    x = int(landmarks.landmark[234].x * iw) - 50
-                    y = int(landmarks.landmark[10].y * ih) - 50
-                    w = int(landmarks.landmark[454].x * iw) + 50
-                    h = int(landmarks.landmark[152].y * ih) + 50
+                    x = int(landmarks.landmark[234].x * iw)
+                    y = int(landmarks.landmark[10].y * ih)
+                    w = int(landmarks.landmark[454].x * iw)
+                    h = int(landmarks.landmark[152].y * ih)
+
                     self.face_boxes.append({'x': x, 'y': y, 'w': w, 'h': h})
-                    #self.crop_faces_in_image(processed_image, x,y,w,h)
-                    print("face detected")
                     cv2.rectangle(processed_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            
-            _, self.buffer_image = cv2.imencode('.jpg', processed_image)
-        else:
-            print("no image found")
 
+                _, self.buffer_image = cv2.imencode('.jpg', processed_image)
+            else:
+                print("No faces detected")
+        else:
+            print("No image provided")
 
     def get_all_target_landmarks(self):
-         face_frame = self.cropped_faces[self.face_index]
-         crop_results = self.face_mesh_images.process(face_frame)
-         
-         if crop_results.multi_face_landmarks:
-            for crop_landmarks in crop_results.multi_face_landmarks:
-                ih, iw, _ = face_frame.shape
-                for name, idx in self.face_landmarks.items():
-                    self.tarket_landmarks[name] = (
-                        int(crop_landmarks.landmark[idx].x * iw),
-                        int(crop_landmarks.landmark[idx].y * ih)
-                    )
+        if self.face_index == -1:
+            print("Invalid face index")
+            return
+
+        face_landmarks = self.multi_face_landmarks[int(self.face_index)]
+        ih, iw, _ = self.raw_image.shape
+
+        #self.target_landmarks = {} #duplication prbably the problem
+        for name, idx in self.face_landmarks.items():
+            x = int(face_landmarks.landmark[idx].x * iw)
+            y = int(face_landmarks.landmark[idx].y * ih)
+            self.target_landmarks[name] = (x, y)
 
 
-
-    def crop_faces_in_image(self, sample_image, x, y, w, h):
-        crop = sample_image[y:y+h, x:x+w]
-        self.cropped_faces.append(crop)
-        
     #ibabato nito laaht ng mukhang available sa image at ang kanilang bouding boxes
     def set_face_boxes(self):
         return self.face_boxes, self.buffer_image
@@ -104,6 +104,10 @@ class Sticker_Filter:
     def set_face_index(self, index, sticker_type):
         self.face_index = index
         path = None
+
+        self.get_all_target_landmarks()
+        print(self.target_landmarks)
+
         match sticker_type:
             case "AoA":
                 path = "static/stickers/AoA.png"
@@ -143,32 +147,49 @@ class Sticker_Filter:
         print(index, sticker_type)
 
     def warp_image(self):
+
+        if not self.sticker_type_path or not self.src_points or not self.dest_points:
+            print("Sticker path or points missing")
+            return None
+
         sticker = cv2.imread(self.sticker_type_path, cv2.IMREAD_UNCHANGED)
-        src_points = np.float32([self.src_points[0], self.src_points[1], self.src_points[2]])
-        dst_points = np.float32([self.dest_points[0], self.dest_points[1], self.dest_points[2]])
+        h, w, _ = self.raw_image.shape
+        
+        # Transparent canvas
+        overlay = np.zeros((h, w, 4), dtype=np.uint8)
 
-        # Calculate affine transform
-        M = cv2.getAffineTransform(src_points, dst_points)
+        src = np.float32(self.src_points)
+        dst = np.float32(self.dest_points)
 
-        warped_sticker = cv2.warpAffine(
-                sticker, M, (self.raw_image.shape[1], self.raw_image.shape[0]),
-                flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_TRANSPARENT
-            )
+        M = cv2.getAffineTransform(src, dst)
 
-            # Prepare alpha mask
-        if warped_sticker.shape[2] == 4:
-            alpha_s = warped_sticker[:, :, 3] / 255.0
-            alpha_l = 1.0 - alpha_s
+        warped = cv2.warpAffine(sticker, M, (w, h), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_TRANSPARENT)
 
-            # Blend sticker onto the image
-            for c in range(3):  # For BGR channels
-                self.raw_image[:, :, c] = (
-                    alpha_s * warped_sticker[:, :, c] +
-                    alpha_l * self.raw_image[:, :, c]
-                )
-            print("warped")
-        return self.raw_image
+        if warped.shape[2] == 4:
+            alpha_s = warped[:, :, 3] / 255.0
+            for c in range(3):  # Only BGR channels
+                overlay[:, :, c] = (warped[:, :, c] * alpha_s).astype(np.uint8)
+            overlay[:, :, 3] = warped[:, :, 3]  # Copy alpha channel
 
+        return overlay
+    
+    def get_overlay_bounding_box(self, overlay):
+        """Returns the bounding box (x, y, width, height) of the non-transparent area of the overlay"""
+        if overlay is None or overlay.shape[2] != 4:
+            return None
+
+        alpha = overlay[:, :, 3]  # Get alpha channel
+        coords = cv2.findNonZero((alpha > 0).astype(np.uint8))
+
+        if coords is not None:
+            x, y, w, h = cv2.boundingRect(coords)
+
+            print("Bounding box:", x, y, w, h)
+
+            return x, y, w, h
+        return None
+
+    
     #must call this para safe ass shit
     def clear_all(self):
         if self.buffer_image is not None:

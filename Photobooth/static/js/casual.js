@@ -850,6 +850,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+
     //test method only
     function getImageForSticker(urlBlob){
         fetch(urlBlob)
@@ -992,7 +993,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             editCanvas.addEventListener('drop', function(event){
                 event.preventDefault();
-
+                let isSuccess = false;
                 const rect = editCanvas.getBoundingClientRect();
                 const dropX = event.clientX - rect.left;
                 const dropY = event.clientY - rect.top;
@@ -1028,11 +1029,20 @@ document.addEventListener("DOMContentLoaded", function() {
                         .then(res => res.json())
                         .then(data => {
                             console.log('Data sent, response:', data);
+                            fetch("/get_warped_sticker")
+                            .then(res => res.json())
+                            .then(data => {
+                                const img = new Image();
+                                img.onload = function() {
+                                    drawStickers(img, 0, 0, data.width, data.height);
+                                };
+                                img.src = "data:image/png;base64," + data.sticker;                            });
                         })
                         .catch(error => {
                             console.error('Request failed', error);
                         });
-                    
+
+                        //need to make a canvas para mailagay yung mismong sticker
                     } else {
                         console.log("outside face");
                     }
@@ -1042,6 +1052,37 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    function createStickerOverlayCanvas(x, y, width, height){
+        const parent = document.getElementById('edit-canvas');
+    
+        const overlay = document.createElement('canvas');
+        overlay.className = 'sticker-canvas'; // Use class instead of ID
+        overlay.style.position = 'absolute';
+        overlay.style.pointerEvents = 'none'; 
+        overlay.style.zIndex = '999';
+    
+        parent.parentElement.style.position = 'relative';
+    
+        overlay.width = width;
+        overlay.height = height;
+        overlay.style.width = width + 'px';
+        overlay.style.height = height + 'px';
+        overlay.style.left = x + 'px';
+        overlay.style.top = y + 'px';
+    
+        parent.parentElement.appendChild(overlay);
+    
+        return overlay.getContext('2d');
+    }
+
+    function drawStickers(img, x, y, width, height) {
+        const newImg = new Image();
+        newImg.onload = function() {
+            const ctx = createStickerOverlayCanvas(x, y, width, height);
+            ctx.drawImage(newImg, 0, 0, width, height);
+        };
+        newImg.src = img.src;
+    }
     //must fix this. Hindi umaallign sa mukha ng user kapag wala yung width and height
     function createOverlayCanvas(parentId = 'edit-canvas') {
         const parent = document.getElementById(parentId);
