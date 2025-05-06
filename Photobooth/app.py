@@ -7,7 +7,6 @@ import time
 import uuid
 import base64
 import io
-import cv2
 from db_functions import get_db, init_db, close_connection, insert_photo_session
 from session_flow import start_photo_session, finalize_session
 
@@ -240,17 +239,9 @@ def set_face_index():
 @app.route('/get_warped_sticker')
 def get_warped_sticker():
     overlay = sticker_filter.warp_image()
-
     if overlay is not None:
-        x, y, w, h = sticker_filter.get_overlay_bounding_box(overlay)
-
-        # Encode as PNG
-        success, buffer = cv2.imencode('.png', overlay)
-        if not success:
-            return jsonify({"status": "error", "message": "Failed to encode image"}), 500
-
-        # Convert to base64
-        base64_sticker = base64.b64encode(buffer).decode('utf-8')
+        x, y, w, h = sticker_filter.get_overlay_bounding_box()
+        base64_sticker = base64.b64encode(overlay).decode('utf-8')
         
         return jsonify({
             "sticker": base64_sticker,
