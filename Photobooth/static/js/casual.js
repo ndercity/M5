@@ -982,7 +982,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .catch(err => console.error("Failed to fetch face boxes", err));
             });
             sticker.addEventListener('dragend', ()=>{
-                //removeOverlayCanvas();
+                removeOverlayCanvas();
             })
         });
     }
@@ -1091,12 +1091,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function drawStickers(img, x, y, width, height) {
         const newImg = new Image();
-        newImg.onload = function() {
-            const ctx = createStickerOverlayCanvas(x, y, width, height);
-            ctx.drawImage(newImg, 0, 0, width, height);
+        newImg.onload = function () {
+            const editCanvas = document.getElementById('edit-canvas');
+    
+            // Scaling factors from internal canvas size to visible canvas size
+            const scaleX = editCanvas.offsetWidth / editCanvas.width;
+            const scaleY = editCanvas.offsetHeight / editCanvas.height;
+    
+            // Apply scaling to position and size
+            const scaledX = x * scaleX;
+            const scaledY = y * scaleY;
+            const scaledWidth = width * scaleX;
+            const scaledHeight = height * scaleY;
+    
+            // Now draw with scaled coordinates
+            const ctx = createStickerOverlayCanvas(scaledX, scaledY, scaledWidth, scaledHeight);
+            ctx.drawImage(newImg, 0, 0, scaledWidth, scaledHeight);
         };
         newImg.src = img.src;
     }
+    
     //must fix this. Hindi umaallign sa mukha ng user kapag wala yung width and height
     function createOverlayCanvas(parentId = 'edit-canvas') {
         const parent = document.getElementById(parentId);

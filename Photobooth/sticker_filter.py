@@ -91,17 +91,20 @@ class Sticker_Filter:
             return
         
         img = self.cropped_faces[self.face_index]
-        crop_result = self.face_mesh_images.process(img)
+        rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        result = self.face_mesh_images.process(rgb)
 
-        if crop_result.multi_face_landmarks:
-            for crop_landmarks in crop_result.multi_face_landmarks:
-                ih,iw,_ = img.shape
-                for name, idx in self.face_landmarks.items():
-                    self.target_landmarks[name] = (
-                        int(crop_landmarks.landmark[idx].x * iw),
-                        int(crop_landmarks.landmark[idx].y * ih)
-                    )
-    '''
+        if result.multi_face_landmarks:
+            for landmarks in result.multi_face_landmarks:
+                h, w, _ = img.shape
+                self.target_landmarks = {
+                    name: (
+                        int(landmark.x * w),
+                        int(landmark.y * h)
+                    ) for name, idx in self.face_landmarks.items()
+                    if (landmark := landmarks.landmark[idx])
+                }   
+        '''
         face_landmarks = self.multi_face_landmarks[int(self.face_index)]
         ih, iw, _ = self.raw_image.shape
 
