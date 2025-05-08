@@ -122,7 +122,7 @@ class Sticker_Filter:
 
         self.get_all_target_landmarks()
         #print(self.target_landmarks)
-        #self.size_test()
+        self.size_test()
 
         match sticker_type:
             case "AoA":
@@ -190,20 +190,36 @@ class Sticker_Filter:
         for c in range(3):
             c_img[:, :, c] = (alpha_mask * warped_rgb[:, :, c] + alpha_inv * img[:, :, c])
         '''
+        warped_image = cv2.merge([warped_rgb[:, :, 0], warped_rgb[:, :, 1], warped_rgb[:, :, 2], warped_alpha])
 
-        _,sticker = cv2.imencode('.png', warped_rgb)
+        _,sticker = cv2.imencode('.png', warped_image)
 
         return sticker
 
 
     def get_overlay_bounding_box(self):
-        return self.face_boxes[self.face_index]
+        box = self.face_boxes[self.face_index]  # face_index is the index of the face you want
+        x1 = box['x']
+        y1 = box['y']
+        x2 = box['w']
+        y2 = box['h']
+
+        return x1,y1,x2,y2
 
     def size_test(self):
-        h, w, _ = self.raw_image.shape
-        print("Width:", w, "Height:", h) #expected result must be 640x480
+        h1, w1, _1 = self.raw_image.shape
+        print("Raw Pic Width:", w1, "Raw Pic Height:", h1) #expected result must be 640x480
 
-    
+        box = self.face_boxes[self.face_index]  # face_index is the index of the face you want
+        x1 = box['x']
+        y1 = box['y']
+        x2 = box['w']
+        y2 = box['h']
+
+        print("all points: ", x1,x2,y1,y2)
+
+
+
     #must call this para safe ass shit
     def clear_all(self):
         if self.buffer_image is not None:

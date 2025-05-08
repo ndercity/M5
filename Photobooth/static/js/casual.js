@@ -944,6 +944,13 @@ document.addEventListener("DOMContentLoaded", function() {
             ctx.rect(box.x, box.y, box.w, box.h);  
             ctx.stroke();  
         });
+
+        boxes.forEach(box=>{
+            ctx.beginPath(); 
+            ctx.rect(box.x, box.y, box.w, box.h);  
+            //console.log("top left corner: ", box.x, box.y)
+            ctx.stroke();  
+        })
     }
     
         
@@ -993,10 +1000,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
             editCanvas.addEventListener('drop', function(event){
                 event.preventDefault();
-                let isSuccess = false;
                 const rect = editCanvas.getBoundingClientRect();
-                const dropX = event.clientX - rect.left;
-                const dropY = event.clientY - rect.top;
+                const scaleX = editCanvas.width / editCanvas.offsetWidth;
+                const scaleY = editCanvas.height / editCanvas.offsetHeight;
+
+                const dropX = (event.clientX - rect.left) * scaleX;
+                const dropY = (event.clientY - rect.top) * scaleY;
+
+                //const dropX = event.clientX - rect.left;
+                //const dropY = event.clientY - rect.top;
 
                 fetch('/set_face_boxes')
                 .then(res=>res.json())
@@ -1034,9 +1046,11 @@ document.addEventListener("DOMContentLoaded", function() {
                             .then(data => {
                                 const img = new Image();
                                 img.onload = function() {
-                                    drawStickers(img, 0, 0, data.width, data.height);
+                                    drawStickers(img, data.x, data.y, data.width, data.height);
+                                    //console.log("image data: ", data.x, data.y, data.width, data.height);
                                 };
-                                img.src = "data:image/png;base64," + data.sticker;                            });
+                                img.src = "data:image/png;base64," + data.sticker;
+                            });
                         })
                         .catch(error => {
                             console.error('Request failed', error);

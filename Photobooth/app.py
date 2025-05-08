@@ -242,7 +242,7 @@ def get_warped_sticker():
     if overlay is not None:
         x, y, w, h = sticker_filter.get_overlay_bounding_box()
         base64_sticker = base64.b64encode(overlay).decode('utf-8')
-        
+        print("data sent: ", x, y, w, h)
         return jsonify({
             "sticker": base64_sticker,
             "x": x,
