@@ -944,13 +944,6 @@ document.addEventListener("DOMContentLoaded", function() {
             ctx.rect(box.x, box.y, box.w, box.h);  
             ctx.stroke();  
         });
-
-        boxes.forEach(box=>{
-            ctx.beginPath(); 
-            ctx.rect(box.x, box.y, box.w, box.h);  
-            //console.log("top left corner: ", box.x, box.y)
-            ctx.stroke();  
-        })
     }
     
         

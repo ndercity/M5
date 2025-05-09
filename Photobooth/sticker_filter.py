@@ -52,6 +52,7 @@ class Sticker_Filter:
 
     #tawagin muna ito para mapagana yung buong class
     #100% pure test pa lang ito
+    #look for a way to create a face box and at the same time crop the image
     def get_image_sticker(self, image):
         if image:
             processed_image = np.frombuffer(image.read(), np.uint8)
@@ -59,8 +60,38 @@ class Sticker_Filter:
             self.raw_image = processed_image.copy()
 
             image_rgb = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)
-            results = self.face_mesh_images.process(image_rgb)
+            results = self.face_detection.process(image_rgb)
 
+            if results.detections:
+                for detection in results.detections:
+                    bounding_box = detection.location_data.relative_bounding_box
+                    ih, iw, _ = processed_image.shape
+                    xmin = int(bounding_box.xmin * iw)
+                    ymin = int(bounding_box.ymin * ih)
+                    width = int(bounding_box.width * iw)
+                    height = int(bounding_box.height * ih)
+
+                    # Expand the box
+                    padding_top = int(0.2 * height)
+                    padding_sides = int(0.2 * width)
+                    padding_bottom = int(0.1 * height)
+
+                    x = max(0, xmin - padding_sides)
+                    y = max(0, ymin - padding_top)
+                    x2 = min(iw, xmin + width + padding_sides)
+                    y2 = min(ih, ymin + height + padding_bottom)
+
+                    w = x2 - x
+                    h = y2 - y
+
+                    if w > 0 and h > 0:
+                        cropped_face = processed_image[y:y+h, x:x+w]
+                        self.cropped_faces.append(cropped_face)
+                        self.face_boxes.append({'x': x, 'y': y, 'w': w, 'h': h})            
+                _, self.buffer_image = cv2.imencode('.jpg', processed_image)
+            else:
+                print("No faces detected")
+            '''
             if results.multi_face_landmarks:
                 for landmarks in results.multi_face_landmarks:
                     ih, iw, _ = processed_image.shape
@@ -76,11 +107,10 @@ class Sticker_Filter:
                     self.face_boxes.append({'x': x1, 'y': y1, 'w': w, 'h': h})
                     self.face_origin.append({'x': x1, 'y': y1})
                     self.cropped_faces.append(processed_image[y1:y2, x1:x2])                    
-                    #cv2.rectangle(processed_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
                 _, self.buffer_image = cv2.imencode('.jpg', processed_image)
-            else:
-                print("No faces detected")
+                '''
+           
         else:
             print("No image provided")
 
@@ -90,30 +120,19 @@ class Sticker_Filter:
             print("Invalid face index")
             return
         
-        img = self.cropped_faces[self.face_index]
-        rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        result = self.face_mesh_images.process(rgb)
+        cropped_img = self.cropped_faces[self.face_index]
+        img_rgb = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2RGB)
+        crop_result = self.face_mesh_images.process(img_rgb)
 
-        if result.multi_face_landmarks:
-            for landmarks in result.multi_face_landmarks:
-                h, w, _ = img.shape
-                self.target_landmarks = {
-                    name: (
-                        int(landmark.x * w),
-                        int(landmark.y * h)
-                    ) for name, idx in self.face_landmarks.items()
-                    if (landmark := landmarks.landmark[idx])
-                }   
-        '''
-        face_landmarks = self.multi_face_landmarks[int(self.face_index)]
-        ih, iw, _ = self.raw_image.shape
-
-        #self.target_landmarks = {} #duplication prbably the problem
-        for name, idx in self.face_landmarks.items():
-            x = int(face_landmarks.landmark[idx].x * iw)
-            y = int(face_landmarks.landmark[idx].y * ih)
-            self.target_landmarks[name] = (x, y)
-    '''
+        if crop_result.multi_face_landmarks:
+            for crop_landmarks in crop_result.multi_face_landmarks:
+                ih,iw,_ = cropped_img.shape
+                print(ih, iw)
+                for name, idx in self.face_landmarks.items():
+                    self.target_landmarks[name] = (
+                        int(crop_landmarks.landmark[idx].x * iw),
+                        int(crop_landmarks.landmark[idx].y * ih)
+                    )
 
     #ibabato nito laaht ng mukhang available sa image at ang kanilang bouding boxes
     def set_face_boxes(self):
@@ -147,7 +166,7 @@ class Sticker_Filter:
                 mustache_l = self.target_landmarks["left_mustache"]
 
                 self.src_points = [[177, 99],[277, 41], [385, 99]] # ponts starting from left to right depending on the sticker
-                self.dest_points = [mustache_c, mustache_r, mustache_l]
+                self.dest_points = [mustache_l, mustache_c, mustache_r]
 
             case "OoO":
                 path = "static/stickers/OoO.png"
@@ -220,8 +239,6 @@ class Sticker_Filter:
         y2 = box['h']
 
         print("all points: ", x1,x2,y1,y2)
-
-
 
     #must call this para safe ass shit
     def clear_all(self):
