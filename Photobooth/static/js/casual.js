@@ -975,7 +975,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .catch(err => console.error("Failed to fetch face boxes", err));
             });
             sticker.addEventListener('dragend', ()=>{
-                removeOverlayCanvas();
+                //removeOverlayCanvas();
             })
         });
     }

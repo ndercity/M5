@@ -165,7 +165,7 @@ class Sticker_Filter:
                 mustache_r = self.target_landmarks["right_mustache"]
                 mustache_l = self.target_landmarks["left_mustache"]
 
-                self.src_points = [[177, 99],[277, 41], [385, 99]] # ponts starting from left to right depending on the sticker
+                self.src_points = [[47, 110], [100, 60], [153, 110]] # ponts starting from left to right depending on the sticker
                 self.dest_points = [mustache_l, mustache_c, mustache_r]
 
             case "OoO":
