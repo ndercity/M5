@@ -27,8 +27,7 @@ class Sticker_Filter:
         self.cropped_faces = []
         self.dest_points = []
         self.src_points = []
-        self.face_origin = [] #dito ilalagay ang starting point ng cropped image it will contain x and y
-        self.target_landmarks = {}
+        self.target_landmarks = {} 
 
         self.face_index = -1
         self.sticker_type_path = None
@@ -37,22 +36,25 @@ class Sticker_Filter:
 
         # Landmark indexes
         self.face_landmarks = {
-            "left_eye_center": 468, #might remove this
-            "right_eye_center": 473, #might remove this
-            "left_cheek": 234,
-            "right_cheek": 454,
-            "center_lips": 13,
-            "center_chin": 152,
-            "center_forehead": 10,
-            "center_nose": 1,
-
+            #for mustache
             "mustache_center": 164,
             "left_mustache": 410,
             "right_mustache": 186,
-
+            #for swag glasses
             "upper_nasal_bone": 168, #might change this to 8
             "lower_left_eyes_":230,
-            "lower_right_eyes":450
+            "lower_right_eyes":450,
+            #for puppy glasses
+            "upper_left_eye": 223,
+            "upper_right_eye": 443,
+            "left_forehead": 67,
+            "right_forehead":297,
+            #dog
+            "center_nose":1,
+            #blue crown
+            "center_forehead": 10,
+            "left_midline_forehead":104,
+            "right_midline_forehead":333
         }
 
     #tawagin muna ito para mapagana yung buong class
@@ -130,17 +132,31 @@ class Sticker_Filter:
 
         self.get_all_target_landmarks()
         #print(self.target_landmarks)
-        self.size_test()
 
         match sticker_type:
             case "AoA":
                 path = "static/stickers/AoA.png"
             case "blue_crown":
                 path = "static/stickers/blue_crown.png"
+
+                crown_c = self.target_landmarks["center_forehead"]
+                crown_r = self.target_landmarks["right_midline_forehead"]
+                crown_l = self.target_landmarks["left_midline_forehead"]
+
+                self.src_points = [[23,352], [381,121], [724, 352]] # ponts starting from left to right depending on the sticker
+                self.dest_points = [crown_l, crown_c, crown_r]
+
             case "DoD":
                 path = "static/stickers/DoD.png"
             case "dog":
                 path = "static/stickers/dog.png"
+                dog_left = self.target_landmarks["left_forehead"]
+                dog_center = self.target_landmarks["center_nose"]
+                dog_right = self.target_landmarks["right_forehead"]
+
+                self.src_points = [[112,24], [151,143], [195,24]] # ponts starting from left to right depending on the sticker
+                self.dest_points = [dog_left, dog_center, dog_right]
+
             case "EoE":
                 path = "static/stickers/EoE.png"
             case "IoI":
@@ -156,8 +172,16 @@ class Sticker_Filter:
 
             case "OoO":
                 path = "static/stickers/OoO.png"
-            case "puppy":
+            case "puppy": #may prob ito
                 path = "static/stickers/puppy.png"
+               
+                puppy_center = self.target_landmarks["center_forehead"]
+                puppy_lower_left_eye = self.target_landmarks["lower_left_eyes_"]
+                puppy_lower_right_eye = self.target_landmarks["lower_right_eyes"]
+
+                self.src_points = [[62,178],[100,39],[144,176]] # ponts starting from left to right depending on the sticker
+                self.dest_points = [puppy_lower_left_eye, puppy_center, puppy_lower_right_eye]
+
             case "rat":
                 path = "static/stickers/rat.png"
             case "swag":
@@ -221,18 +245,6 @@ class Sticker_Filter:
 
         return x1,y1,x2,y2
 
-    def size_test(self):
-        h1, w1, _1 = self.raw_image.shape
-        print("Raw Pic Width:", w1, "Raw Pic Height:", h1) #expected result must be 640x480
-
-        box = self.face_boxes[self.face_index]  # face_index is the index of the face you want
-        x1 = box['x']
-        y1 = box['y']
-        x2 = box['w']
-        y2 = box['h']
-
-        print("all points: ", x1,x2,y1,y2)
-
     #must call this para safe ass shit
     def clear_all(self):
         if self.buffer_image is not None:
@@ -240,7 +252,6 @@ class Sticker_Filter:
             self.cropped_faces = []
             self.dest_points = []
             self.src_points = []
-            self.face_origin = []
             self.target_landmarks = {}
 
             self.face_index = -1
