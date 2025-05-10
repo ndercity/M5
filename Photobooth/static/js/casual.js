@@ -89,6 +89,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Sticker Variables (dont delete anything pls)
     let stickerImages = [];
+    const stickerTracker = {};
 
     // =============================================
     // STATE VARIABLES
@@ -552,6 +553,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
         backFromEditBtn.addEventListener('click', exitEditMode);
         applyEditBtn.addEventListener('click', applyEdit);
+
         //Event listener for color filter buttons. possible malipat somewhere if ginawang dynamic si color filter
         document.querySelectorAll('#colors .circle-button').forEach((btn, index) => {
             btn.addEventListener('click', () => applyColorFilter(index));
@@ -874,6 +876,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function exitEditMode() {
         editControls.classList.add('hidden');
         clearBoundingBoxes();
+        removeExistingStickers();
     }
 
     function applyEdit() {
@@ -912,6 +915,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     //console.log('50ms has passed');
                     addStickerEventListener();
                     addEditCanvaEventListener();
+                    addDoubleClickForSticker();
                 }, 50);
     
                 observer.disconnect();
@@ -975,14 +979,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 .catch(err => console.error("Failed to fetch face boxes", err));
             });
             sticker.addEventListener('dragend', ()=>{
-                //removeOverlayCanvas();
+                removeOverlayCanvas();
             })
         });
     }
     
 
-    //will the snap here 
+    //sticker snap occurs here
     function addEditCanvaEventListener(){
+        let faceIndex = -1;
+
         if(editCanvas){
             //console.log("edit canvas now exists");
 
@@ -1007,7 +1013,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(res=>res.json())
                 .then(data=>{
                     const boxes = data.boxes;
-                    let faceIndex = -1;
 
                     boxes.forEach((box, index) =>{
                         if(
@@ -1039,8 +1044,11 @@ document.addEventListener("DOMContentLoaded", function() {
                             .then(data => {
                                 const img = new Image();
                                 img.onload = function() {
-                                    drawStickers(img, data.x, data.y, data.width, data.height);
+                                    setStickertoExistingSticker(faceIndex);
+                                    drawStickers(img, data.x, data.y, data.width, data.height, faceIndex);
                                     //console.log("image data: ", data.x, data.y, data.width, data.height);
+                                    
+
                                 };
                                 img.src = "data:image/png;base64," + data.sticker;
                             });
@@ -1059,8 +1067,60 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    function addDoubleClickForSticker() {
+        let faceIndex = -1
+        editCanvas.addEventListener('dblclick', function(event) { 
+
+            event.preventDefault();
+            const rect = editCanvas.getBoundingClientRect();
+            const scaleX = editCanvas.width / editCanvas.offsetWidth;
+            const scaleY = editCanvas.height / editCanvas.offsetHeight;
+
+            const dropX = (event.clientX - rect.left) * scaleX;
+            const dropY = (event.clientY - rect.top) * scaleY;
+
+            fetch('/set_face_boxes')
+                .then(res => res.json())
+                .then(data => {
+                    const boxes = data.boxes;
+
+                    boxes.forEach((box, index) => {
+                        if (
+                            dropX >= box.x &&
+                            dropX <= box.x + box.w &&
+                            dropY >= box.y &&
+                            dropY <= box.y + box.h
+                        ) {
+                            faceIndex = index;
+                        }
+                    });
+
+                    if (faceIndex !== -1){
+                        if(stickerTracker[faceIndex]){
+                                stickerTracker[faceIndex].remove();
+                                //stickerTracker.delete('value');
+                                console.log("sticker replaced")
+                            }                    
+                        }
+                }); 
+        }); 
+    }
+
     function createStickerOverlayCanvas(x, y, width, height){
         const parent = document.getElementById('edit-canvas');
+        let stickerGroup = document.getElementById('sticker-group');
+
+        if (!stickerGroup) {
+            stickerGroup = document.createElement('div');
+            stickerGroup.id = 'sticker-group';
+            stickerGroup.style.position = 'absolute';
+            stickerGroup.style.top = '0';
+            stickerGroup.style.left = '0';
+            stickerGroup.style.width = '100%';
+            stickerGroup.style.height = '100%';
+            stickerGroup.style.pointerEvents = 'none'; 
+            parent.parentElement.appendChild(stickerGroup);
+        }
     
         const overlay = document.createElement('canvas');
         overlay.className = 'sticker-canvas'; // Use class instead of ID
@@ -1068,7 +1128,7 @@ document.addEventListener("DOMContentLoaded", function() {
         overlay.style.pointerEvents = 'none'; 
         overlay.style.zIndex = '999';
     
-        parent.parentElement.style.position = 'relative';
+        //parent.parentElement.style.position = 'relative';
     
         overlay.width = width;
         overlay.height = height;
@@ -1077,12 +1137,12 @@ document.addEventListener("DOMContentLoaded", function() {
         overlay.style.left = x + 'px';
         overlay.style.top = y + 'px';
     
-        parent.parentElement.appendChild(overlay);
+        stickerGroup.appendChild(overlay);
     
         return overlay.getContext('2d');
     }
 
-    function drawStickers(img, x, y, width, height) {
+    function drawStickers(img, x, y, width, height, faceIndex) {
         const newImg = new Image();
         newImg.onload = function () {
             const editCanvas = document.getElementById('edit-canvas');
@@ -1100,6 +1160,7 @@ document.addEventListener("DOMContentLoaded", function() {
             // Now draw with scaled coordinates
             const ctx = createStickerOverlayCanvas(scaledX, scaledY, scaledWidth, scaledHeight);
             ctx.drawImage(newImg, 0, 0, scaledWidth, scaledHeight);
+            stickerTracker[faceIndex] = ctx.canvas
         };
         newImg.src = img.src;
     }
@@ -1137,6 +1198,24 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log("removed");
             overlay.remove();
         }
+    }
+
+    function removeExistingStickers(){
+        const stickerGroup = document.getElementById('sticker-group');
+        if (stickerGroup) {
+            stickerGroup.remove();
+            console.log("All stickers removed");
+        }
+    }
+
+    function setStickertoExistingSticker(index){
+       
+        if(stickerTracker[index]){
+            stickerTracker[index].remove();
+            //stickerTracker.delete('value');
+            console.log("sticker replaced")
+        }
+
     }
 
     function clearBoundingBoxes(){

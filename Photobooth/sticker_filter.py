@@ -45,9 +45,14 @@ class Sticker_Filter:
             "center_chin": 152,
             "center_forehead": 10,
             "center_nose": 1,
+
             "mustache_center": 164,
             "left_mustache": 410,
-            "right_mustache": 186
+            "right_mustache": 186,
+
+            "upper_nasal_bone": 168, #might change this to 8
+            "lower_left_eyes_":230,
+            "lower_right_eyes":450
         }
 
     #tawagin muna ito para mapagana yung buong class
@@ -91,25 +96,6 @@ class Sticker_Filter:
                 _, self.buffer_image = cv2.imencode('.jpg', processed_image)
             else:
                 print("No faces detected")
-            '''
-            if results.multi_face_landmarks:
-                for landmarks in results.multi_face_landmarks:
-                    ih, iw, _ = processed_image.shape
-
-                    x1 = int(landmarks.landmark[234].x * iw) - 10
-                    y1 = int(landmarks.landmark[10].y * ih) - 10
-                    x2 = int(landmarks.landmark[454].x * iw) + 10
-                    y2 = int(landmarks.landmark[152].y * ih) + 10
-
-                    w = x2 - x1
-                    h = y2 - y1
-
-                    self.face_boxes.append({'x': x1, 'y': y1, 'w': w, 'h': h})
-                    self.face_origin.append({'x': x1, 'y': y1})
-                    self.cropped_faces.append(processed_image[y1:y2, x1:x2])                    
-
-                _, self.buffer_image = cv2.imencode('.jpg', processed_image)
-                '''
            
         else:
             print("No image provided")
@@ -176,6 +162,13 @@ class Sticker_Filter:
                 path = "static/stickers/rat.png"
             case "swag":
                 path = "static/stickers/swag.png"
+                swag_center = self.target_landmarks["upper_nasal_bone"]
+                swag_left = self.target_landmarks["lower_left_eyes_"]
+                swag_right = self.target_landmarks["lower_right_eyes"]
+
+                self.src_points = [[50,39], [101,4], [153,31]]
+                self.dest_points = [swag_left, swag_center, swag_right] #left to right again 
+
             case "UoU":
                 path = "static/stickers/UoU.png"
             case default:
