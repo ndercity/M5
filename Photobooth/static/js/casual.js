@@ -983,7 +983,41 @@ document.addEventListener("DOMContentLoaded", function() {
             })
         });
     }
-    
+
+    async function getFaceIndex(x, y) {
+        const res = await fetch('/set_face_boxes');
+        const data = await res.json();
+        const boxes = data.boxes;
+
+        let closestIndex = null;
+        let minDistance = Infinity;
+
+        boxes.forEach((box, index) => {
+            if (
+                x >= box.x &&
+                x <= box.x + box.w &&
+                y >= box.y &&
+                y <= box.y + box.h
+            ) {
+                // Compute center of the box
+                const centerX = box.x + box.w / 2;
+                const centerY = box.y + box.h / 2;
+
+                // Compute Euclidean distance from point to center
+                const dx = x - centerX;
+                const dy = y - centerY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                // Track the closest box
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestIndex = index;
+                }
+            }
+        });
+
+        return closestIndex; // returns null if no box contains the point
+    }
 
     //sticker snap occurs here
     function addEditCanvaEventListener(){
@@ -997,7 +1031,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 event.preventDefault();
             });
 
-            editCanvas.addEventListener('drop', function(event){
+            editCanvas.addEventListener('drop', async function(event){
                 event.preventDefault();
                 const rect = editCanvas.getBoundingClientRect();
                 const scaleX = editCanvas.width / editCanvas.offsetWidth;
@@ -1009,67 +1043,50 @@ document.addEventListener("DOMContentLoaded", function() {
                 //const dropX = event.clientX - rect.left;
                 //const dropY = event.clientY - rect.top;
 
-                fetch('/set_face_boxes')
-                .then(res=>res.json())
-                .then(data=>{
-                    const boxes = data.boxes;
+                faceIndex = await getFaceIndex(dropX, dropY);
+                console.log("the index is: ", faceIndex);
 
-                    boxes.forEach((box, index) =>{
-                        if(
-                            dropX >= box.x &&
-                            dropX <= box.x + box.w &&
-                            dropY >= box.y &&
-                            dropY <= box.y + box.h
-                        ){
-                            faceIndex = index
-                        }
-                    });
+                if (faceIndex !== -1) {
+                    console.log("inside a face");
 
-                    if (faceIndex !== -1) {
-                        console.log("inside a face");
-
-                        let formData = new FormData();
-                        formData.append('faceIndex', faceIndex);
-                        formData.append('stickerType', sticker_alt);
-                    
-                        fetch('/set_face_index', {
-                            method: 'POST',
-                            body: formData
-                        })
+                    let formData = new FormData();
+                    formData.append('faceIndex', faceIndex);
+                    formData.append('stickerType', sticker_alt);
+                
+                    fetch('/set_face_index', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('Data sent, response:', data);
+                        fetch("/get_warped_sticker")
                         .then(res => res.json())
                         .then(data => {
-                            console.log('Data sent, response:', data);
-                            fetch("/get_warped_sticker")
-                            .then(res => res.json())
-                            .then(data => {
-                                const img = new Image();
-                                img.onload = function() {
-                                    setStickertoExistingSticker(faceIndex);
-                                    drawStickers(img, data.x, data.y, data.width, data.height, faceIndex);
-                                    //console.log("image data: ", data.x, data.y, data.width, data.height);
-                                    
-
-                                };
-                                img.src = "data:image/png;base64," + data.sticker;
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Request failed', error);
+                            const img = new Image();
+                            img.onload = function() {
+                                setStickertoExistingSticker(faceIndex);
+                                drawStickers(img, data.x, data.y, data.width, data.height, faceIndex);
+                                //console.log("image data: ", data.x, data.y, data.width, data.height);
+                            };
+                            img.src = "data:image/png;base64," + data.sticker;
                         });
+                    })
+                    .catch(error => {
+                        console.error('Request failed', error);
+                    });
 
-                        //need to make a canvas para mailagay yung mismong sticker
-                    } else {
-                        console.log("outside face");
-                    }
-                });
-                
+                    //need to make a canvas para mailagay yung mismong sticker
+                } else {
+                    console.log("outside face");
+                }
             });
         }
     }
-
+    
     function addDoubleClickForSticker() {
         let faceIndex = -1
-        editCanvas.addEventListener('dblclick', function(event) { 
+        editCanvas.addEventListener('dblclick', async function(event) { 
 
             event.preventDefault();
             const rect = editCanvas.getBoundingClientRect();
@@ -1079,32 +1096,18 @@ document.addEventListener("DOMContentLoaded", function() {
             const dropX = (event.clientX - rect.left) * scaleX;
             const dropY = (event.clientY - rect.top) * scaleY;
 
-            fetch('/set_face_boxes')
-                .then(res => res.json())
-                .then(data => {
-                    const boxes = data.boxes;
+            faceIndex = await getFaceIndex(dropX, dropY);
 
-                    boxes.forEach((box, index) => {
-                        if (
-                            dropX >= box.x &&
-                            dropX <= box.x + box.w &&
-                            dropY >= box.y &&
-                            dropY <= box.y + box.h
-                        ) {
-                            faceIndex = index;
-                        }
-                    });
-
-                    if (faceIndex !== -1){
-                        if(stickerTracker[faceIndex]){
-                                stickerTracker[faceIndex].remove();
-                                //stickerTracker.delete('value');
-                                console.log("sticker replaced")
-                            }                    
-                        }
-                }); 
+            if (faceIndex !== -1){
+                if(stickerTracker[faceIndex]){
+                        stickerTracker[faceIndex].remove();
+                        //stickerTracker.delete('value');
+                        console.log("sticker replaced")
+                    }                    
+                }
         }); 
     }
+       
 
     function createStickerOverlayCanvas(x, y, width, height){
         const parent = document.getElementById('edit-canvas');
