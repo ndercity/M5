@@ -89,6 +89,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Sticker Variables (dont delete anything pls)
     let stickerImages = [];
+    const stickerTracker = {};
+    const stickerMetaData = {};
 
     // =============================================
     // STATE VARIABLES
@@ -105,6 +107,12 @@ document.addEventListener("DOMContentLoaded", function() {
     let carouselItems = [];
     let currentIndex = 0;
     let currentButtonIndex = -1; //negative 1 ang default value para walang ibalik
+
+    // =============================================
+    // VARIABLES
+    // =============================================
+    let sticker_alt = ""
+
 
     // =============================================
     // INITIALIZATION
@@ -546,6 +554,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
         backFromEditBtn.addEventListener('click', exitEditMode);
         applyEditBtn.addEventListener('click', applyEdit);
+
         //Event listener for color filter buttons. possible malipat somewhere if ginawang dynamic si color filter
         document.querySelectorAll('#colors .circle-button').forEach((btn, index) => {
             btn.addEventListener('click', () => applyColorFilter(index));
@@ -649,6 +658,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         img.alt = alt;
                         img.draggable = true;
                         img.classList.add("sticker-img");
+                        img.dataset.stickerType = alt;
     
                         button.appendChild(img);
                         slide.appendChild(button);
@@ -843,14 +853,13 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
-    //test method only
+
     function getImageForSticker(urlBlob){
         fetch(urlBlob)
         .then(response=>response.blob())
         .then(blob => {
             const formData = new FormData();
             formData.append("image", blob)
-            //console.log("natawag ako for sticekr")
             fetch('/get_image_sticker', {
                 method: 'POST', 
                 body: formData,
@@ -866,19 +875,38 @@ document.addEventListener("DOMContentLoaded", function() {
     function exitEditMode() {
         editControls.classList.add('hidden');
         clearBoundingBoxes();
+        removeExistingStickers();
     }
 
     function applyEdit() {
-        const editedImageData = editCanvas.toDataURL('image/png');
-        clearBoundingBoxes();
-        if (capturedImages[currentEditImageIndex]) {
-            URL.revokeObjectURL(capturedImages[currentEditImageIndex]);
+        const editCanvas = document.getElementById('edit-canvas');
+        const mergedCanvas = document.createElement('canvas');
+        mergedCanvas.width = 640;  // base resolution
+        mergedCanvas.height = 480;
+        const ctx = mergedCanvas.getContext('2d');
+
+        ctx.drawImage(editCanvas, 0, 0, 640, 480);
+
+        // redraw all stickers now with its original values
+        for (const data of Object.values(stickerMetaData)) {
+            const stickerImg = new Image();
+            stickerImg.src = data.imgSrc;
+
+            if (stickerImg.complete) {
+                ctx.drawImage(stickerImg, data.x, data.y, data.width, data.height);
+            } else {
+                stickerImg.onload = () => {
+                    ctx.drawImage(stickerImg, data.x, data.y, data.width, data.height);
+                };
+            }
         }
-        
+
+        const editedImageData = mergedCanvas.toDataURL('image/png');
         capturedImages[currentEditImageIndex] = editedImageData;
         selectedImagePreview.src = editedImageData;
         renderTemplate();
         exitEditMode();
+        removeExistingStickers();
         clearBoundingBoxes();
     }
 
@@ -893,6 +921,7 @@ document.addEventListener("DOMContentLoaded", function() {
     ================================================
     */ 
 
+    //para malaman kung edit na ba talaga
     function monitorEditSection() {
         const observer = new MutationObserver(() => {
             const isVisible = !editControls.classList.contains('hidden');
@@ -901,9 +930,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 //console.log('edit loaded');
     
                 setTimeout(() => {
-                    //console.log('50ms has passed');
                     addStickerEventListener();
                     addEditCanvaEventListener();
+                    addDoubleClickForSticker();
                 }, 50);
     
                 observer.disconnect();
@@ -923,6 +952,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    //grrreeeeennnnnnnnn
     function drawBoundingBoxes(boxes) {
         const ctx = createOverlayCanvas();
         const overlay = document.getElementById('overlay-canvas');
@@ -941,83 +971,211 @@ document.addEventListener("DOMContentLoaded", function() {
         
     //lahat ng exsisting stickers ay lalagyan ng draggable
     function addStickerEventListener(){
-    
         if (stickerImages.length === 0) {
             console.log("No draggable stickers found.");
             return;
         }
-
         stickerImages.forEach((sticker) => {
-            //console.log(`Attaching dragstart to: ${sticker.id}`);
-
-            // Only attach if it hasn't been attached yet
             sticker.addEventListener('dragstart', (event) => {
                 event.dataTransfer.setData('text/plain', sticker.src);
-                console.log(`Dragging ${sticker.id}`, event);
+                sticker_alt = sticker.alt;
 
                 fetch('/set_face_boxes')
                 .then(res => res.json())
                 .then(data => {
                     console.log("bounding boxes", data.boxes)
                     drawBoundingBoxes(data.boxes)
-                    //console.log("am i repeating?")
                 })
                 .catch(err => console.error("Failed to fetch face boxes", err));
             });
             sticker.addEventListener('dragend', ()=>{
-                //removeOverlayCanvas();
+                removeOverlayCanvas();
             })
         });
     }
-    
 
-    //will the snap here 
+    //for special scenario na may overlap ng bounding boxes
+    async function getFaceIndex(x, y) {
+        const res = await fetch('/set_face_boxes');
+        const data = await res.json();
+        const boxes = data.boxes;
+
+        let closestIndex = null;
+        let minDistance = Infinity;
+
+        boxes.forEach((box, index) => {
+            if (
+                x >= box.x &&
+                x <= box.x + box.w &&
+                y >= box.y &&
+                y <= box.y + box.h
+            ) {
+                const centerX = box.x + box.w / 2;
+                const centerY = box.y + box.h / 2;
+                const dx = x - centerX;
+                const dy = y - centerY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestIndex = index;
+                }
+            }
+        });
+
+        return closestIndex; // returns null if no box contains the point
+    }
+
+    //sticker snap occurs here
     function addEditCanvaEventListener(){
-        if(editCanvas){
-            //console.log("edit canvas now exists");
+        let faceIndex = -1;
 
+        if(editCanvas){
             editCanvas.addEventListener('dragover', function(event){
-                //console.log("dragover created");
                 event.preventDefault();
             });
 
-            editCanvas.addEventListener('drop', function(event){
+            editCanvas.addEventListener('drop', async function(event){
                 event.preventDefault();
-
                 const rect = editCanvas.getBoundingClientRect();
-                const dropX = event.clientX - rect.left;
-                const dropY = event.clientY - rect.top;
+                const scaleX = editCanvas.width / editCanvas.offsetWidth;
+                const scaleY = editCanvas.height / editCanvas.offsetHeight;
 
-                fetch('/set_face_boxes')
-                .then(res=>res.json())
-                .then(data=>{
-                    const boxes = data.boxes;
-                    let faceIndex = -1;
+                const dropX = (event.clientX - rect.left) * scaleX;
+                const dropY = (event.clientY - rect.top) * scaleY;
 
-                    boxes.forEach((box, index) =>{
-                        if(
-                            dropX >= box.x &&
-                            dropX <= box.x + box.w &&
-                            dropY >= box.y &&
-                            dropY <= box.y + box.h
-                        ){
-                            faceIndex = index
-                        }
+                faceIndex = await getFaceIndex(dropX, dropY);
+                console.log("the index is: ", faceIndex);
+
+                if (faceIndex !== -1) {
+                    console.log("inside a face");
+
+                    let formData = new FormData();
+                    formData.append('faceIndex', faceIndex);
+                    formData.append('stickerType', sticker_alt);
+                
+                    fetch('/set_face_index', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('Data sent, response:', data);
+                        fetch("/get_warped_sticker")
+                        .then(res => res.json())
+                        .then(data => {
+                            const img = new Image();
+                            img.onload = function() {
+                                setStickertoExistingSticker(faceIndex);
+                                //store values for saving purposes
+                                stickerMetaData[faceIndex] = {
+                                    imgSrc: "data:image/png;base64," + data.sticker,   
+                                    //original position nila sa 640x480 na scaling
+                                    x: data.x,              
+                                    y: data.y,
+                                    width: data.width,
+                                    height: data.height
+                                }
+                                drawStickers(img, data.x, data.y, data.width, data.height, faceIndex);
+                                //console.log("image data: ", data.x, data.y, data.width, data.height);
+                            };
+                            img.src = "data:image/png;base64," + data.sticker;
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Request failed', error);
                     });
 
-                    if(faceIndex !== -1){
-                        console.log("inside a face");
-                    }
-                    else{
-                        console.log("outside face")
-                    }
-                })
-                
+                    //need to make a canvas para mailagay yung mismong sticker
+                } else {
+                    console.log("outside face");
+                }
             });
         }
     }
+    
+    function addDoubleClickForSticker() {
+        let faceIndex = -1
+        editCanvas.addEventListener('dblclick', async function(event) { 
 
-    //must fix this. Hindi umaallign sa mukha ng user kapag wala yung width and height
+            event.preventDefault();
+            const rect = editCanvas.getBoundingClientRect();
+            const scaleX = editCanvas.width / editCanvas.offsetWidth;
+            const scaleY = editCanvas.height / editCanvas.offsetHeight;
+
+            const dropX = (event.clientX - rect.left) * scaleX;
+            const dropY = (event.clientY - rect.top) * scaleY;
+
+            faceIndex = await getFaceIndex(dropX, dropY);
+
+            if (faceIndex !== -1){
+                if(stickerTracker[faceIndex]){
+                        stickerTracker[faceIndex].remove();
+                        delete stickerMetaData[faceIndex];
+                        //stickerTracker.delete('value');
+                        console.log("selected sticker deleted")
+                    }                    
+                }
+        }); 
+    }
+       
+    //gagawa ito ng maliliit na overlays depending doon sa size na ibibigay ni flask
+    function createStickerOverlayCanvas(x, y, width, height){
+        const parent = document.getElementById('edit-canvas');
+        let stickerGroup = document.getElementById('sticker-group');
+
+        if (!stickerGroup) {
+            stickerGroup = document.createElement('div');
+            stickerGroup.id = 'sticker-group';
+            stickerGroup.style.position = 'absolute';
+            stickerGroup.style.top = '0';
+            stickerGroup.style.left = '0';
+            stickerGroup.style.width = '100%';
+            stickerGroup.style.height = '100%';
+            stickerGroup.style.pointerEvents = 'none'; 
+            parent.parentElement.appendChild(stickerGroup);
+        }
+    
+        const overlay = document.createElement('canvas');
+        overlay.className = 'sticker-canvas'; 
+        overlay.style.position = 'absolute';
+        overlay.style.pointerEvents = 'none'; 
+        overlay.style.zIndex = '999';
+    
+        //parent.parentElement.style.position = 'relative';
+    
+        overlay.width = width;
+        overlay.height = height;
+        overlay.style.width = width + 'px';
+        overlay.style.height = height + 'px';
+        overlay.style.left = x + 'px';
+        overlay.style.top = y + 'px';
+    
+        stickerGroup.appendChild(overlay);
+    
+        return overlay.getContext('2d');
+    }
+
+    function drawStickers(img, x, y, width, height, faceIndex) {
+        const newImg = new Image();
+        newImg.onload = function () {
+            const editCanvas = document.getElementById('edit-canvas');
+    
+            // scaling down ng mga sticekrs
+            const scaleX = editCanvas.offsetWidth / editCanvas.width;
+            const scaleY = editCanvas.offsetHeight / editCanvas.height;
+            const scaledX = x * scaleX;
+            const scaledY = y * scaleY;
+            const scaledWidth = width * scaleX;
+            const scaledHeight = height * scaleY;
+    
+            const ctx = createStickerOverlayCanvas(scaledX, scaledY, scaledWidth, scaledHeight);
+            ctx.drawImage(newImg, 0, 0, scaledWidth, scaledHeight);
+            stickerTracker[faceIndex] = ctx.canvas
+        };
+        newImg.src = img.src;
+    }
+    
     function createOverlayCanvas(parentId = 'edit-canvas') {
         const parent = document.getElementById(parentId);
         let overlay = document.getElementById('overlay-canvas');
@@ -1050,6 +1208,28 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log("removed");
             overlay.remove();
         }
+    }
+
+    function removeExistingStickers(){
+        const stickerGroup = document.getElementById('sticker-group');
+        if (stickerGroup) {
+            stickerGroup.remove();
+            
+            for (let key in stickerMetaData) {
+                delete stickerMetaData[key];
+            }
+            console.log("All stickers removed");
+        }
+    }
+
+    function setStickertoExistingSticker(index){
+       
+        if(stickerTracker[index]){
+            stickerTracker[index].remove();
+            delete stickerMetaData[index];
+            console.log("sticker replaced")
+        }
+
     }
 
     function clearBoundingBoxes(){

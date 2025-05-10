@@ -5,6 +5,8 @@ from sticker_filter import Sticker_Filter
 import os
 import time
 import uuid
+import base64
+import io
 from db_functions import get_db, init_db, close_connection, insert_photo_session
 from session_flow import start_photo_session, finalize_session
 
@@ -224,6 +226,33 @@ def set_face_boxes():
 def clear_boxes():
     sticker_filter.clear_all()
     return jsonify({"status": "cleared"}), 200
+
+@app.route('/set_face_index', methods=['POST'])
+def set_face_index():
+    index = request.form.get('faceIndex')
+    sticker_type = request.form.get('stickerType')
+    if not index or not sticker_type:
+        return jsonify({"status": "error", "message": "No Index Received"}), 400
+    sticker_filter.set_face_index(index, sticker_type)
+    return jsonify({"status": "cleared"}), 200
+
+@app.route('/get_warped_sticker')
+def get_warped_sticker():
+    overlay = sticker_filter.warp_image()
+    if overlay is not None:
+        x, y, w, h = sticker_filter.get_overlay_bounding_box()
+        base64_sticker = base64.b64encode(overlay).decode('utf-8')
+        print("data sent: ", x, y, w, h)
+        return jsonify({
+            "sticker": base64_sticker,
+            "x": x,
+            "y": y,
+            "width": w,
+            "height": h        
+        })
+
+    return jsonify({"status": "error", "message": "No overlay given"}), 500
+
 
 # For the page before proceeding to tutorial [ email confirmation ]
 @app.route('/start_session', methods=['POST'])
