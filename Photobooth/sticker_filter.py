@@ -78,7 +78,6 @@ class Sticker_Filter:
                     width = int(bounding_box.width * iw)
                     height = int(bounding_box.height * ih)
 
-                    # Expand the box
                     padding_top = int(0.2 * height)
                     padding_sides = int(0.2 * width)
                     padding_bottom = int(0.1 * height)
@@ -102,7 +101,7 @@ class Sticker_Filter:
         else:
             print("No image provided")
 
-    #scans the whole face and saves all the landmark associated to the face
+    #scans the whole face and saves all the landmark associated to the face position para mamaya
     def get_all_target_landmarks(self):
         if self.face_index == -1:
             print("Invalid face index")
@@ -131,8 +130,6 @@ class Sticker_Filter:
         path = None
 
         self.get_all_target_landmarks()
-        #print(self.target_landmarks)
-
         match sticker_type:
             case "AoA":
                 path = "static/stickers/AoA.png"
@@ -223,12 +220,6 @@ class Sticker_Filter:
 
         alpha_mask = warped_alpha / 255.0
         alpha_inv = 1.0 - alpha_mask
-
-        '''
-        #di ko alam kung kailangan ito
-        for c in range(3):
-            c_img[:, :, c] = (alpha_mask * warped_rgb[:, :, c] + alpha_inv * img[:, :, c])
-        '''
         warped_image = cv2.merge([warped_rgb[:, :, 0], warped_rgb[:, :, 1], warped_rgb[:, :, 2], warped_alpha])
 
         _,sticker = cv2.imencode('.png', warped_image)
@@ -237,7 +228,7 @@ class Sticker_Filter:
 
 
     def get_overlay_bounding_box(self):
-        box = self.face_boxes[self.face_index]  # face_index is the index of the face you want
+        box = self.face_boxes[self.face_index] 
         x1 = box['x']
         y1 = box['y']
         x2 = box['w']

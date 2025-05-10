@@ -90,6 +90,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Sticker Variables (dont delete anything pls)
     let stickerImages = [];
     const stickerTracker = {};
+    const stickerMetaData = {};
 
     // =============================================
     // STATE VARIABLES
@@ -853,14 +854,12 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    //test method only
     function getImageForSticker(urlBlob){
         fetch(urlBlob)
         .then(response=>response.blob())
         .then(blob => {
             const formData = new FormData();
             formData.append("image", blob)
-            //console.log("natawag ako for sticekr")
             fetch('/get_image_sticker', {
                 method: 'POST', 
                 body: formData,
@@ -880,16 +879,34 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function applyEdit() {
-        const editedImageData = editCanvas.toDataURL('image/png');
-        clearBoundingBoxes();
-        if (capturedImages[currentEditImageIndex]) {
-            URL.revokeObjectURL(capturedImages[currentEditImageIndex]);
+        const editCanvas = document.getElementById('edit-canvas');
+        const mergedCanvas = document.createElement('canvas');
+        mergedCanvas.width = 640;  // base resolution
+        mergedCanvas.height = 480;
+        const ctx = mergedCanvas.getContext('2d');
+
+        ctx.drawImage(editCanvas, 0, 0, 640, 480);
+
+        // redraw all stickers now with its original values
+        for (const data of Object.values(stickerMetaData)) {
+            const stickerImg = new Image();
+            stickerImg.src = data.imgSrc;
+
+            if (stickerImg.complete) {
+                ctx.drawImage(stickerImg, data.x, data.y, data.width, data.height);
+            } else {
+                stickerImg.onload = () => {
+                    ctx.drawImage(stickerImg, data.x, data.y, data.width, data.height);
+                };
+            }
         }
-        
+
+        const editedImageData = mergedCanvas.toDataURL('image/png');
         capturedImages[currentEditImageIndex] = editedImageData;
         selectedImagePreview.src = editedImageData;
         renderTemplate();
         exitEditMode();
+        removeExistingStickers();
         clearBoundingBoxes();
     }
 
@@ -904,6 +921,7 @@ document.addEventListener("DOMContentLoaded", function() {
     ================================================
     */ 
 
+    //para malaman kung edit na ba talaga
     function monitorEditSection() {
         const observer = new MutationObserver(() => {
             const isVisible = !editControls.classList.contains('hidden');
@@ -912,7 +930,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 //console.log('edit loaded');
     
                 setTimeout(() => {
-                    //console.log('50ms has passed');
                     addStickerEventListener();
                     addEditCanvaEventListener();
                     addDoubleClickForSticker();
@@ -935,6 +952,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    //grrreeeeennnnnnnnn
     function drawBoundingBoxes(boxes) {
         const ctx = createOverlayCanvas();
         const overlay = document.getElementById('overlay-canvas');
@@ -953,20 +971,13 @@ document.addEventListener("DOMContentLoaded", function() {
         
     //lahat ng exsisting stickers ay lalagyan ng draggable
     function addStickerEventListener(){
-    
         if (stickerImages.length === 0) {
             console.log("No draggable stickers found.");
             return;
         }
-
         stickerImages.forEach((sticker) => {
-            //console.log(`Attaching dragstart to: ${sticker.id}`);
-
-            // Only attach if it hasn't been attached yet
             sticker.addEventListener('dragstart', (event) => {
                 event.dataTransfer.setData('text/plain', sticker.src);
-                //console.log(`Dragging ${sticker.id}`, event);
-                //console.log(`Sticker Alt: ${sticker.alt}`)
                 sticker_alt = sticker.alt;
 
                 fetch('/set_face_boxes')
@@ -974,7 +985,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(data => {
                     console.log("bounding boxes", data.boxes)
                     drawBoundingBoxes(data.boxes)
-                    //console.log("am i repeating?")
                 })
                 .catch(err => console.error("Failed to fetch face boxes", err));
             });
@@ -984,6 +994,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    //for special scenario na may overlap ng bounding boxes
     async function getFaceIndex(x, y) {
         const res = await fetch('/set_face_boxes');
         const data = await res.json();
@@ -999,16 +1010,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 y >= box.y &&
                 y <= box.y + box.h
             ) {
-                // Compute center of the box
                 const centerX = box.x + box.w / 2;
                 const centerY = box.y + box.h / 2;
-
-                // Compute Euclidean distance from point to center
                 const dx = x - centerX;
                 const dy = y - centerY;
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
-                // Track the closest box
                 if (distance < minDistance) {
                     minDistance = distance;
                     closestIndex = index;
@@ -1024,10 +1031,7 @@ document.addEventListener("DOMContentLoaded", function() {
         let faceIndex = -1;
 
         if(editCanvas){
-            //console.log("edit canvas now exists");
-
             editCanvas.addEventListener('dragover', function(event){
-                //console.log("dragover created");
                 event.preventDefault();
             });
 
@@ -1039,9 +1043,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 const dropX = (event.clientX - rect.left) * scaleX;
                 const dropY = (event.clientY - rect.top) * scaleY;
-
-                //const dropX = event.clientX - rect.left;
-                //const dropY = event.clientY - rect.top;
 
                 faceIndex = await getFaceIndex(dropX, dropY);
                 console.log("the index is: ", faceIndex);
@@ -1066,6 +1067,15 @@ document.addEventListener("DOMContentLoaded", function() {
                             const img = new Image();
                             img.onload = function() {
                                 setStickertoExistingSticker(faceIndex);
+                                //store values for saving purposes
+                                stickerMetaData[faceIndex] = {
+                                    imgSrc: "data:image/png;base64," + data.sticker,   
+                                    //original position nila sa 640x480 na scaling
+                                    x: data.x,              
+                                    y: data.y,
+                                    width: data.width,
+                                    height: data.height
+                                }
                                 drawStickers(img, data.x, data.y, data.width, data.height, faceIndex);
                                 //console.log("image data: ", data.x, data.y, data.width, data.height);
                             };
@@ -1101,14 +1111,15 @@ document.addEventListener("DOMContentLoaded", function() {
             if (faceIndex !== -1){
                 if(stickerTracker[faceIndex]){
                         stickerTracker[faceIndex].remove();
+                        delete stickerMetaData[faceIndex];
                         //stickerTracker.delete('value');
-                        console.log("sticker replaced")
+                        console.log("selected sticker deleted")
                     }                    
                 }
         }); 
     }
        
-
+    //gagawa ito ng maliliit na overlays depending doon sa size na ibibigay ni flask
     function createStickerOverlayCanvas(x, y, width, height){
         const parent = document.getElementById('edit-canvas');
         let stickerGroup = document.getElementById('sticker-group');
@@ -1126,7 +1137,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     
         const overlay = document.createElement('canvas');
-        overlay.className = 'sticker-canvas'; // Use class instead of ID
+        overlay.className = 'sticker-canvas'; 
         overlay.style.position = 'absolute';
         overlay.style.pointerEvents = 'none'; 
         overlay.style.zIndex = '999';
@@ -1150,17 +1161,14 @@ document.addEventListener("DOMContentLoaded", function() {
         newImg.onload = function () {
             const editCanvas = document.getElementById('edit-canvas');
     
-            // Scaling factors from internal canvas size to visible canvas size
+            // scaling down ng mga sticekrs
             const scaleX = editCanvas.offsetWidth / editCanvas.width;
             const scaleY = editCanvas.offsetHeight / editCanvas.height;
-    
-            // Apply scaling to position and size
             const scaledX = x * scaleX;
             const scaledY = y * scaleY;
             const scaledWidth = width * scaleX;
             const scaledHeight = height * scaleY;
     
-            // Now draw with scaled coordinates
             const ctx = createStickerOverlayCanvas(scaledX, scaledY, scaledWidth, scaledHeight);
             ctx.drawImage(newImg, 0, 0, scaledWidth, scaledHeight);
             stickerTracker[faceIndex] = ctx.canvas
@@ -1168,7 +1176,6 @@ document.addEventListener("DOMContentLoaded", function() {
         newImg.src = img.src;
     }
     
-    //must fix this. Hindi umaallign sa mukha ng user kapag wala yung width and height
     function createOverlayCanvas(parentId = 'edit-canvas') {
         const parent = document.getElementById(parentId);
         let overlay = document.getElementById('overlay-canvas');
@@ -1207,6 +1214,10 @@ document.addEventListener("DOMContentLoaded", function() {
         const stickerGroup = document.getElementById('sticker-group');
         if (stickerGroup) {
             stickerGroup.remove();
+            
+            for (let key in stickerMetaData) {
+                delete stickerMetaData[key];
+            }
             console.log("All stickers removed");
         }
     }
@@ -1215,7 +1226,7 @@ document.addEventListener("DOMContentLoaded", function() {
        
         if(stickerTracker[index]){
             stickerTracker[index].remove();
-            //stickerTracker.delete('value');
+            delete stickerMetaData[index];
             console.log("sticker replaced")
         }
 
