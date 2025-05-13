@@ -1,31 +1,31 @@
-# SAMPLE CODE ONLY. NO FUNCTIONALITY YET
+import os
+from dotenv import load_dotenv
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 
+# Load environment variables from .env file
+load_dotenv()
+
 SMTP_SERVER = 'smtp.gmail.com'
 SMTP_PORT = 587
-SENDER_EMAIL = 'your_email@example.com'
-SENDER_PASSWORD = 'your_app_password'  # Use app password if using Gmail with 2FA
+SENDER_EMAIL = os.getenv('SENDER_EMAIL')
+SENDER_PASSWORD = os.getenv('SENDER_PASSWORD')
 
 def send_email_with_pdf(to_email, pdf_data, session_id):
     try:
-        # Create email message
         msg = MIMEMultipart()
         msg['From'] = SENDER_EMAIL
         msg['To'] = to_email
         msg['Subject'] = f"Your PhotoBooth Session PDF (Session ID: {session_id})"
 
-        # Add a body text
         msg.attach(MIMEText('Thanks for using our PhotoBooth! Attached is your session PDF.', 'plain'))
 
-        # Attach the PDF
         attachment = MIMEApplication(pdf_data, _subtype="pdf")
         attachment.add_header('Content-Disposition', 'attachment', filename=f'session_{session_id}.pdf')
         msg.attach(attachment)
 
-        # Send the email
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
             server.login(SENDER_EMAIL, SENDER_PASSWORD)

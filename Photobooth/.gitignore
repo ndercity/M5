@@ -4,3 +4,4 @@ __pycache__/
 *.py[cod]
 photobooth.db
 *.db
+.env
