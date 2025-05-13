@@ -1,11 +1,13 @@
 import customtkinter as ctk
-from logic import RFID_Logic as rfl
+from logic import RFID_Logic, AppState
 from PIL import Image
 import pywinstyles as pws
 
 class AppUI:
     def __init__(self, root): 
         self.root = root
+        self.state = AppState()
+        #self.logic = RFID_Logic()
         self.root.title("Pic-a-Pi RFID")
         self.root.geometry("800x480")
         
@@ -18,7 +20,7 @@ class AppUI:
         self.pages = {} #container ito ng page states
         for PageClass in (HomePage, ScanPage, OperationsPage, CompeleteOperation):
             page_name = PageClass.__name__
-            frame = PageClass(self.container, self)
+            frame = PageClass(self.container, self, self.state)
             self.pages[page_name] = frame
             frame.grid(row= 0, column = 0, sticky="nsew")
 
@@ -30,7 +32,7 @@ class AppUI:
         
 
 class HomePage(ctk.CTkFrame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, state):
         super().__init__(parent)
         self.button_height = 60
         self.button_width = 200
@@ -57,8 +59,15 @@ class HomePage(ctk.CTkFrame):
 
 
 class ScanPage(ctk.CTkFrame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, state):
+        self.controller = controller
+        self.state = state
+        self.logic = logic
+
         super().__init__(parent)
+
+        self.logic.turn_on_rfid()
+
         self.bg_image = ctk.CTkImage(light_image = Image.open('images/scan_design.png'), 
                                                                 size = (800,480)) #just to make sure
         
@@ -83,6 +92,7 @@ class ScanPage(ctk.CTkFrame):
         self.bg_image_label.place(x=(800/2) - (167/2), y=223)
         pws.set_opacity(self.bg_image_label, color="#000001")
 
+        self.rfid_logic = self.logic(self.on_rfid_scanned)
 
         self.back_button = ctk.CTkButton(self, height = 54, width = 181, 
                                         text="Back", 
@@ -93,7 +103,7 @@ class ScanPage(ctk.CTkFrame):
                                         bg_color="#000001",
                                         border_color = "#FFFFFF",
                                         border_width=4,                                         
-                                        command=lambda: controller.show_page("HomePage"))
+                                        command=lambda: self.go_back)
         self.back_button.place(x=(800/2) - (181/2), y=378)
         pws.set_opacity(self.back_button, color="#000001")
 
@@ -111,10 +121,25 @@ class ScanPage(ctk.CTkFrame):
         self.x_button.place(x=(800/2) - (181/2), y=400)
         pws.set_opacity(self.x_button, color="#000001")
 
+        self.rfid_logic = RFID_Logic(self.on_rfid_scanned)
+        self.rfid_logic.turn_on_rfid()
+
+    def on_rfid_scanned(self, rfid):
+        self.state.set_rfid(rfid)
+        self.rfid_logic.turn_off_rfid()
+        self.controller.show_page("OperationsPage")
+
+    def go_back(self):
+        self.rfid_logic.turn_off_rfid()
+        self.controller.show_page("HomePage")
 
 class OperationsPage(ctk.CTkFrame):
-     def __init__(self, parent, controller):
+    def __init__(self, parent, controller, state, logic):
+        self.controller = controller
+        self.state = state
+        self.logic = logic
         super().__init__(parent)
+        self.rfid_display, self.rfid_status = self.state.get_current_rfid()
 
         self.bg_image = ctk.CTkImage(light_image = Image.open('images/scan_design.png'), 
                                                                 size = (800,480)) #just to make sure
@@ -139,7 +164,7 @@ class OperationsPage(ctk.CTkFrame):
         self.scan_label.pack()   
 
         self.rfid_num_label = ctk.CTkLabel(self.text_container,
-                                       text = "RFID Number: 0000000",
+                                       text = f"RFID Number: {self.rfid_display if self.rfid_display else '0000000'}",
                                        font = ("Helvetica", 15),
                                        text_color = "#000000")
         self.rfid_num_label.pack()
@@ -150,7 +175,6 @@ class OperationsPage(ctk.CTkFrame):
                                        text_color = "#000000")
         self.rfid_status_label.pack()
 
-
         self.register_button = ctk.CTkButton(self, height = 54, width = 181, 
                                         text="Register/Reactivate", 
                                         text_color = "#000000",
@@ -160,7 +184,7 @@ class OperationsPage(ctk.CTkFrame):
                                         bg_color="#000001",
                                         border_color = "#FFFFFF",
                                         border_width=4,                                         
-                                        command=lambda: controller.show_page("HomePage")) #iibahin ito
+                                        command=lambda: self.rfid_operation(self.rfid_display, True)) #iibahin ito
         self.register_button.place(x=207, y=289)
         pws.set_opacity(self.register_button, color="#000001")
 
@@ -173,7 +197,7 @@ class OperationsPage(ctk.CTkFrame):
                                         bg_color="#000001",
                                         border_color = "#FFFFFF",
                                         border_width=4,                                         
-                                        command=lambda: controller.show_page("HomePage")) #iibahin ito
+                                        command=lambda: self.rfid_operation(self.rfid_display, False)) #iibahin ito
         self.deactivate_button.place(x=412, y=289)
         pws.set_opacity(self.deactivate_button, color="#000001")
 
@@ -186,7 +210,7 @@ class OperationsPage(ctk.CTkFrame):
                                         bg_color="#000001",
                                         border_color = "#FFFFFF",
                                         border_width=4,                                         
-                                        command=lambda: controller.show_page("ScanPage"))
+                                        command=lambda: self.clear)
         self.back_button.place(x=(800/2) - (181/2), y=378)
         pws.set_opacity(self.back_button, color="#000001")
 
@@ -204,9 +228,22 @@ class OperationsPage(ctk.CTkFrame):
         self.x_button.place(x=(800/2) - (181/2), y=400)
         pws.set_opacity(self.x_button, color="#000001")
 
+    def rfid_operation(self, rfid, isUpdate):
+        self.state.manipulate_rfid(rfid, isUpdate)
+        self.controller.show_page("CompeleteOperation")
+
+    def clear(self):
+        self.state.clear_details()
+        self.controller.show_page("ScanPage")
+
 class CompeleteOperation(ctk.CTkFrame):
-     def __init__(self, parent, controller):
+    def __init__(self, parent, controller, state, logic):
         super().__init__(parent)
+        self.controller = controller
+        self.state = state
+        self.logic = logic
+        self.rfid_display, self.rfid_status = self.state.get_current_rfid()
+
 
         self.bg_image = ctk.CTkImage(light_image = Image.open('images/scan_design.png'), 
                                                                 size = (800,480)) #just to make sure
@@ -231,13 +268,13 @@ class CompeleteOperation(ctk.CTkFrame):
         self.scan_label.pack()   
 
         self.rfid_num_label = ctk.CTkLabel(self.text_container,
-                                       text = "RFID Number: 0000000",
+                                       text = f"RFID Number: {self.rfid_display if self.rfid_display else '0000000'}",
                                        font = ("Helvetica", 15),
                                        text_color = "#000000")
         self.rfid_num_label.pack()
 
         self.rfid_status_label = ctk.CTkLabel(self.text_container,
-                                       text = "Status: Something",
+                                       text = f"RFID Status: {self.rfid_status}",
                                        font = ("Helvetica", 15),
                                        text_color = "#000000")
         self.rfid_status_label.pack()
@@ -252,7 +289,7 @@ class CompeleteOperation(ctk.CTkFrame):
                                         bg_color="#000001",
                                         border_color = "#FFFFFF",
                                         border_width=4,                                         
-                                        command=lambda: controller.show_page("ScanPage"))
+                                        command=lambda: self.clear("ScanPage"))
         self.rescan_button.place(x=(800/2) - (181/2), y=289)
         pws.set_opacity(self.rescan_button, color="#000001")
 
@@ -265,6 +302,10 @@ class CompeleteOperation(ctk.CTkFrame):
                                         bg_color="#000001",
                                         border_color = "#FFFFFF",
                                         border_width=4,                                         
-                                        command=lambda: controller.show_page("HomePage"))
+                                        command=lambda: self.clear("HomePage"))
         self.back_button.place(x=(800/2) - (181/2), y=378)
         pws.set_opacity(self.back_button, color="#000001")
+
+    def clear(self, page):
+        self.state.clear_details()
+        self.controller.show_page("ScanPage")
