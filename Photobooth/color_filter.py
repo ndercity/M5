@@ -139,8 +139,9 @@ class Color_Filter:
       else:
          print("No image detected")
          return None
-
-
+      
+   def give_edit(self):
+      print("hehe")
 
    #gagamitin ito kapag nagapply na si user ng filter per tinaggal nya magkakaroon pa ito ng another shit fix dahil possible na hindi makita ang sticker dito
    def return_raw(self):

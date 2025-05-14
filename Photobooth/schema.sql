@@ -6,3 +6,10 @@ CREATE TABLE IF NOT EXISTS photo_sessions (
     session_id TEXT UNIQUE NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS rfid_db(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  rfid_key VARCHAR NOT NULL,
+  status TEXT DEFAULT 'activated', 
+  UNIQUE(rfid_key)
+);
