@@ -34,6 +34,16 @@ def insert_photo_session(email, pdf_data, status='pending', session_id=None):
     db.commit()
     return session_id
 
+def update_photo_blob(session_id, photo_blob):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('''
+        UPDATE photo_sessions
+        SET pdf_data = ?
+        WHERE session_id = ?
+    ''', (photo_blob, session_id))
+    db.commit()
+
 def get_photo_session_by_id(session_id):
     db = get_db()
     cursor = db.cursor()
