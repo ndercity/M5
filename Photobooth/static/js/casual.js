@@ -1288,10 +1288,71 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function downloadResult() {
+        /*
         const link = document.createElement('a');
         link.download = `photo-booth-${currentTemplate.name.toLowerCase().replace(/ /g, '-')}-${new Date().getTime()}.png`;
         link.href = resultCanvas.toDataURL('image/png');
         link.click();
+        */
+        if(capturedImages.length === 0){
+            console.log("nothing so download");
+            return;
+        }
+
+        const session_id = localStorage.getItem('session_id');
+
+        resultCanvas.toBlob(blob => {
+            if (!blob) {
+                alert("Failed to get image blob!");
+                return;
+            }
+    
+            const formData = new FormData();
+            formData.append('photo', blob, 'photo.png');
+            formData.append('session_id', session_id);
+    
+            fetch('/upload_photo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                if (data.message === "Photo saved successfully") {
+                    alert("Photo saved! Sending email...");
+    
+                    // Directly call finalize_session with session_id only
+                    const finalizeForm = new FormData();
+                    finalizeForm.append('session_id', session_id);
+    
+                    return fetch('/finalize_session', {
+                        method: 'POST',
+                        body: finalizeForm
+                    });
+                } else {
+                    throw new Error(data.error || 'Failed to save photo');
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to finalize session');
+                return response.json();
+            })
+            .then(finalizeData => {
+                if (finalizeData.status === 'sent') {
+                    alert("Email sent! Redirecting to home...");
+                    window.location.href = "/";
+                } else {
+                    alert("Failed to send email.");
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Error during photo save or email sending: ' + error.message);
+            });
+    
+        }, 'image/png');
     }
 
     function returnToLayout() {
@@ -1300,7 +1361,6 @@ document.addEventListener("DOMContentLoaded", function() {
             switchToLayoutSelection();
         }
     }
-
 
     function resetCaptureState() {
         capturedImages.forEach(img => {
