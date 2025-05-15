@@ -235,7 +235,7 @@ button:disabled {
 .control-group input[type="range"] {
     width: 250px;
     height: 6px;
-    -webkit-appearance: none;
+    appearance: none;
     background: #bdc3c7;
     border-radius: 3px;
     outline: none;
@@ -256,9 +256,9 @@ button:disabled {
     transform: scale(1.1);
 }
 
-/* =====================
-   Download Confirmation
-   ===================== */
+/*  =====================
+    Download Confirmation
+    ===================== */
 .download-confirmation {
     position: fixed;
     bottom: 20px;
