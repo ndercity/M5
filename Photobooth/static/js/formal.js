@@ -112,6 +112,8 @@ document.addEventListener("DOMContentLoaded", function () {
         
         // Clean up on page unload
         window.addEventListener("beforeunload", cleanup);
+
+
     }
 
     // =====================
