@@ -389,12 +389,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("Email sent! Redirecting to home...");
                     window.location.href = "/";
                 } else {
-                    alert("Failed to send email.");
+                    alert("Failed to send email. Redirecting to home...");
+                    window.location.href = "/";
                 }
             })
             .catch(error => {
                 console.error(error);
-                alert('Error during photo save or email sending: ' + error.message);
+                alert('Error during photo save or email sending: ' + error.message + ' Redirecting to home...');
+                window.location.href = "/";
             });
     
         }, 'image/png');
