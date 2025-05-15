@@ -50,10 +50,13 @@ def finalize_session(session_id):
     for attempt in range(1, max_retries + 1):
         try:
             print(f"[Email] Attempt {attempt} to send PDF to {email}")
-            send_email_with_pdf(email, pdf_bytes, session_id)
-            update_photo_session_status(session_id, "sent")
-            print(f"[Email] Sent successfully to {email}")
-            return True
+            sent = send_email_with_pdf(email, pdf_bytes, session_id)
+            if sent:
+                update_photo_session_status(session_id, "sent")
+                print(f"[Email] Sent successfully to {email}")
+                return True
+            else:
+                print(f"[Email] Sending failed (status false) on attempt {attempt}")
         except Exception as e:
             print(f"[Email] Failed attempt {attempt}: {e}")
 
