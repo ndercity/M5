@@ -36,10 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // =====================
     const elements = {
         // Camera controls
-        toggleCameraBtn: document.getElementById("toggle-camera"),
         videoFeed: document.getElementById("video-feed"),
         captureBtn: document.getElementById("capture-btn"),
-        previewBtn: document.getElementById("preview-btn"),
         
         // Preview controls
         mainPreview: document.getElementById("main-preview"),
@@ -100,9 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function setupEventListeners() {
         // Camera controls
-        elements.toggleCameraBtn.addEventListener("click", toggleCamera);
         elements.captureBtn.addEventListener("click", capturePhoto);
-        elements.previewBtn.addEventListener("click", showPreviewSection);
         
         // Preview controls
         elements.finalizeBtn.addEventListener("click", showResultsSection);
@@ -136,14 +132,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         };
         
-        elements.toggleCameraBtn.textContent = "Close Camera";
         state.cameraActive = true;
     }
 
     function stopCamera() {
         elements.videoFeed.onerror = null;
         elements.videoFeed.src = "";
-        elements.toggleCameraBtn.textContent = "Open Camera";
         state.cameraActive = false;
         fetch("/stop_camera");
     }

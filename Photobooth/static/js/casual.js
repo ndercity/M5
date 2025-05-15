@@ -3,40 +3,67 @@ document.addEventListener("DOMContentLoaded", function() {
     // CONSTANTS AND CONFIGURATION
     // =============================================
     const TEMPLATE_CONFIG = {
-        grid: {
-            name: "Classic Grid",
+        one: {
+            name: "One",
             areas: [
-                { x: 0, y: 0, width: 900, height: 600, color: '#FFDDC1' }, // Top-left
-                { x: 900, y: 0, width: 900, height: 600, color: '#C1FFD7' }, // Top-right
-                { x: 0, y: 600, width: 900, height: 600, color: '#C1D7FF' }, // Bottom-left
-                { x: 900, y: 600, width: 900, height: 600, color: '#FFC1E3' } // Bottom-right
+                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
+                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
+                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
+                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
             ]
         },
-        featured: {
-            name: "Featured + 3",
+        two: {
+            name: "Two",
             areas: [
-                { x: 0, y: 0, width: 1200, height: 600, color: '#FFDDC1' }, // Main featured
-                { x: 0, y: 600, width: 600, height: 600, color: '#C1FFD7' }, // Small 1
-                { x: 600, y: 600, width: 600, height: 600, color: '#C1D7FF' }, // Small 2
-                { x: 1200, y: 0, width: 600, height: 1200, color: '#FFC1E3' } // Small 3
+                { x: 58.7, y: 24.9, width: 1000, height: 562.5, color: '#FFDDC1' }, 
+                { x: 1091.3, y: 221.8, width: 650, height: 365.6, color: '#C1FFD7' },
+                { x: 58.7, y: 612.6, width: 650, height: 365.6, color: '#C1D7FF' }, 
+                { x: 741.3, y: 612.6, width: 1000, height: 562.5, color: '#FFC1E3' } 
             ]
         },
-        vertical: {
-            name: "Vertical Strip",
+        three: {
+            name: "Three",
             areas: [
-                { x: 0, y: 0, width: 450, height: 1200, color: '#FFDDC1' }, // Left
-                { x: 450, y: 0, width: 450, height: 1200, color: '#C1FFD7' }, // Middle-left
-                { x: 900, y: 0, width: 450, height: 1200, color: '#C1D7FF' }, // Middle-right
-                { x: 1350, y: 0, width: 450, height: 1200, color: '#FFC1E3' } // Right
+                { x: 94.8, y: 77.9, width: 784.9, height: 441.5, color: '#FFDDC1' },
+                { x: 920.4, y: 174.9, width: 784.9, height: 441.5, color: '#C1FFD7' }, 
+                { x: 94.8, y: 583.6, width: 784.9, height: 441.5, color: '#C1D7FF' }, 
+                { x: 920.4, y: 680.6, width: 784.9, height: 441.5, color: '#FFC1E3' } 
             ]
         },
-        horizontal: {
-            name: "Horizontal Strip",
+        four: {
+            name: "Four",
             areas: [
-                { x: 0, y: 0, width: 1800, height: 300, color: '#FFDDC1' }, // Left
-                { x: 0, y: 300, width: 1800, height: 300, color: '#C1FFD7' }, // Middle-left
-                { x: 0, y: 600, width: 1800, height: 300, color: '#C1D7FF' }, // Middle-right
-                { x: 0, y: 900, width: 1800, height: 300, color: '#FFC1E3' } // Right
+                { x: 282.1, y: 90, width: 1204.4, height: 677.5, color: '#FFDDC1' }, 
+                { x: 35.9, y: 797.8, width: 555.1, height: 312.2, color: '#C1FFD7' }, 
+                { x: 622.4, y: 797.8, width: 555.1, height: 312.2, color: '#C1D7FF' }, 
+                { x: 1209, y: 797.8, width: 555.1, height: 312.2, color: '#FFC1E3' } 
+            ]
+        },
+        five: {
+            name: "Five",
+            areas: [
+                { x: 391.9, y: 52.8, width: 706.8, height: 397.6, color: '#FFDDC1' }, 
+                { x: 928.3, y: 301.8, width: 706.8, height: 397.6, color: '#C1FFD7' }, 
+                { x: 164.9, y: 500.6, width: 706.8, height: 397.6, color: '#C1D7FF' }, 
+                { x: 701.2, y: 749.6, width: 706.8, height: 397.6, color: '#FFC1E3' } 
+            ]
+        },
+        six: {
+            name: "Six",
+            areas: [
+                { x: 158.6, y: 144.6, width: 732.8, height: 412.2, color: '#FFDDC1' },
+                { x: 908.6, y: 144.6, width: 732.8, height: 412.2, color: '#C1FFD7' },
+                { x: 30.9, y: 571.3, width: 860.6, height: 484.1, color: '#C1D7FF' },
+                { x: 908.6, y: 571.3, width: 860.6, height: 484.1, color: '#FFC1E3' }
+            ]
+        },
+        seven: {
+            name: "Seven",
+            areas: [
+                { x: 117, y: 138.6, width: 732.8, height: 412.2, color: '#FFDDC1' }, 
+                { x: 872.7, y: 98.9, width: 834.6, height: 522.2, color: '#C1FFD7' },
+                { x: 92.7, y: 578.9, width: 834.6, height: 522.2, color: '#C1D7FF' },
+                { x: 953.1, y: 646.7, width: 732.8, height: 412.2, color: '#FFC1E3' } 
             ]
         }
     };
@@ -53,7 +80,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const captureSection = document.getElementById('capture-section');
     const videoFeed = document.getElementById('video-feed');
     const videoContainer = document.querySelector('.video-container');
-    const toggleCameraBtn = document.getElementById('toggle-camera');
     const captureBtn = document.getElementById('capture-btn');
     const poseNumber = document.getElementById('pose-number');
     const confirmLayoutBtn = document.getElementById('confirm-layout');
@@ -232,6 +258,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function navigateCarousel(direction) {
         currentIndex = (currentIndex + direction + carouselItems.length) % carouselItems.length;
         scrollToItem(currentIndex);
+        selectItem(currentIndex);
     }
 
     function scrollToItem(index) {
@@ -249,6 +276,7 @@ document.addEventListener("DOMContentLoaded", function() {
         carouselItems[index].classList.add('selected');
         currentTemplate = TEMPLATE_CONFIG[carouselItems[index].dataset.layout];
         currentIndex = index;
+        console.log("Current Layout: ", currentIndex)
     }
 
     function handleKeyboardNavigation(e) {
@@ -313,15 +341,13 @@ document.addEventListener("DOMContentLoaded", function() {
     function startCamera() {
         videoFeed.onerror = handleCameraError;
         videoFeed.src = "/video_feed?" + new Date().getTime();
-        toggleCameraBtn.textContent = "Close Camera";
         cameraActive = true;
-        setTimeout(updateVideoContainerLayout, 100);
+        setTimeout(updateVideoContainerLayout, 3000);
     }
 
     function stopCamera() {
         videoFeed.onerror = null;
         videoFeed.src = "";
-        toggleCameraBtn.textContent = "Open Camera";
         cameraActive = false;
         fetch("/stop_camera");
     }
@@ -1379,6 +1405,7 @@ document.addEventListener("DOMContentLoaded", function() {
         layoutSelection.classList.remove("section-inactive");
         layoutSelection.classList.add("section-active");
         stopCamera();
+        startCamera();
     }
 
     function startOver() {
@@ -1397,7 +1424,6 @@ document.addEventListener("DOMContentLoaded", function() {
         templateContainer.addEventListener('click', handleTemplateClick);
         
         // Camera and capture
-        toggleCameraBtn.addEventListener('click', toggleCamera);
         captureBtn.addEventListener('click', capturePose);
         confirmLayoutBtn.addEventListener('click', confirmLayout);
         
