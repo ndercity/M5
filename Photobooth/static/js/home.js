@@ -4,9 +4,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevBtn = document.querySelector('.carousel-control.prev');
     const nextBtn = document.querySelector('.carousel-control.next');
     const indicatorsContainer = document.querySelector('.carousel-indicators');
-    
+    const scan = document.querySelector('.scan');
+    const emailForm = document.querySelector('.email-form');
     let currentIndex = 0;
-    
+
     // Create indicators (remove if mas better)
     items.forEach((_, index) => {
         const indicator = document.createElement('div');
@@ -42,10 +43,28 @@ document.addEventListener('DOMContentLoaded', function() {
         currentIndex = (currentIndex - 1 + items.length) % items.length;
         updateCarousel();
     }
+
+    function displayEmail(){
+        toggleSection(scan,false);
+        toggleSection(emailForm, true);
+    }
+
+    function initialize() {
+        //Page Initialization
+    scan.classList.add("section-active");
+    emailForm.classList.add("section-inactive");
+    }
+
+    function toggleSection(section, show) {
+        section.classList.toggle("section-active", show);
+        section.classList.toggle("section-inactive", !show);
+        document.getElementById("email-form").scrollIntoView({behavior:'smooth' , block: 'center'});
+    }
     
     // Event listeners
     nextBtn.addEventListener('click', nextSlide);
     prevBtn.addEventListener('click', prevSlide);
+    scan.addEventListener('click', displayEmail)
     
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
@@ -94,5 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Server error');
         }
     });
-    
+    initialize();
+    console.log("nagana lods")
+
 });
