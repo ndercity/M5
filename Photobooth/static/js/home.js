@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const indicatorsContainer = document.querySelector('.carousel-indicators');
     const scan = document.querySelector('.scan');
     const emailForm = document.querySelector('.email-form');
+    const carouselProMax = document.querySelector('.carouselProMax');
     let currentIndex = 0;
 
     // Create indicators (remove if mas better)
@@ -47,18 +48,25 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayEmail(){
         toggleSection(scan,false);
         toggleSection(emailForm, true);
+        document.getElementById("email-form").scrollIntoView({behavior:'smooth' , block: 'center'});
+    }
+
+    function displayCarousel(){
+        toggleSection(emailForm, false);
+        toggleSection(carouselProMax, true);
+        document.getElementById("carouselProMax").scrollIntoView({behavior:'smooth' , block: 'center'});
     }
 
     function initialize() {
         //Page Initialization
     scan.classList.add("section-active");
     emailForm.classList.add("section-inactive");
+    carouselProMax.classList.add("section-inactive");
     }
 
     function toggleSection(section, show) {
         section.classList.toggle("section-active", show);
         section.classList.toggle("section-inactive", !show);
-        document.getElementById("email-form").scrollIntoView({behavior:'smooth' , block: 'center'});
     }
     
     // Event listeners
@@ -102,6 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 //check kung present yung 2 data
                 console.log('Session started with ID:', data.session_id);
                 console.log('Session started with email:', email);
+                displayCarousel();
     
                 // OPTIONAL: Redirect to mode selection if needed
                 // window.location.href = "/mode";

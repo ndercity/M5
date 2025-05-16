@@ -10,13 +10,12 @@ main {
     -webkit-text-stroke-width: 1px;
     font-weight: bold;
     font-size: 120px;
-    line-height: 2px;
 }
 
 .emailButton{
     display: flex;
     padding: 5px;
-    margin: 5px;
+    margin: 10px;
 }
 
 .scan{
@@ -136,7 +135,8 @@ a.btn-link:hover {
 
 
 body {
-    background:radial-gradient( #FFFFFF 100%);
+    display:flex;
+    overflow: hidden;
 }
 
 .ocean { 
@@ -187,6 +187,7 @@ body {
 form{
     display: flex;
     flex-direction: column;
+    justify-self: center;
     align-items: center;
     flex-wrap: wrap;
     margin-top: 20vh;
@@ -208,11 +209,21 @@ button:hover{
 
 .section-active {
     opacity: 1;
-    animation: fadeIn 0.3s ease-out;
+    animation: fadeInOut 0.9s ease-out;
     z-index: 1000 !important;
 }
 
 .section-inactive {
     opacity: 0;
     overflow: hidden;
+}
+
+.carouselProMax{
+    display: block;
+}
+
+input{
+    width: 55vh;
+    height: 5vh;
+    font-size: 14px;
 }
