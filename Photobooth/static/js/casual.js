@@ -117,6 +117,8 @@ document.addEventListener("DOMContentLoaded", function() {
     let stickerImages = [];
     const stickerTracker = {};
     const stickerMetaData = {};
+    const picEditState = [false, false, false, false]; //ito ang magiindicate kung naedit na ba yung pic or hindi
+    let isImageRaw = true; //titignan neto kung raw pa ba ang image or hindi na
 
     // =============================================
     // STATE VARIABLES
@@ -133,6 +135,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let carouselItems = [];
     let currentIndex = 0;
     let currentButtonIndex = -1; //negative 1 ang default value para walang ibalik
+    let retakeChances = 3;
 
     // =============================================
     // VARIABLES
@@ -470,7 +473,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function selectImage(index) {
         currentlySelectedImageIndex = index;
-        
+        console.log("current index is: ", currentEditImageIndex)
         imageSelectBtns.forEach(btn => {
             btn.classList.toggle('active', parseInt(btn.dataset.index) === index);
         });
@@ -485,7 +488,13 @@ document.addEventListener("DOMContentLoaded", function() {
     //ito yung taga display???????
     function editImage() {
         if (!capturedImages[currentlySelectedImageIndex]) return;
-        enterEditMode(currentlySelectedImageIndex);
+
+        if(picEditState[currentlySelectedImageIndex] == false){
+            enterEditMode(currentlySelectedImageIndex);
+        }
+        else{
+            alert("The image has already been edited")
+        }
     }
 
     function retakeImage() {
@@ -493,11 +502,19 @@ document.addEventListener("DOMContentLoaded", function() {
             alert("No image to retake");
             return;
         }
+
+        if(retakeChances <= 0){
+            alert("Retake chances has been used");
+            return;
+        }
     
         if (confirm("Are you sure you want to retake this photo?")) {
             setupRetakeState();
             switchToCaptureSection();
             prepareForRetake();
+            picEditState[currentlySelectedImageIndex] = false; //para pwede na siyang maedit ulit
+            isImageRaw = true;
+            retakeChances -= 1;
         }
     }
 
@@ -805,6 +822,7 @@ document.addEventListener("DOMContentLoaded", function() {
         switch(index){
             case -1:
                 routeString = '/get_raw';
+                isImageRaw = true;
                 break
             case 0:
                 routeString = '/get_grayscaled';
@@ -834,9 +852,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 routeString = '/get_green';
                 break;
             default:
-                console.error("Invalid filter index:", index);
+                console.error("Invalid filter index:", index); //how the fuck did you get in here
                 return Promise.resolve(null);  // Dunno how it works pero hayaan lang ito
         }
+        //console.log("route string: ", routeString);
+        if(routeString == '/get_raw'){ isImageRaw = true;}
+        else{ isImageRaw = false; }
+
+        console.log("isImageRaw value: ", isImageRaw);
 
         return fetch(routeString)
         .then(response =>{
@@ -900,6 +923,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function exitEditMode() {
         editControls.classList.add('hidden');
+        isImageRaw = true;
         clearBoundingBoxes();
         removeExistingStickers();
     }
@@ -910,31 +934,57 @@ document.addEventListener("DOMContentLoaded", function() {
         mergedCanvas.width = 640;  // base resolution
         mergedCanvas.height = 480;
         const ctx = mergedCanvas.getContext('2d');
-
         ctx.drawImage(editCanvas, 0, 0, 640, 480);
 
-        // redraw all stickers now with its original values
-        for (const data of Object.values(stickerMetaData)) {
-            const stickerImg = new Image();
-            stickerImg.src = data.imgSrc;
 
-            if (stickerImg.complete) {
-                ctx.drawImage(stickerImg, data.x, data.y, data.width, data.height);
-            } else {
-                stickerImg.onload = () => {
+        if(!isObjectEmpty(stickerMetaData)){
+            /*
+            const editCanvas = document.getElementById('edit-canvas');
+            const mergedCanvas = document.createElement('canvas');
+            mergedCanvas.width = 640;  // base resolution
+            mergedCanvas.height = 480;
+            const ctx = mergedCanvas.getContext('2d');
+
+            ctx.drawImage(editCanvas, 0, 0, 640, 480);
+            */
+
+            // redraw all stickers now with its original values
+            for (const data of Object.values(stickerMetaData)) {
+                const stickerImg = new Image();
+                stickerImg.src = data.imgSrc;
+
+                if (stickerImg.complete) {
                     ctx.drawImage(stickerImg, data.x, data.y, data.width, data.height);
-                };
+                } else {
+                    stickerImg.onload = () => {
+                        ctx.drawImage(stickerImg, data.x, data.y, data.width, data.height);
+                    };
+                }
             }
+            picEditState[currentEditImageIndex] = true;
+
+        }
+        else{
+            picEditState[currentEditImageIndex] = false;
         }
 
         const editedImageData = mergedCanvas.toDataURL('image/png');
         capturedImages[currentEditImageIndex] = editedImageData;
         selectedImagePreview.src = editedImageData;
+
+        if(isImageRaw == false) {picEditState[currentEditImageIndex] = true;} //crucial placement ito kaya ito nandito kasi masisira yung overlay for some reason
+
         renderTemplate();
         exitEditMode();
         removeExistingStickers();
         clearBoundingBoxes();
     }
+
+    const isObjectEmpty = (objectName =>{
+        return(
+            objectName && Object.keys(objectName).length === 0 && objectName.constructor === Object
+        );
+    });
 
     function applyColorFilter(index) {
         editCtx.fillStyle = `rgba(${index * 40}, ${index * 30}, ${index * 50}, 0.3)`;
@@ -980,13 +1030,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     //grrreeeeennnnnnnnn
     function drawBoundingBoxes(boxes) {
+
+        if (boxes == null){ return;} //incase na walang mukhang nakita
+
         const ctx = createOverlayCanvas();
         const overlay = document.getElementById('overlay-canvas');
     
         ctx.clearRect(0, 0, overlay.width, overlay.height);
         ctx.strokeStyle = 'lime';
         ctx.lineWidth = 2;
-    
+        
         boxes.forEach(box => {
             ctx.beginPath(); 
             ctx.rect(box.x, box.y, box.w, box.h);  
@@ -1073,6 +1126,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 faceIndex = await getFaceIndex(dropX, dropY);
                 console.log("the index is: ", faceIndex);
 
+                if(faceIndex == null){return;} //kapag walang mukhang nadetect ay ito ang sasalo
+
                 if (faceIndex !== -1) {
                     console.log("inside a face");
 
@@ -1092,7 +1147,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         .then(data => {
                             const img = new Image();
                             img.onload = function() {
-                                setStickertoExistingSticker(faceIndex);
+                                setStickertoExistingSticker(faceIndex); //umayos kang method ka hayp ka
                                 //store values for saving purposes
                                 stickerMetaData[faceIndex] = {
                                     imgSrc: "data:image/png;base64," + data.sticker,   
