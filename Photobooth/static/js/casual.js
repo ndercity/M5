@@ -928,13 +928,14 @@ document.addEventListener("DOMContentLoaded", function() {
         removeExistingStickers();
     }
 
+    //ADJUSTED FROM 640x480 to 1920x1080.
     function applyEdit() {
         const editCanvas = document.getElementById('edit-canvas');
         const mergedCanvas = document.createElement('canvas');
-        mergedCanvas.width = 640;  // base resolution
-        mergedCanvas.height = 480;
+        mergedCanvas.width = 1920;  // base resolution
+        mergedCanvas.height = 1080;
         const ctx = mergedCanvas.getContext('2d');
-        ctx.drawImage(editCanvas, 0, 0, 640, 480);
+        ctx.drawImage(editCanvas, 0, 0, 1920, 1080);
 
 
         if(!isObjectEmpty(stickerMetaData)){
