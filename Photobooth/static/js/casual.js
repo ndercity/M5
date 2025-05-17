@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const TEMPLATE_CONFIG = {
         one: {
             name: "One",
+            background: "/static/others/frame1.png",
             areas: [
                 { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
                 { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
@@ -65,6 +66,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 { x: 92.7, y: 578.9, width: 834.6, height: 522.2, color: '#C1D7FF' },
                 { x: 953.1, y: 646.7, width: 732.8, height: 412.2, color: '#FFC1E3' } 
             ]
+        },
+        eight: {
+            name: "Eight",
+            background: "/static/others/frame8.png",
+            areas: [
+                { x: 120, y: 155, width: 1027.5, height: 578, color: '#FFDDC1' }, 
+                { x: 1206.9, y: 155, width: 473.1, height: 266.1, color: '#C1FFD7' },
+                { x: 1206.9, y: 466.8, width: 473.1, height: 266.1, color: '#C1D7FF' },
+                { x: 1206.9, y: 778.9, width: 473.1, height: 266.1, color: '#FFC1E3' } 
+            ]
         }
     };
 
@@ -97,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Canvas Elements
     const resultCanvas = document.getElementById('result-canvas');
     const ctx = resultCanvas.getContext('2d');
+    let selectedBG = '';
     
     // Final Result Elements
     const finalResultSection = document.getElementById('final-result-section');
@@ -154,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function initialize() {
         resultCanvas.width = 1800;
         resultCanvas.height = 1200;
-        
+        resultCanvas.background = selectedBG;
         setupEditMode();
         renderTemplates();
         setupEventListeners();
@@ -162,6 +174,9 @@ document.addEventListener("DOMContentLoaded", function() {
         loadStickersDynamically();
         groupColorButtonsIntoSlides();
         setupColorCarousel();
+
+        selectItem(currentIndex);
+        console.log(currentIndex);
     }
 
     // =============================================
@@ -193,6 +208,10 @@ document.addEventListener("DOMContentLoaded", function() {
         
         const preview = document.createElement('div');
         preview.className = 'template-preview';
+
+        if (template.background) {
+            preview.style.backgroundImage = `url('${template.background}')`;
+        }
         
         const templateAreasContainer = createTemplateAreasContainer(template);
         preview.appendChild(templateAreasContainer);
@@ -202,20 +221,24 @@ document.addEventListener("DOMContentLoaded", function() {
         label.className = 'template-label';
         label.textContent = template.name;
         templateOption.appendChild(label);
-        
+
         return templateOption;
     }
 
     function createTemplateAreasContainer(template) {
         const container = document.createElement('div');
-        container.style.position = 'relative';
-        container.style.width = '100%';
-        container.style.height = '100%';
+        container.className = 'AreaForTemplate'
+        container.style.position = 'absolute'; // absolute inside preview
+        container.style.width = '300px';
+        container.style.height = '200px';
+        container.style.left = '0';
+        container.style.top = '0';
+        container.style.pointerEvents = 'none'; 
         
-        const originalWidth = Math.max(...template.areas.map(area => area.x + area.width));
-        const originalHeight = Math.max(...template.areas.map(area => area.y + area.height));
-        const previewWidth = 300;
-        const previewHeight = 200;
+        const originalWidth = 1800;
+        const originalHeight = 1200;
+        const previewWidth = parseFloat(container.style.width);
+        const previewHeight = parseFloat(container.style.height);
         const scaleX = previewWidth / originalWidth;
         const scaleY = previewHeight / originalHeight;
         const scale = Math.min(scaleX, scaleY);
@@ -240,7 +263,7 @@ document.addEventListener("DOMContentLoaded", function() {
             
             container.appendChild(areaDiv);
         });
-        
+
         return container;
     }
 
@@ -278,6 +301,7 @@ document.addEventListener("DOMContentLoaded", function() {
         carouselItems.forEach(item => item.classList.remove('selected'));
         carouselItems[index].classList.add('selected');
         currentTemplate = TEMPLATE_CONFIG[carouselItems[index].dataset.layout];
+        selectedBG = currentTemplate.background;
         currentIndex = index;
         console.log("Current Layout: ", currentIndex)
     }
@@ -543,12 +567,31 @@ document.addEventListener("DOMContentLoaded", function() {
     // TEMPLATE RENDERING
     // =============================================
     function renderTemplate() {
+        // Draw the background first (if any)
+        if (selectedBG) {
+            const bgImage = new Image();
+            bgImage.onload = function () {
+                ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height); // Clear canvas
+                ctx.drawImage(bgImage, 0, 0, resultCanvas.width, resultCanvas.height);
+
+                // Then draw template areas and images
+                drawTemplateAreasAndImages();
+            };
+            bgImage.src = selectedBG;
+        } else {
+            // No background, just clear and draw
+            ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+            drawTemplateAreasAndImages();
+        }
+    }
+
+    function drawTemplateAreasAndImages() {
         // Draw colored background for each area
         currentTemplate.areas.forEach(area => {
             ctx.fillStyle = area.color + '80';
             ctx.fillRect(area.x, area.y, area.width, area.height);
         });
-        
+
         // Draw the images
         currentTemplate.areas.forEach((area, index) => {
             if (capturedImages[index]) {
