@@ -91,6 +91,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const captureSection = document.getElementById('capture-section');
     const videoFeed = document.getElementById('video-feed');
     const videoContainer = document.querySelector('.video-container');
+    const countdownDisplay = document.getElementById('countdown-display');
+    const flashOverlay = document.getElementById('flash-overlay');
     const captureBtn = document.getElementById('capture-btn');
     const poseNumber = document.getElementById('pose-number');
     const confirmLayoutBtn = document.getElementById('confirm-layout');
@@ -313,7 +315,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    function updateVideoContainerLayout() {
+    /* function updateVideoContainerLayout() {
         videoContainer.querySelectorAll('.layout-marker').forEach(marker => marker.remove());
         if (!currentTemplate) return;
         
@@ -321,9 +323,9 @@ document.addEventListener("DOMContentLoaded", function() {
             const marker = createLayoutMarker(area, index);
             videoContainer.appendChild(marker);
         });
-    }
+    } */
 
-    function createLayoutMarker(area, index) {
+    /* function createLayoutMarker(area, index) {
         const marker = document.createElement('div');
         marker.className = 'layout-marker';
         
@@ -356,7 +358,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         marker.appendChild(number);
         return marker;
-    }
+    } */
 
     // =============================================
     // CAMERA CONTROLS
@@ -369,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function() {
         videoFeed.onerror = handleCameraError;
         videoFeed.src = "/video_feed?" + new Date().getTime();
         cameraActive = true;
-        setTimeout(updateVideoContainerLayout, 3000);
+        //setTimeout(updateVideoContainerLayout, 3000);
     }
 
     function stopCamera() {
@@ -404,6 +406,33 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(handleCaptureSuccess)
             .catch(handleCaptureError)
             .finally(resetCaptureButton);
+    }
+
+    function startCountdown(seconds) {
+        return new Promise((resolve) => {
+            countdownDisplay.style.display = 'block';
+            let count = seconds;
+
+            const interval = setInterval(() => {
+                countdownDisplay.textContent = '';
+                countdownDisplay.textContent = count;
+                count--;
+
+                if (count < 0) {
+                    clearInterval(interval);
+                    countdownDisplay.style.display = 'none';
+                    countdownDisplay.textContent = '';
+                    resolve();
+                }
+            }, 1000);
+        });
+    }
+
+    function triggerFlash() {
+        flashOverlay.style.opacity = '1';
+        setTimeout(() => {
+            flashOverlay.style.opacity = '0';
+        }, 100);
     }
 
     function handleCaptureResponse(response) {
@@ -1525,7 +1554,14 @@ document.addEventListener("DOMContentLoaded", function() {
         templateContainer.addEventListener('click', handleTemplateClick);
         
         // Camera and capture
-        captureBtn.addEventListener('click', capturePose);
+        captureBtn.addEventListener('click', async () => {
+            await startCountdown(3);
+            triggerFlash();
+            
+            setTimeout(() => {
+                capturePose();
+            }, 150);
+        });
         confirmLayoutBtn.addEventListener('click', confirmLayout);
         
         // Navigation
@@ -1542,7 +1578,7 @@ document.addEventListener("DOMContentLoaded", function() {
         startOverBtn.addEventListener('click', startOver);
         
         // Window events
-        window.addEventListener('resize', updateVideoContainerLayout);
+        //window.addEventListener('resize', updateVideoContainerLayout);
         window.addEventListener("beforeunload", cleanupBeforeUnload);
     }
 

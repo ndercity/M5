@@ -11,21 +11,20 @@
 
 {% block content %}
     <main>
-        <a class="titleName">Pic-a-Pi</a>
-        <p>A Raspberry Pi Photobooth</p>
-        <button class="scan" id="scan">-Scan The Card to Start-</button>
-        <div class="ocean"> 
-            <div class="wave"></div> 
+        <div class="start-section">
+            <a class="titleName">Pic-a-Pi</a>
+            <p>A Raspberry Pi Photobooth</p>
+            <button class="scan">-Scan The Card to Start-</button>
+        </div>
 
-            <div class="underwater">
+        <div class="wave"></div>
+        <div class="ocean"></div>
 
-            <div class="fish">
-                
-            <form class="email-form" id="email-form">
-                <input type="email" id="email" name="email" required placeholder="Enter your email">
-                <button type="submit" class="emailButton">Confirm</button>
-            </form>
-            <div class="carouselProMax" id="carouselProMax">
+        <form class="email-form" id="email-form">
+            <input type="email" id="email" name="email" required placeholder="Enter your email">
+            <button type="submit" class="emailButton">Confirm</button>
+        </form>
+        <div class="carouselProMax" id="carouselProMax">
             <div class="carousel-container" id="carousel-container">
                 <div class="carousel">
                     <div class="carousel-item active">
@@ -58,22 +57,17 @@
                         <p>Send the photo to your e-mail and save it</p>
                     </div>
                 </div>
-                
+            
                 <button class="carousel-control prev" aria-label="Previous slide">&#10094;</button>
                 <button class="carousel-control next" aria-label="Next slide">&#10095;</button>
             </div>
-        
-        <div class="carousel-indicators">
-            <!-- Indicators will be added by JavaScript -->
-        </div>
-        
-        <a href="{{ url_for('mode') }}" class="btn-link">Proceed to Mode Selection</a>
+    
+            <div class="carousel-indicators">
+                <!-- Indicators will be added by JavaScript -->
             </div>
+    
+                <a href="{{ url_for('mode') }}" class="btn-link">Proceed to Mode Selection</a>
             </div>
-    </div>
         </div>
-        
-        
-            
     </main>
 {% endblock %}
