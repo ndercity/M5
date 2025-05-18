@@ -6,19 +6,19 @@
 {% block content %}
 <main>
     <a href="{{ url_for('home') }}" class="back-card">
-        <span class="back-content">Back</span>
+        <span class="back-content">Go Back</span>
     </a>
     <div class="mode-header">
         <a class="title">Choose Mode</a>
     </div>
 
     <div class="mode-options">
-        <a href="{{ url_for('formal') }}" class="mode-card">
+        <a href="{{ url_for('casual') }}" class="mode-card">
             <img src="../static/others/casualText.png" class="card-content">
             </img>
         </a>
 
-        <a href="{{ url_for('casual') }}" class="mode-card">
+        <a href="{{ url_for('formal') }}" class="mode-card">
             <img src="../static/others/formalText.png" class="card-content">
             </img>
         </a>
