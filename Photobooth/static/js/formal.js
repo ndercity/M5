@@ -36,6 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // =====================
     const elements = {
         // Camera controls
+        countdownDisplay: document.getElementById('countdown-display'),
+        flashOverlay: document.getElementById('flash-overlay'),
         videoFeed: document.getElementById("video-feed"),
         captureBtn: document.getElementById("capture-btn"),
         
@@ -98,7 +100,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function setupEventListeners() {
         // Camera controls
-        elements.captureBtn.addEventListener("click", capturePhoto);
+        elements.captureBtn.addEventListener('click', async () => {
+            await startCountdown(3);
+            triggerFlash();
+            
+            setTimeout(() => {
+                capturePhoto();
+            }, 150);
+        });
         
         // Preview controls
         elements.finalizeBtn.addEventListener("click", showResultsSection);
@@ -160,6 +169,33 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(handleCaptureSuccess)
             .catch(handleCaptureError)
             .finally(() => disableCaptureButton(false));
+    }
+
+    function startCountdown(seconds) {
+        return new Promise((resolve) => {
+            elements.countdownDisplay.style.display = 'block';
+            let count = seconds;
+
+            const interval = setInterval(() => {
+                elements.countdownDisplay.textContent = '';
+                elements.countdownDisplay.textContent = count;
+                count--;
+
+                if (count < 0) {
+                    clearInterval(interval);
+                    elements.countdownDisplay.style.display = 'none';
+                    elements.countdownDisplay.textContent = '';
+                    resolve();
+                }
+            }, 1000);
+        });
+    }
+
+    function triggerFlash() {
+        elements.flashOverlay.style.opacity = '1';
+        setTimeout(() => {
+            elements.flashOverlay.style.opacity = '0';
+        }, 100);
     }
 
     function disableCaptureButton(disabled) {
