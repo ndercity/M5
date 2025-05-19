@@ -1,21 +1,39 @@
 main {
     text-align: center;
-    padding: 20px;
+    max-width: 800px;
+    max-height: 480px;
+}
+
+.titleName{
+    color:#99ffd0;
+    text-shadow: 0px 3px 2px #198050;
+    -webkit-text-stroke-width: 1px;
+    font-weight: bold;
+    font-size: 120px;
+}
+
+.emailButton{
+    display: flex;
+    padding: 5px;
+    margin: 10px;
+}
+
+.scan{
+    color: white;
+    -webkit-text-stroke: 0.5px black;
+    line-height: 20vh;
+    font-weight: bold;
+    border: 0;
+    background: none;
 }
 
 h2 {
-    color: #333;
+    color: #99ffd0;
+    -webkit-text-stroke: 1px #198050;
 }
 
 p {
     font-size: 18px;
-    margin-bottom: 15px;
-}
-
-ul {
-    text-align: left;
-    max-width: 400px;
-    margin: 0 auto 20px;
 }
 
 a.btn-link {
@@ -31,4 +49,278 @@ a.btn-link {
 
 a.btn-link:hover {
     background-color: #0056b3;
+}
+
+
+/* Carousel styles */
+.carousel-container {
+    display: flex;
+    position: relative;
+    width: 600px;
+    border-radius: 25px;
+    margin: 2rem auto;
+    background: white;
+    overflow: hidden;
+    box-shadow: 0px 4px 2px black;
+}
+
+.carousel {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.5s ease-in-out;
+}
+
+.carousel-item {
+    width: 100%;
+    padding: 2rem;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+.carousel-item.active {
+    display: flex;
+    height: 200px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    z-index: 10;
+}
+
+.carousel-control.prev {
+    left: 10px;
+}
+
+.carousel-control.next {
+    right: 10px;
+}
+
+.carousel-control:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    margin: 1rem;
+}
+
+.carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.carousel-indicator.active {
+    background-color: #333;
+}
+
+
+body {
+    overflow: hidden;
+}
+
+/* Ocean layer: the background color */
+.ocean {
+    width: 100%;
+    height: 100%;
+    background: hsl(152, 100%, 80%);
+    z-index: -2;
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    z-index: -2;
+    pointer-events: none;
+    display: none;
+}
+
+.wave {
+    background: url("/static/others/greenwave.svg") repeat-x;
+    width: 400%;
+    height: 360px;
+    background-size: contain;
+    animation: wave 30s infinite;
+
+    position: fixed;
+    bottom: 0;
+    left: -300px;
+    z-index: -1;
+    pointer-events: none;
+}
+
+@keyframes wave {
+    0% {
+        margin-left: 0px;
+    }
+    50% {
+        margin-left: -1960px;
+    }
+    100%
+    {
+        margin-left: 0px;
+    }
+}
+
+.underwater{
+    background: #99ffd0;
+    width:100%;
+    margin-top: -25vh;
+    overflow-x: hidden;
+}
+
+.fish{
+    width: 100%;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+
+.btn-link{
+    display: flex;
+    padding: 5px;
+    margin-bottom: 40px;
+}
+button{
+    font-family: "DynaPuff", system-ui;
+}
+button:hover{
+    background: none;
+}
+
+.section-active {
+    opacity: 1;
+    display: block;
+    animation: fadeIn 0.9s ease-out;
+    z-index: 1000 !important;
+
+}
+
+.section-inactive {
+    opacity: 0;
+    overflow: hidden;
+    animation: fadeOut 0.9s ease-out;
+    position: relative;
+}
+
+@keyframes fadeIn {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+}
+
+.wave-active {
+    opacity: 1;
+    animation: wavefadeIn 0.9s ease-out;
+    display: block;
+}
+
+.wave-inactive {
+    overflow: hidden;
+    animation: wavefadeOut 0.9s ease-out;
+    position: relative;
+    opacity: 1;
+}
+
+@keyframes wavefadeIn {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+@keyframes wavefadeOut {
+    0% {
+        transform: translateY(10%);
+    }
+    100% {
+        transform: translateY(-100%);
+    }
+}
+
+.ocean-active {
+    animation: oceanfadeIn 0.9s ease-out;
+    display: block;
+    opacity: 1;
+}
+
+.ocean-inactive {
+    overflow: hidden;
+    animation: oceanfadeOut 0.9s ease-out;
+    position: relative;
+    opacity: 1;
+}
+
+@keyframes oceanfadeIn {
+    0% {
+        transform: translateY(50%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes oceanfadeOut {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-100%);
+    }
+}
+
+/* #email-form {
+    display: none;
+}
+
+.carouselProMax{
+    display: none;
+} */
+
+input{
+    width: 55vh;
+    height: 5vh;
+    font-size: 14px;
 }

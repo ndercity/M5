@@ -12,22 +12,58 @@
     <!-- Capture Section -->
     <div id="capture-section">
         <h3>Camera Feed</h3>
-        <button id="toggle-camera">Open Camera</button>
         <div class="video-container">
             <img id="video-feed" class="camera-feed">
+            <img id="formal-guide" src="/static/others/1x1and2x2guide.png" alt="guide">
+            <div id="flash-overlay"></div>
+            <div id="countdown-display"></div>
         </div>
         <button id="capture-btn">Capture</button>
-        <button id="preview-btn">Go to Preview</button>
     </div>
 
     <!-- Preview Section -->
-    <div id="preview-section">
-        <h3>Preview</h3>
-        <div id="captured-photo"></div>
-        <button id="capture-again-btn">Capture Again</button>
+    <div id="preview-section" class="hidden">
+        <h3>Preview & Customization</h3>
+        
+        <!-- Main Preview Image -->
+        <img id="main-preview" class="main-preview" alt="Captured Photo">
+        
+        <!-- Customization Controls -->
+        <div class="customization-options">
+            <h4>Edit Your Photo</h4>
+            <div class="control-group">
+                <label for="brightness">Brightness:</label>
+                <input type="range" id="brightness" min="-100" max="100" value="0">
+            </div>
+            <div class="control-group">
+                <label for="contrast">Contrast:</label>
+                <input type="range" id="contrast" min="-100" max="100" value="0">
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="preview-controls">
+            <button id="finalize-btn">Finalize</button>
+            <button id="capture-again-btn">Capture Again</button>
+        </div>
     </div>
 
-    <!-- Back Button -->
+    <!-- Results Section -->
+    <div id="results-section" class="hidden">
+        <h3>Your Final 4R Template</h3>
+        
+        <!-- 4R Template Canvas -->
+        <div class="template-container">
+            <canvas id="result-canvas"></canvas>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="results-controls">
+            <button id="download-btn">Send Photo to E-Mail</button>
+            <button id="back-to-preview-btn">Back to Preview</button>
+        </div>
+    </div>
+
     <a href="{{ url_for('mode') }}" class="btn-link">Back to Mode Selection</a>
 </main>
 {% endblock %}
