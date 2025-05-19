@@ -29,6 +29,8 @@ class AppUI:
     def show_page(self, page_name):
         frame = self.pages[page_name]
         frame.tkraise()
+        if hasattr (frame, "refresh"):
+            frame.refresh()
         
 
 class HomePage(ctk.CTkFrame):
@@ -159,16 +161,19 @@ class OperationsPage(ctk.CTkFrame):
         self.scan_label.pack()   
 
         self.rfid_num_label = ctk.CTkLabel(self.text_container,
-                                       text = f"RFID Number: {self.get_current_rfid}",
+                                       text = f"RFID Number: ",
                                        font = ("Helvetica", 15),
                                        text_color = "#000000")
         self.rfid_num_label.pack()
 
         self.rfid_status_label = ctk.CTkLabel(self.text_container,
-                                       text = "Status: Something",
+                                       text = "Status: ",
                                        font = ("Helvetica", 15),
                                        text_color = "#000000")
         self.rfid_status_label.pack()
+
+        self.rfid_display  = None
+        self.rfid_status = None
 
         self.register_button = ctk.CTkButton(self, height = 54, width = 181, 
                                         text="Register/Reactivate", 
@@ -234,6 +239,11 @@ class OperationsPage(ctk.CTkFrame):
     def get_current_rfid(self):
         self.rfid_display, self.rfid_status = self.state.get_current_rfid_details()
         return self.rfid_display
+    
+    def refresh(self):
+        self.rfid_display,self.rfid_status = self.state.get_current_rfid_details()
+        self.rfid_num_label.configure(text = f"RFID Number: {self.rfid_display}")
+        self.rfid_status_label.configure(text = f"Status: {self.rfid_status}")
 
 
 
