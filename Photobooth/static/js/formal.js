@@ -36,10 +36,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // =====================
     const elements = {
         // Camera controls
-        toggleCameraBtn: document.getElementById("toggle-camera"),
+        countdownDisplay: document.getElementById('countdown-display'),
+        flashOverlay: document.getElementById('flash-overlay'),
         videoFeed: document.getElementById("video-feed"),
         captureBtn: document.getElementById("capture-btn"),
-        previewBtn: document.getElementById("preview-btn"),
         
         // Preview controls
         mainPreview: document.getElementById("main-preview"),
@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function initialize() {
         // Set up canvas
         setupCanvas();
+        if (!state.cameraActive) startCamera();
         
         // Initialize sections
         elements.captureSection.classList.add("section-active");
@@ -99,9 +100,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function setupEventListeners() {
         // Camera controls
-        elements.toggleCameraBtn.addEventListener("click", toggleCamera);
-        elements.captureBtn.addEventListener("click", capturePhoto);
-        elements.previewBtn.addEventListener("click", showPreviewSection);
+        elements.captureBtn.addEventListener('click', async () => {
+            await startCountdown(3);
+            triggerFlash();
+            
+            setTimeout(() => {
+                capturePhoto();
+            }, 150);
+        });
         
         // Preview controls
         elements.finalizeBtn.addEventListener("click", showResultsSection);
@@ -115,6 +121,8 @@ document.addEventListener("DOMContentLoaded", function () {
         
         // Clean up on page unload
         window.addEventListener("beforeunload", cleanup);
+
+
     }
 
     // =====================
@@ -135,14 +143,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         };
         
-        elements.toggleCameraBtn.textContent = "Close Camera";
         state.cameraActive = true;
     }
 
     function stopCamera() {
         elements.videoFeed.onerror = null;
         elements.videoFeed.src = "";
-        elements.toggleCameraBtn.textContent = "Open Camera";
         state.cameraActive = false;
         fetch("/stop_camera");
     }
@@ -165,6 +171,33 @@ document.addEventListener("DOMContentLoaded", function () {
             .finally(() => disableCaptureButton(false));
     }
 
+    function startCountdown(seconds) {
+        return new Promise((resolve) => {
+            elements.countdownDisplay.style.display = 'block';
+            let count = seconds;
+
+            const interval = setInterval(() => {
+                elements.countdownDisplay.textContent = '';
+                elements.countdownDisplay.textContent = count;
+                count--;
+
+                if (count < 0) {
+                    clearInterval(interval);
+                    elements.countdownDisplay.style.display = 'none';
+                    elements.countdownDisplay.textContent = '';
+                    resolve();
+                }
+            }, 1000);
+        });
+    }
+
+    function triggerFlash() {
+        elements.flashOverlay.style.opacity = '1';
+        setTimeout(() => {
+            elements.flashOverlay.style.opacity = '0';
+        }, 100);
+    }
+
     function disableCaptureButton(disabled) {
         elements.captureBtn.disabled = disabled;
         elements.captureBtn.textContent = disabled ? "Capturing..." : "Capture";
@@ -176,15 +209,34 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function handleCaptureSuccess(imageBlob) {
-        // Clear previous image if exists
         if (state.currentImageUrl) {
             URL.revokeObjectURL(state.currentImageUrl);
         }
-        
-        state.currentImageUrl = URL.createObjectURL(imageBlob);
-        updateMainPreview();
-        showPreviewSection();
+    
+        const img = new Image();
+        img.onload = function () {
+            // Crop to square (smallest side)
+            const size = Math.min(img.width, img.height);
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = size;
+            tempCanvas.height = size;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Draw centered crop
+            const offsetX = (img.width - size) / 2;
+            const offsetY = (img.height - size) / 2;
+            tempCtx.drawImage(img, offsetX, offsetY, size, size, 0, 0, size, size);
+    
+            // Save the cropped image
+            tempCanvas.toBlob(blob => {
+                state.currentImageUrl = URL.createObjectURL(blob);
+                updateMainPreview();
+                showPreviewSection();
+            }, 'image/png');
+        };
+        img.src = URL.createObjectURL(imageBlob);
     }
+    
 
     function handleCaptureError(error) {
         console.error("Error capturing:", error);
@@ -295,6 +347,11 @@ document.addEventListener("DOMContentLoaded", function () {
             URL.revokeObjectURL(state.currentImageUrl);
             state.currentImageUrl = null;
         }
+
+        // Reset sliders
+        elements.brightnessControl.value = 0;
+        elements.contrastControl.value = 0;
+        applyEdits();
         
         toggleSection(elements.previewSection, false);
         toggleSection(elements.resultsSection, false);
@@ -324,18 +381,64 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("No photo to save!");
             return;
         }
-        
-        // Create temporary link to download canvas as PNG
-        const link = document.createElement('a');
-        link.download = '4R-formal-template.png';
-        link.href = elements.resultCanvas.toDataURL('image/png');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        // Show download confirmation
-        showDownloadConfirmation();
-    }
+    
+        const session_id = localStorage.getItem('session_id');
+    
+        elements.resultCanvas.toBlob(blob => {
+            if (!blob) {
+                alert("Failed to get image blob!");
+                return;
+            }
+    
+            const formData = new FormData();
+            formData.append('photo', blob, 'photo.png');
+            formData.append('session_id', session_id);
+    
+            fetch('/upload_photo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                if (data.message === "Photo saved successfully") {
+                    alert("Photo saved! Sending email...");
+    
+                    // Directly call finalize_session with session_id only
+                    const finalizeForm = new FormData();
+                    finalizeForm.append('session_id', session_id);
+    
+                    return fetch('/finalize_session', {
+                        method: 'POST',
+                        body: finalizeForm
+                    });
+                } else {
+                    throw new Error(data.error || 'Failed to save photo');
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to finalize session');
+                return response.json();
+            })
+            .then(finalizeData => {
+                if (finalizeData.status === 'sent') {
+                    alert("Email sent! Redirecting to home...");
+                    window.location.href = "/";
+                } else {
+                    alert("Failed to send email. Redirecting to home...");
+                    window.location.href = "/";
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Error during photo save or email sending: ' + error.message + ' Redirecting to home...');
+                window.location.href = "/";
+            });
+    
+        }, 'image/png');
+    }    
 
     function showDownloadConfirmation() {
         const confirmation = document.createElement('div');
@@ -347,6 +450,24 @@ document.addEventListener("DOMContentLoaded", function () {
             confirmation.remove();
         }, 2000);
     }
+
+    //
+    function finalizeAndSendPdf(pdfBlob) {
+        const session_id = localStorage.getItem('session_id');
+        const formData = new FormData();
+        formData.append('pdf', pdfBlob, 'session.pdf');
+        formData.append('session_id', session_id);
+    
+        return fetch('/finalize_session', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        });
+    }
+    
 
     // =====================
     // Cleanup

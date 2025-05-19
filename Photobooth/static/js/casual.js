@@ -3,40 +3,78 @@ document.addEventListener("DOMContentLoaded", function() {
     // CONSTANTS AND CONFIGURATION
     // =============================================
     const TEMPLATE_CONFIG = {
-        grid: {
-            name: "Classic Grid",
+        one: {
+            name: "One",
+            background: "/static/others/frame1.png",
             areas: [
-                { x: 0, y: 0, width: 900, height: 600, color: '#FFDDC1' }, // Top-left
-                { x: 900, y: 0, width: 900, height: 600, color: '#C1FFD7' }, // Top-right
-                { x: 0, y: 600, width: 900, height: 600, color: '#C1D7FF' }, // Bottom-left
-                { x: 900, y: 600, width: 900, height: 600, color: '#FFC1E3' } // Bottom-right
+                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
+                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
+                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
+                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
             ]
         },
-        featured: {
-            name: "Featured + 3",
+        two: {
+            name: "Two",
             areas: [
-                { x: 0, y: 0, width: 1200, height: 600, color: '#FFDDC1' }, // Main featured
-                { x: 0, y: 600, width: 600, height: 600, color: '#C1FFD7' }, // Small 1
-                { x: 600, y: 600, width: 600, height: 600, color: '#C1D7FF' }, // Small 2
-                { x: 1200, y: 0, width: 600, height: 1200, color: '#FFC1E3' } // Small 3
+                { x: 58.7, y: 24.9, width: 1000, height: 562.5, color: '#FFDDC1' }, 
+                { x: 1091.3, y: 221.8, width: 650, height: 365.6, color: '#C1FFD7' },
+                { x: 58.7, y: 612.6, width: 650, height: 365.6, color: '#C1D7FF' }, 
+                { x: 741.3, y: 612.6, width: 1000, height: 562.5, color: '#FFC1E3' } 
             ]
         },
-        vertical: {
-            name: "Vertical Strip",
+        three: {
+            name: "Three",
             areas: [
-                { x: 0, y: 0, width: 450, height: 1200, color: '#FFDDC1' }, // Left
-                { x: 450, y: 0, width: 450, height: 1200, color: '#C1FFD7' }, // Middle-left
-                { x: 900, y: 0, width: 450, height: 1200, color: '#C1D7FF' }, // Middle-right
-                { x: 1350, y: 0, width: 450, height: 1200, color: '#FFC1E3' } // Right
+                { x: 94.8, y: 77.9, width: 784.9, height: 441.5, color: '#FFDDC1' },
+                { x: 920.4, y: 174.9, width: 784.9, height: 441.5, color: '#C1FFD7' }, 
+                { x: 94.8, y: 583.6, width: 784.9, height: 441.5, color: '#C1D7FF' }, 
+                { x: 920.4, y: 680.6, width: 784.9, height: 441.5, color: '#FFC1E3' } 
             ]
         },
-        horizontal: {
-            name: "Horizontal Strip",
+        four: {
+            name: "Four",
             areas: [
-                { x: 0, y: 0, width: 1800, height: 300, color: '#FFDDC1' }, // Left
-                { x: 0, y: 300, width: 1800, height: 300, color: '#C1FFD7' }, // Middle-left
-                { x: 0, y: 600, width: 1800, height: 300, color: '#C1D7FF' }, // Middle-right
-                { x: 0, y: 900, width: 1800, height: 300, color: '#FFC1E3' } // Right
+                { x: 282.1, y: 90, width: 1204.4, height: 677.5, color: '#FFDDC1' }, 
+                { x: 35.9, y: 797.8, width: 555.1, height: 312.2, color: '#C1FFD7' }, 
+                { x: 622.4, y: 797.8, width: 555.1, height: 312.2, color: '#C1D7FF' }, 
+                { x: 1209, y: 797.8, width: 555.1, height: 312.2, color: '#FFC1E3' } 
+            ]
+        },
+        five: {
+            name: "Five",
+            areas: [
+                { x: 391.9, y: 52.8, width: 706.8, height: 397.6, color: '#FFDDC1' }, 
+                { x: 928.3, y: 301.8, width: 706.8, height: 397.6, color: '#C1FFD7' }, 
+                { x: 164.9, y: 500.6, width: 706.8, height: 397.6, color: '#C1D7FF' }, 
+                { x: 701.2, y: 749.6, width: 706.8, height: 397.6, color: '#FFC1E3' } 
+            ]
+        },
+        six: {
+            name: "Six",
+            areas: [
+                { x: 158.6, y: 144.6, width: 732.8, height: 412.2, color: '#FFDDC1' },
+                { x: 908.6, y: 144.6, width: 732.8, height: 412.2, color: '#C1FFD7' },
+                { x: 30.9, y: 571.3, width: 860.6, height: 484.1, color: '#C1D7FF' },
+                { x: 908.6, y: 571.3, width: 860.6, height: 484.1, color: '#FFC1E3' }
+            ]
+        },
+        seven: {
+            name: "Seven",
+            areas: [
+                { x: 117, y: 138.6, width: 732.8, height: 412.2, color: '#FFDDC1' }, 
+                { x: 872.7, y: 98.9, width: 834.6, height: 522.2, color: '#C1FFD7' },
+                { x: 92.7, y: 578.9, width: 834.6, height: 522.2, color: '#C1D7FF' },
+                { x: 953.1, y: 646.7, width: 732.8, height: 412.2, color: '#FFC1E3' } 
+            ]
+        },
+        eight: {
+            name: "Eight",
+            background: "/static/others/frame8.png",
+            areas: [
+                { x: 120, y: 155, width: 1027.5, height: 578, color: '#FFDDC1' }, 
+                { x: 1206.9, y: 155, width: 473.1, height: 266.1, color: '#C1FFD7' },
+                { x: 1206.9, y: 466.8, width: 473.1, height: 266.1, color: '#C1D7FF' },
+                { x: 1206.9, y: 778.9, width: 473.1, height: 266.1, color: '#FFC1E3' } 
             ]
         }
     };
@@ -53,7 +91,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const captureSection = document.getElementById('capture-section');
     const videoFeed = document.getElementById('video-feed');
     const videoContainer = document.querySelector('.video-container');
-    const toggleCameraBtn = document.getElementById('toggle-camera');
+    const countdownDisplay = document.getElementById('countdown-display');
+    const flashOverlay = document.getElementById('flash-overlay');
     const captureBtn = document.getElementById('capture-btn');
     const poseNumber = document.getElementById('pose-number');
     const confirmLayoutBtn = document.getElementById('confirm-layout');
@@ -71,6 +110,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Canvas Elements
     const resultCanvas = document.getElementById('result-canvas');
     const ctx = resultCanvas.getContext('2d');
+    let selectedBG = '';
     
     // Final Result Elements
     const finalResultSection = document.getElementById('final-result-section');
@@ -91,6 +131,8 @@ document.addEventListener("DOMContentLoaded", function() {
     let stickerImages = [];
     const stickerTracker = {};
     const stickerMetaData = {};
+    const picEditState = [false, false, false, false]; //ito ang magiindicate kung naedit na ba yung pic or hindi
+    let isImageRaw = true; //titignan neto kung raw pa ba ang image or hindi na
 
     // =============================================
     // STATE VARIABLES
@@ -107,6 +149,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let carouselItems = [];
     let currentIndex = 0;
     let currentButtonIndex = -1; //negative 1 ang default value para walang ibalik
+    let retakeChances = 3;
 
     // =============================================
     // VARIABLES
@@ -125,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function initialize() {
         resultCanvas.width = 1800;
         resultCanvas.height = 1200;
-        
+        resultCanvas.background = selectedBG;
         setupEditMode();
         renderTemplates();
         setupEventListeners();
@@ -133,6 +176,9 @@ document.addEventListener("DOMContentLoaded", function() {
         loadStickersDynamically();
         groupColorButtonsIntoSlides();
         setupColorCarousel();
+
+        selectItem(currentIndex);
+        console.log(currentIndex);
     }
 
     // =============================================
@@ -164,6 +210,10 @@ document.addEventListener("DOMContentLoaded", function() {
         
         const preview = document.createElement('div');
         preview.className = 'template-preview';
+
+        if (template.background) {
+            preview.style.backgroundImage = `url('${template.background}')`;
+        }
         
         const templateAreasContainer = createTemplateAreasContainer(template);
         preview.appendChild(templateAreasContainer);
@@ -173,20 +223,24 @@ document.addEventListener("DOMContentLoaded", function() {
         label.className = 'template-label';
         label.textContent = template.name;
         templateOption.appendChild(label);
-        
+
         return templateOption;
     }
 
     function createTemplateAreasContainer(template) {
         const container = document.createElement('div');
-        container.style.position = 'relative';
-        container.style.width = '100%';
-        container.style.height = '100%';
+        container.className = 'AreaForTemplate'
+        container.style.position = 'absolute'; // absolute inside preview
+        container.style.width = '300px';
+        container.style.height = '200px';
+        container.style.left = '0';
+        container.style.top = '0';
+        container.style.pointerEvents = 'none'; 
         
-        const originalWidth = Math.max(...template.areas.map(area => area.x + area.width));
-        const originalHeight = Math.max(...template.areas.map(area => area.y + area.height));
-        const previewWidth = 300;
-        const previewHeight = 200;
+        const originalWidth = 1800;
+        const originalHeight = 1200;
+        const previewWidth = parseFloat(container.style.width);
+        const previewHeight = parseFloat(container.style.height);
         const scaleX = previewWidth / originalWidth;
         const scaleY = previewHeight / originalHeight;
         const scale = Math.min(scaleX, scaleY);
@@ -211,7 +265,7 @@ document.addEventListener("DOMContentLoaded", function() {
             
             container.appendChild(areaDiv);
         });
-        
+
         return container;
     }
 
@@ -232,6 +286,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function navigateCarousel(direction) {
         currentIndex = (currentIndex + direction + carouselItems.length) % carouselItems.length;
         scrollToItem(currentIndex);
+        selectItem(currentIndex);
     }
 
     function scrollToItem(index) {
@@ -248,7 +303,9 @@ document.addEventListener("DOMContentLoaded", function() {
         carouselItems.forEach(item => item.classList.remove('selected'));
         carouselItems[index].classList.add('selected');
         currentTemplate = TEMPLATE_CONFIG[carouselItems[index].dataset.layout];
+        selectedBG = currentTemplate.background;
         currentIndex = index;
+        console.log("Current Layout: ", currentIndex)
     }
 
     function handleKeyboardNavigation(e) {
@@ -258,7 +315,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    function updateVideoContainerLayout() {
+    /* function updateVideoContainerLayout() {
         videoContainer.querySelectorAll('.layout-marker').forEach(marker => marker.remove());
         if (!currentTemplate) return;
         
@@ -266,9 +323,9 @@ document.addEventListener("DOMContentLoaded", function() {
             const marker = createLayoutMarker(area, index);
             videoContainer.appendChild(marker);
         });
-    }
+    } */
 
-    function createLayoutMarker(area, index) {
+    /* function createLayoutMarker(area, index) {
         const marker = document.createElement('div');
         marker.className = 'layout-marker';
         
@@ -301,7 +358,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         marker.appendChild(number);
         return marker;
-    }
+    } */
 
     // =============================================
     // CAMERA CONTROLS
@@ -313,15 +370,13 @@ document.addEventListener("DOMContentLoaded", function() {
     function startCamera() {
         videoFeed.onerror = handleCameraError;
         videoFeed.src = "/video_feed?" + new Date().getTime();
-        toggleCameraBtn.textContent = "Close Camera";
         cameraActive = true;
-        setTimeout(updateVideoContainerLayout, 100);
+        //setTimeout(updateVideoContainerLayout, 3000);
     }
 
     function stopCamera() {
         videoFeed.onerror = null;
         videoFeed.src = "";
-        toggleCameraBtn.textContent = "Open Camera";
         cameraActive = false;
         fetch("/stop_camera");
     }
@@ -351,6 +406,33 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(handleCaptureSuccess)
             .catch(handleCaptureError)
             .finally(resetCaptureButton);
+    }
+
+    function startCountdown(seconds) {
+        return new Promise((resolve) => {
+            countdownDisplay.style.display = 'block';
+            let count = seconds;
+
+            const interval = setInterval(() => {
+                countdownDisplay.textContent = '';
+                countdownDisplay.textContent = count;
+                count--;
+
+                if (count < 0) {
+                    clearInterval(interval);
+                    countdownDisplay.style.display = 'none';
+                    countdownDisplay.textContent = '';
+                    resolve();
+                }
+            }, 1000);
+        });
+    }
+
+    function triggerFlash() {
+        flashOverlay.style.opacity = '1';
+        setTimeout(() => {
+            flashOverlay.style.opacity = '0';
+        }, 100);
     }
 
     function handleCaptureResponse(response) {
@@ -444,7 +526,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function selectImage(index) {
         currentlySelectedImageIndex = index;
-        
+        console.log("current index is: ", currentEditImageIndex)
         imageSelectBtns.forEach(btn => {
             btn.classList.toggle('active', parseInt(btn.dataset.index) === index);
         });
@@ -459,7 +541,13 @@ document.addEventListener("DOMContentLoaded", function() {
     //ito yung taga display???????
     function editImage() {
         if (!capturedImages[currentlySelectedImageIndex]) return;
-        enterEditMode(currentlySelectedImageIndex);
+
+        if(picEditState[currentlySelectedImageIndex] == false){
+            enterEditMode(currentlySelectedImageIndex);
+        }
+        else{
+            alert("The image has already been edited")
+        }
     }
 
     function retakeImage() {
@@ -467,11 +555,19 @@ document.addEventListener("DOMContentLoaded", function() {
             alert("No image to retake");
             return;
         }
+
+        if(retakeChances <= 0){
+            alert("Retake chances has been used");
+            return;
+        }
     
         if (confirm("Are you sure you want to retake this photo?")) {
             setupRetakeState();
             switchToCaptureSection();
             prepareForRetake();
+            picEditState[currentlySelectedImageIndex] = false; //para pwede na siyang maedit ulit
+            isImageRaw = true;
+            retakeChances -= 1;
         }
     }
 
@@ -500,12 +596,31 @@ document.addEventListener("DOMContentLoaded", function() {
     // TEMPLATE RENDERING
     // =============================================
     function renderTemplate() {
+        // Draw the background first (if any)
+        if (selectedBG) {
+            const bgImage = new Image();
+            bgImage.onload = function () {
+                ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height); // Clear canvas
+                ctx.drawImage(bgImage, 0, 0, resultCanvas.width, resultCanvas.height);
+
+                // Then draw template areas and images
+                drawTemplateAreasAndImages();
+            };
+            bgImage.src = selectedBG;
+        } else {
+            // No background, just clear and draw
+            ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+            drawTemplateAreasAndImages();
+        }
+    }
+
+    function drawTemplateAreasAndImages() {
         // Draw colored background for each area
         currentTemplate.areas.forEach(area => {
             ctx.fillStyle = area.color + '80';
             ctx.fillRect(area.x, area.y, area.width, area.height);
         });
-        
+
         // Draw the images
         currentTemplate.areas.forEach((area, index) => {
             if (capturedImages[index]) {
@@ -779,6 +894,7 @@ document.addEventListener("DOMContentLoaded", function() {
         switch(index){
             case -1:
                 routeString = '/get_raw';
+                isImageRaw = true;
                 break
             case 0:
                 routeString = '/get_grayscaled';
@@ -808,9 +924,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 routeString = '/get_green';
                 break;
             default:
-                console.error("Invalid filter index:", index);
+                console.error("Invalid filter index:", index); //how the fuck did you get in here
                 return Promise.resolve(null);  // Dunno how it works pero hayaan lang ito
         }
+        //console.log("route string: ", routeString);
+        if(routeString == '/get_raw'){ isImageRaw = true;}
+        else{ isImageRaw = false; }
+
+        console.log("isImageRaw value: ", isImageRaw);
 
         return fetch(routeString)
         .then(response =>{
@@ -874,41 +995,69 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function exitEditMode() {
         editControls.classList.add('hidden');
+        isImageRaw = true;
         clearBoundingBoxes();
         removeExistingStickers();
     }
 
+    //ADJUSTED FROM 640x480 to 1920x1080.
     function applyEdit() {
         const editCanvas = document.getElementById('edit-canvas');
         const mergedCanvas = document.createElement('canvas');
-        mergedCanvas.width = 640;  // base resolution
-        mergedCanvas.height = 480;
+        mergedCanvas.width = 1920;  // base resolution
+        mergedCanvas.height = 1080;
         const ctx = mergedCanvas.getContext('2d');
+        ctx.drawImage(editCanvas, 0, 0, 1920, 1080);
 
-        ctx.drawImage(editCanvas, 0, 0, 640, 480);
 
-        // redraw all stickers now with its original values
-        for (const data of Object.values(stickerMetaData)) {
-            const stickerImg = new Image();
-            stickerImg.src = data.imgSrc;
+        if(!isObjectEmpty(stickerMetaData)){
+            /*
+            const editCanvas = document.getElementById('edit-canvas');
+            const mergedCanvas = document.createElement('canvas');
+            mergedCanvas.width = 640;  // base resolution
+            mergedCanvas.height = 480;
+            const ctx = mergedCanvas.getContext('2d');
 
-            if (stickerImg.complete) {
-                ctx.drawImage(stickerImg, data.x, data.y, data.width, data.height);
-            } else {
-                stickerImg.onload = () => {
+            ctx.drawImage(editCanvas, 0, 0, 640, 480);
+            */
+
+            // redraw all stickers now with its original values
+            for (const data of Object.values(stickerMetaData)) {
+                const stickerImg = new Image();
+                stickerImg.src = data.imgSrc;
+
+                if (stickerImg.complete) {
                     ctx.drawImage(stickerImg, data.x, data.y, data.width, data.height);
-                };
+                } else {
+                    stickerImg.onload = () => {
+                        ctx.drawImage(stickerImg, data.x, data.y, data.width, data.height);
+                    };
+                }
             }
+            picEditState[currentEditImageIndex] = true;
+
+        }
+        else{
+            picEditState[currentEditImageIndex] = false;
         }
 
         const editedImageData = mergedCanvas.toDataURL('image/png');
         capturedImages[currentEditImageIndex] = editedImageData;
         selectedImagePreview.src = editedImageData;
+
+        if(isImageRaw == false) {picEditState[currentEditImageIndex] = true;} //crucial placement ito kaya ito nandito kasi masisira yung overlay for some reason
+
         renderTemplate();
         exitEditMode();
         removeExistingStickers();
         clearBoundingBoxes();
     }
+
+    const isObjectEmpty = (objectName =>{
+        return(
+            objectName && Object.keys(objectName).length === 0 && objectName.constructor === Object
+        );
+    });
 
     function applyColorFilter(index) {
         editCtx.fillStyle = `rgba(${index * 40}, ${index * 30}, ${index * 50}, 0.3)`;
@@ -954,13 +1103,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     //grrreeeeennnnnnnnn
     function drawBoundingBoxes(boxes) {
+
+        if (boxes == null){ return;} //incase na walang mukhang nakita
+
         const ctx = createOverlayCanvas();
         const overlay = document.getElementById('overlay-canvas');
     
         ctx.clearRect(0, 0, overlay.width, overlay.height);
         ctx.strokeStyle = 'lime';
         ctx.lineWidth = 2;
-    
+        
         boxes.forEach(box => {
             ctx.beginPath(); 
             ctx.rect(box.x, box.y, box.w, box.h);  
@@ -1047,6 +1199,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 faceIndex = await getFaceIndex(dropX, dropY);
                 console.log("the index is: ", faceIndex);
 
+                if(faceIndex == null){return;} //kapag walang mukhang nadetect ay ito ang sasalo
+
                 if (faceIndex !== -1) {
                     console.log("inside a face");
 
@@ -1066,7 +1220,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         .then(data => {
                             const img = new Image();
                             img.onload = function() {
-                                setStickertoExistingSticker(faceIndex);
+                                setStickertoExistingSticker(faceIndex); //umayos kang method ka hayp ka
                                 //store values for saving purposes
                                 stickerMetaData[faceIndex] = {
                                     imgSrc: "data:image/png;base64," + data.sticker,   
@@ -1288,10 +1442,73 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function downloadResult() {
+        /*
         const link = document.createElement('a');
         link.download = `photo-booth-${currentTemplate.name.toLowerCase().replace(/ /g, '-')}-${new Date().getTime()}.png`;
         link.href = resultCanvas.toDataURL('image/png');
         link.click();
+        */
+        if(capturedImages.length === 0){
+            console.log("nothing so download");
+            return;
+        }
+
+        const session_id = localStorage.getItem('session_id');
+
+        resultCanvas.toBlob(blob => {
+            if (!blob) {
+                alert("Failed to get image blob!");
+                return;
+            }
+    
+            const formData = new FormData();
+            formData.append('photo', blob, 'photo.png');
+            formData.append('session_id', session_id);
+    
+            fetch('/upload_photo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                if (data.message === "Photo saved successfully") {
+                    alert("Photo saved! Sending email...");
+    
+                    // Directly call finalize_session with session_id only
+                    const finalizeForm = new FormData();
+                    finalizeForm.append('session_id', session_id);
+    
+                    return fetch('/finalize_session', {
+                        method: 'POST',
+                        body: finalizeForm
+                    });
+                } else {
+                    throw new Error(data.error || 'Failed to save photo');
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to finalize session');
+                return response.json();
+            })
+            .then(finalizeData => {
+                if (finalizeData.status === 'sent') {
+                    alert("Email sent! Redirecting to home...");
+                    window.location.href = "/";
+                } else {
+                    alert("Failed to send email. Redirecting to home...");
+                    window.location.href = "/";
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Error during photo save or email sending: ' + error.message + ' Redirecting to home...');
+                window.location.href = "/";
+            });
+    
+        }, 'image/png');
     }
 
     function returnToLayout() {
@@ -1300,7 +1517,6 @@ document.addEventListener("DOMContentLoaded", function() {
             switchToLayoutSelection();
         }
     }
-
 
     function resetCaptureState() {
         capturedImages.forEach(img => {
@@ -1319,6 +1535,7 @@ document.addEventListener("DOMContentLoaded", function() {
         layoutSelection.classList.remove("section-inactive");
         layoutSelection.classList.add("section-active");
         stopCamera();
+        startCamera();
     }
 
     function startOver() {
@@ -1337,8 +1554,14 @@ document.addEventListener("DOMContentLoaded", function() {
         templateContainer.addEventListener('click', handleTemplateClick);
         
         // Camera and capture
-        toggleCameraBtn.addEventListener('click', toggleCamera);
-        captureBtn.addEventListener('click', capturePose);
+        captureBtn.addEventListener('click', async () => {
+            await startCountdown(3);
+            triggerFlash();
+            
+            setTimeout(() => {
+                capturePose();
+            }, 150);
+        });
         confirmLayoutBtn.addEventListener('click', confirmLayout);
         
         // Navigation
@@ -1355,7 +1578,7 @@ document.addEventListener("DOMContentLoaded", function() {
         startOverBtn.addEventListener('click', startOver);
         
         // Window events
-        window.addEventListener('resize', updateVideoContainerLayout);
+        //window.addEventListener('resize', updateVideoContainerLayout);
         window.addEventListener("beforeunload", cleanupBeforeUnload);
     }
 

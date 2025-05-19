@@ -1,23 +1,39 @@
 main {
     text-align: center;
-    padding: 20px;
     max-width: 800px;
     max-height: 480px;
 }
 
+.titleName{
+    color:#99ffd0;
+    text-shadow: 0px 3px 2px #198050;
+    -webkit-text-stroke-width: 1px;
+    font-weight: bold;
+    font-size: 120px;
+}
+
+.emailButton{
+    display: flex;
+    padding: 5px;
+    margin: 10px;
+}
+
+.scan{
+    color: white;
+    -webkit-text-stroke: 0.5px black;
+    line-height: 20vh;
+    font-weight: bold;
+    border: 0;
+    background: none;
+}
+
 h2 {
-    color: #333;
+    color: #99ffd0;
+    -webkit-text-stroke: 1px #198050;
 }
 
 p {
     font-size: 18px;
-    margin-bottom: 15px;
-}
-
-ul {
-    text-align: left;
-    max-width: 400px;
-    margin: 0 auto 20px;
 }
 
 a.btn-link {
@@ -38,10 +54,14 @@ a.btn-link:hover {
 
 /* Carousel styles */
 .carousel-container {
+    display: flexbox;
     position: relative;
-    max-width: 800px;
+    max-width: 600px;
+    border-radius: 25px;
     margin: 2rem auto;
+    background: white;
     overflow: hidden;
+    box-shadow: 0px 4px 2px black;
 }
 
 .carousel {
@@ -55,14 +75,17 @@ a.btn-link:hover {
     min-width: 100%;
     padding: 2rem;
     text-align: center;
-    background-color: #f8f9fa;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     display: none;
 }
 
 .carousel-item.active {
-    display: block;
+    display: flex;
+    height: 200px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .carousel-control {
@@ -94,7 +117,7 @@ a.btn-link:hover {
 .carousel-indicators {
     display: flex;
     justify-content: center;
-    margin-top: 1rem;
+    margin: 1rem;
 }
 
 .carousel-indicator {
@@ -108,4 +131,99 @@ a.btn-link:hover {
 
 .carousel-indicator.active {
     background-color: #333;
+}
+
+
+body {
+    display:flex;
+    overflow: hidden;
+}
+
+.ocean { 
+    height: 26vh;
+    width:100%;
+    position:absolute;
+    bottom:0;
+    left:0;
+    margin: 0;
+    padding: 0;
+    background: hsl(152, 100%, 80%);
+    z-index: -1;
+}
+
+.wave {
+    background: url('../others/greenwave.svg') repeat-x; 
+    position: relative;
+    top: -198px;
+    height: 198px;
+    animation: wave 30s infinite;
+    overflow-x: hidden;
+}
+
+@keyframes wave {
+    0% {
+        margin-left: 0px;
+    }
+    50% {
+        margin-left: -1960px;
+    }
+    100%
+    {
+        margin-left: 0px;
+    }
+}
+
+.underwater{
+    background: #99ffd0;
+    width:100%;
+    margin-top: -25vh;
+    overflow-x: hidden;
+}
+
+.fish{
+    width: 100%;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 20vh;
+
+}
+
+
+.btn-link{
+    display: flex;
+    padding: 5px;
+    margin-bottom: 40px;
+}
+button{
+    font-family: "DynaPuff", system-ui;
+}
+button:hover{
+    background: none;
+}
+
+.section-active {
+    opacity: 1;
+    animation: fadeInOut 0.9s ease-out;
+    z-index: 1000 !important;
+}
+
+.section-inactive {
+    opacity: 0;
+    overflow: hidden;
+}
+
+.carouselProMax{
+    display: block;
+}
+
+input{
+    width: 55vh;
+    height: 5vh;
+    font-size: 14px;
 }

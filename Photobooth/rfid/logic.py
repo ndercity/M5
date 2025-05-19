@@ -3,11 +3,7 @@ import os
 import threading
 import time
 from mfrc522 import SimpleMFRC522 #uncomment this in raspi
-
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(parent_dir)
-
-import db_functions as dbf
+import rfid_db_func as dbf
 
 class AppState:
     def __init__(self):
@@ -36,6 +32,7 @@ class AppState:
 
 class RFID_Logic:
     def __init__(self, on_scan_callback):
+        dbf.init_db()
         self.reader = None
         self.thread = None
         self.on_scan_callback = on_scan_callback
