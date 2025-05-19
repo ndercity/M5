@@ -234,7 +234,7 @@ class OperationsPage(ctk.CTkFrame):
 
     def clear(self):
         self.state.clear_details()
-        self.controller.show_page("ScanPage")
+        self.controller.show_page("HomePage")
     
     def get_current_rfid(self):
         self.rfid_display, self.rfid_status = self.state.get_current_rfid_details()
@@ -242,9 +242,12 @@ class OperationsPage(ctk.CTkFrame):
     
     def refresh(self):
         self.rfid_display,self.rfid_status = self.state.get_current_rfid_details()
+
+        if self.rfid_status == "None":
+            self.rfid_status = "Doesn't Exist"
+
         self.rfid_num_label.configure(text = f"RFID Number: {self.rfid_display}")
         self.rfid_status_label.configure(text = f"Status: {self.rfid_status}")
-
 
 
 class CompeleteOperation(ctk.CTkFrame):
@@ -252,8 +255,6 @@ class CompeleteOperation(ctk.CTkFrame):
         super().__init__(parent)
         self.controller = controller
         self.state = state
-        self.rfid_display, self.rfid_status = self.state.get_current_rfid_details()
-
 
         self.bg_image = ctk.CTkImage(light_image = Image.open('images/scan_design.png'), 
                                                                 size = (800,480)) #just to make sure
@@ -278,16 +279,19 @@ class CompeleteOperation(ctk.CTkFrame):
         self.scan_label.pack()   
 
         self.rfid_num_label = ctk.CTkLabel(self.text_container,
-                                       text = f"RFID Number: {self.rfid_display if self.rfid_display else '0000000'}",
+                                       text = f"RFID Number: ",
                                        font = ("Helvetica", 15),
                                        text_color = "#000000")
         self.rfid_num_label.pack()
 
         self.rfid_status_label = ctk.CTkLabel(self.text_container,
-                                       text = f"RFID Status: {self.rfid_status}",
+                                       text = f"RFID Status: ",
                                        font = ("Helvetica", 15),
                                        text_color = "#000000")
         self.rfid_status_label.pack()
+
+        self.rfid_display = None
+        self.rfid_status = None
 
 
         self.rescan_button = ctk.CTkButton(self, height = 54, width = 181, 
@@ -319,3 +323,9 @@ class CompeleteOperation(ctk.CTkFrame):
     def clear(self, page):
         self.state.clear_details()
         self.controller.show_page(page)
+
+    def refresh(self):
+        self.rfid_display,self.rfid_status = self.state.get_current_rfid_details()
+        self.rfid_num_label.configure(text = f"RFID Number: {self.rfid_display}")
+        self.rfid_status_label.configure(text = f"Status: {self.rfid_status}")
+
