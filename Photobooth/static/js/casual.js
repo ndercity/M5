@@ -7,74 +7,90 @@ document.addEventListener("DOMContentLoaded", function() {
             name: "One",
             background: "/static/others/frame1.png",
             areas: [
-                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
-                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
-                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
-                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
+                { x: 69.8, y: 56.2, width: 814.2, height: 458, color: '#FFDDC1' },
+                { x: 916, y: 56.2, width: 814.2, height: 458, color: '#C1FFD7' },
+                { x: 69.8, y: 548.9, width: 814.2, height: 458, color: '#C1D7FF' },
+                { x: 916, y: 548.9, width: 814.2, height: 458, color: '#FFC1E3' }
             ]
         },
         two: {
             name: "Two",
+            background: "/static/others/frame2.png",
             areas: [
-                { x: 58.7, y: 24.9, width: 1000, height: 562.5, color: '#FFDDC1' }, 
-                { x: 1091.3, y: 221.8, width: 650, height: 365.6, color: '#C1FFD7' },
-                { x: 58.7, y: 612.6, width: 650, height: 365.6, color: '#C1D7FF' }, 
-                { x: 741.3, y: 612.6, width: 1000, height: 562.5, color: '#FFC1E3' } 
+                { x: 180.4, y: 167.6, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
+                { x: 913.1, y: 167.6, width: 696.1, height: 391.5, color: '#C1FFD7' },
+                { x: 266.1, y: 579.1, width: 505.2, height: 284.2, color: '#C1D7FF' }, 
+                { x: 1012, y: 579.1, width: 505.2, height: 284.2, color: '#FFC1E3' } 
             ]
         },
         three: {
             name: "Three",
+            background: "/static/others/frame3.png",
             areas: [
-                { x: 94.8, y: 77.9, width: 784.9, height: 441.5, color: '#FFDDC1' },
-                { x: 920.4, y: 174.9, width: 784.9, height: 441.5, color: '#C1FFD7' }, 
-                { x: 94.8, y: 583.6, width: 784.9, height: 441.5, color: '#C1D7FF' }, 
-                { x: 920.4, y: 680.6, width: 784.9, height: 441.5, color: '#FFC1E3' } 
+                { x: 120, y: 155, width: 1027.5, height: 578, color: '#FFDDC1' }, 
+                { x: 1206.9, y: 155, width: 473.1, height: 266.1, color: '#C1FFD7' },
+                { x: 1206.9, y: 466.8, width: 473.1, height: 266.1, color: '#C1D7FF' },
+                { x: 1206.9, y: 778.9, width: 473.1, height: 266.1, color: '#FFC1E3' } 
             ]
         },
         four: {
             name: "Four",
+            background: "/static/others/frame4.png",
             areas: [
-                { x: 282.1, y: 90, width: 1204.4, height: 677.5, color: '#FFDDC1' }, 
-                { x: 35.9, y: 797.8, width: 555.1, height: 312.2, color: '#C1FFD7' }, 
-                { x: 622.4, y: 797.8, width: 555.1, height: 312.2, color: '#C1D7FF' }, 
-                { x: 1209, y: 797.8, width: 555.1, height: 312.2, color: '#FFC1E3' } 
+                { x: 123.2, y: 218.9, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
+                { x: 123.2, y: 714.7, width: 505.2, height: 284.2, color: '#C1FFD7' }, 
+                { x: 675.6, y: 714.7, width: 505.2, height: 284.2, color: '#C1D7FF' }, 
+                { x: 1228, y: 714.7, width: 505.2, height: 284.2, color: '#FFC1E3' } 
             ]
         },
         five: {
             name: "Five",
+            background: "/static/others/frame5.png",
             areas: [
-                { x: 391.9, y: 52.8, width: 706.8, height: 397.6, color: '#FFDDC1' }, 
-                { x: 928.3, y: 301.8, width: 706.8, height: 397.6, color: '#C1FFD7' }, 
-                { x: 164.9, y: 500.6, width: 706.8, height: 397.6, color: '#C1D7FF' }, 
-                { x: 701.2, y: 749.6, width: 706.8, height: 397.6, color: '#FFC1E3' } 
+                { x: 153.5, y: 167.6, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
+                { x: 880.8, y: 167.6, width: 696.1, height: 391.5, color: '#C1FFD7' }, 
+                { x: 153.5, y: 600, width: 696.1, height: 391.5, color: '#C1D7FF' }, 
+                { x: 880.8, y: 600, width: 696.1, height: 391.5, color: '#FFC1E3' } 
             ]
         },
         six: {
             name: "Six",
+            background: "/static/others/frame6.png",
             areas: [
-                { x: 158.6, y: 144.6, width: 732.8, height: 412.2, color: '#FFDDC1' },
-                { x: 908.6, y: 144.6, width: 732.8, height: 412.2, color: '#C1FFD7' },
-                { x: 30.9, y: 571.3, width: 860.6, height: 484.1, color: '#C1D7FF' },
-                { x: 908.6, y: 571.3, width: 860.6, height: 484.1, color: '#FFC1E3' }
+                { x: 123.2, y: 242.4, width: 724.8, height: 407.7, color: '#FFDDC1' },
+                { x: 123.2, y: 722.7, width: 505.2, height: 284.2, color: '#C1FFD7' },
+                { x: 688.9, y: 722.7, width: 505.2, height: 284.2, color: '#C1D7FF' },
+                { x: 1228, y: 722.7, width: 505.2, height: 284.2, color: '#FFC1E3' }
             ]
         },
         seven: {
             name: "Seven",
+            background: "/static/others/frame7.png",
             areas: [
-                { x: 117, y: 138.6, width: 732.8, height: 412.2, color: '#FFDDC1' }, 
-                { x: 872.7, y: 98.9, width: 834.6, height: 522.2, color: '#C1FFD7' },
-                { x: 92.7, y: 578.9, width: 834.6, height: 522.2, color: '#C1D7FF' },
-                { x: 953.1, y: 646.7, width: 732.8, height: 412.2, color: '#FFC1E3' } 
+                { x: 64.2, y: 295.9, width: 426.5, height: 239.9, color: '#FFDDC1' }, 
+                { x: 1298.1, y: 295.9, width: 426.5, height: 239.9, color: '#C1FFD7' },
+                { x: 64.2, y: 662.5, width: 426.5, height: 239.9, color: '#C1D7FF' },
+                { x: 1298.1, y: 662.5, width: 426.5, height: 239.9, color: '#FFC1E3' } 
             ]
         },
         eight: {
             name: "Eight",
             background: "/static/others/frame8.png",
             areas: [
-                { x: 120, y: 155, width: 1027.5, height: 578, color: '#FFDDC1' }, 
-                { x: 1206.9, y: 155, width: 473.1, height: 266.1, color: '#C1FFD7' },
-                { x: 1206.9, y: 466.8, width: 473.1, height: 266.1, color: '#C1D7FF' },
-                { x: 1206.9, y: 778.9, width: 473.1, height: 266.1, color: '#FFC1E3' } 
+                { x: 190.3, y: 170.2, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
+                { x: 913.7, y: 170.2, width: 696.1, height: 391.5, color: '#C1FFD7' },
+                { x: 190.3, y: 591.3, width: 696.1, height: 391.5, color: '#C1D7FF' },
+                { x: 913.7, y: 591.3, width: 696.1, height: 412.2, color: '#FFC1E3' } 
+            ]
+        },
+        nine: {
+            name: "Nine",
+            background: "/static/others/frame9.png",
+            areas: [
+                { x: 839.5, y: 319.7, width: 323.1, height: 181.7, color: '#FFDDC1' }, 
+                { x: 497.7, y: 527.5, width: 323.1, height: 181.7, color: '#C1FFD7' },
+                { x: 156, y: 735.5, width: 323.1, height: 181.7, color: '#C1D7FF' },
+                { x: 1331.3, y: 473.6, width: 449.4, height: 252.8, color: '#FFC1E3' } 
             ]
         }
     };
@@ -596,23 +612,20 @@ document.addEventListener("DOMContentLoaded", function() {
     // TEMPLATE RENDERING
     // =============================================
     function renderTemplate() {
-        // Draw the background first (if any)
+        ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+
+        // Draw images and template areas first
+        drawTemplateAreasAndImages();
+
         if (selectedBG) {
             const bgImage = new Image();
             bgImage.onload = function () {
-                ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height); // Clear canvas
                 ctx.drawImage(bgImage, 0, 0, resultCanvas.width, resultCanvas.height);
-
-                // Then draw template areas and images
-                drawTemplateAreasAndImages();
             };
             bgImage.src = selectedBG;
-        } else {
-            // No background, just clear and draw
-            ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
-            drawTemplateAreasAndImages();
         }
     }
+
 
     function drawTemplateAreasAndImages() {
         // Draw colored background for each area
