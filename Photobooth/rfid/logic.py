@@ -32,6 +32,7 @@ class AppState:
 
 class RFID_Logic:
     def __init__(self, on_scan_callback):
+        dbf.init_db()
         self.reader = None
         self.thread = None
         self.on_scan_callback = on_scan_callback
