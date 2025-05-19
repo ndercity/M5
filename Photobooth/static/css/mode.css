@@ -107,7 +107,7 @@ a{
     padding: 10px;
     border: 5px solid white;
     border-radius: 10px;
-    box-shadow: 5px 5px 0px rgb(0 0 0 / 0.6);
+    box-shadow: -5px 5px 0px rgb(0 0 0 / 0.6);
     transition: transform 0.3s, box-shadow 0.0s;
 }
 .back-card:active{

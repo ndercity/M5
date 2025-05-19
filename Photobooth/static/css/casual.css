@@ -8,6 +8,13 @@ main {
     display: none;
 }
 
+.title{
+    font-size: 40px;
+    font-weight: bold;
+    color: #ffffff;
+    -webkit-text-stroke: 1px  #ffd027;
+}
+
 /* Capture Section */
 .video-container {
     position: relative;
@@ -47,7 +54,7 @@ main {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    background: white;
+    background:none;
     padding: 20px;
 }
 
@@ -106,8 +113,11 @@ main {
 }
 
 .carousel-button {
-    background: rgba(255,255,255,0.7);
+    background: rgba(0, 0, 0, 0.7);
     border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -118,8 +128,8 @@ main {
     transition: all 0.2s;
 }
 
-.carousel-button:hover {
-    background: rgba(255,255,255,0.9);
+.carousel-button:focus{
+    background: #101010;
     transform: scale(1.1);
 }
 
@@ -640,4 +650,52 @@ main {
     border-radius: 1rem;
     z-index: 10000;
     display: none;
+}
+
+body{
+    background-image: 
+    repeating-linear-gradient(
+        -45deg, 
+        #ffde6b 1rem, 
+        #ffde6b 3rem,
+        #fcf6bd 2rem,
+        #fcf6bd 5rem
+    );
+    background-size: 200% 200%;
+    animation: barberpole 30s linear infinite;
+}
+
+@keyframes barberpole {
+    100% {
+    background-position: 100% 100%;
+    }
+}
+a{
+    position: relative;
+    text-align: center;
+    color: white;
+}
+.back-card{
+    position: absolute;
+    text-decoration: none;
+    top: 0;
+    left: -7px;
+    
+}
+.back-content{
+    background:#ffde6b;
+    font-size: 30px;
+    padding: 10px;
+    border: 5px solid white;
+    border-radius: 10px;
+    box-shadow: -5px 5px 0px rgb(0 0 0 / 0.6);
+    transition: transform 0.3s, box-shadow 0.0s;
+}
+.back-card:active{
+    transform:translateY(3px);
+    box-shadow: none;
+}
+
+.back-content:active{
+    box-shadow: none;
 }

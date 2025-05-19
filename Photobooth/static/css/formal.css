@@ -1,13 +1,32 @@
 /* =====================
-   Base Styles
+    Base Styles
    ===================== */
-   main {
+    main {
     text-align: center;
-    padding: 20px;
     position: relative;
     min-height: 100vh;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
+    width: 800px;
+    height: 480px;
+}
+
+body{
+    background-image: 
+    repeating-linear-gradient(
+        -45deg, 
+        #5bc8ff 1rem, 
+        #5bc8ff 3rem,
+        #7fd4ff 2rem,
+        #7fd4ff 5rem
+    );
+    background-size: 200% 200%;
+    animation: barberpole 30s linear infinite;
+}
+
+@keyframes barberpole {
+    100% {
+    background-position: 100% 100%;
+    }
 }
 
 h2, h3, h4 {
@@ -326,5 +345,34 @@ button:disabled {
     border-radius: 1rem;
     z-index: 10000;
     display: none;
+}
+a{
+    position: relative;
+    text-align: center;
+    color: white;
+}
+.back-card{
+    position: absolute;
+    text-decoration: none;
+    top: 0;
+    left: -7px;
+    
+}
+.back-content{
+    background:#5bc8ff;
+    font-size: 30px;
+    padding: 10px;
+    border: 5px solid white;
+    border-radius: 10px;
+    box-shadow: -5px 5px 0px rgb(0 0 0 / 0.6);
+    transition: transform 0.3s, box-shadow 0.0s;
+}
+.back-card:active{
+    transform:translateY(3px);
+    box-shadow: none;
+}
+
+.back-content:active{
+    box-shadow: none;
 }
 
