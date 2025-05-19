@@ -5,25 +5,22 @@
 
 {% block content %}
 <main>
+    <a href="{{ url_for('home') }}" class="back-card">
+        <span class="back-content">Go Back</span>
+    </a>
     <div class="mode-header">
-        <h1>Choose Mode</h1>
+        <a class="title">Choose Mode</a>
     </div>
 
     <div class="mode-options">
-        <a href="{{ url_for('formal') }}" class="mode-card">
-            <div class="card-content">
-                <h2>Formal</h2>
-                <p>Look sharp! A pro-style photo with good lighting and a clean background—perfect for work, school or fancy events.</p>
-                <span class="mode-btn">Select</span>
-            </div>
+        <a href="{{ url_for('casual') }}" class="mode-card">
+            <img src="../static/others/casualText.png" class="card-content">
+            </img>
         </a>
 
-        <a href="{{ url_for('casual') }}" class="mode-card">
-            <div class="card-content">
-                <h2>Casual</h2>
-                <p>Keep it fun! Relax, smile, and snap a pic that shows your vibe—great for socials and memories!</p>
-                <span class="mode-btn">Select</span>
-            </div>
+        <a href="{{ url_for('formal') }}" class="mode-card">
+            <img src="../static/others/formalText.png" class="card-content">
+            </img>
         </a>
     </div>
 </main>
