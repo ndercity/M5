@@ -10,12 +10,12 @@
 
 {% block content %}
 <main>
-    <h2>Casual Photo Session</h2>
-    <p>Choose your favorite layout style!</p>
-
+    <a href="{{ url_for('mode') }}" class="back-card">
+        <span class="back-content">Go Back</span>
+    </a>
     <!-- Layout Selection -->
     <div id="layout-selection" class="section-active">
-        <h3>Select Your Layout</h3>
+        <a class="title">Select Your Frame</a>
         <div class="carousel-container">
             <button class="carousel-button prev" aria-label="Previous template">&#10094;</button>
             <div class="template-carousel" id="template-container">
@@ -131,6 +131,6 @@
         </div>
     </div>
 
-    <a href="{{ url_for('mode') }}" class="btn-link">Back to Mode Selection</a>
+    
 </main>
 {% endblock %}

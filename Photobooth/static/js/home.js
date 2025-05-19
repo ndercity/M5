@@ -49,13 +49,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayEmail(){
-        toggleWaveOrOcean(ocean);
         toggleSection(emailForm, true);
         toggleSection(start, false);
         document.getElementById("email-form").scrollIntoView({behavior:'smooth' , block: 'center'});
     }
 
     function displayCarousel(){
+        /*toggleWaveOrOcean(ocean);*/
         toggleSection(emailForm, false);
         toggleSection(carouselProMax, true);
         document.getElementById("carouselProMax").scrollIntoView({behavior:'smooth' , block: 'center'});
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function toggleWaveOrOcean(activeElement) {
+    /* function toggleWaveOrOcean(activeElement) {
         if (activeElement === wave) {
             wave.classList.add("wave-active");
             wave.classList.remove("wave-inactive");
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 wave.style.display = "none";
             }, 0);
         }
-    }
+    }*/
     
     // Event listeners
     nextBtn.addEventListener('click', nextSlide);

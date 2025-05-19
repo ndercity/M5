@@ -159,7 +159,6 @@ body {
     background: url("/static/others/greenwave.svg") repeat-x;
     width: 400%;
     height: 360px;
-    background-size: contain;
     animation: wave 30s infinite;
 
     position: fixed;
@@ -171,7 +170,7 @@ body {
 
 @keyframes wave {
     0% {
-        margin-left: 0px;
+        margin-left:  0px;
     }
     50% {
         margin-left: -1960px;
