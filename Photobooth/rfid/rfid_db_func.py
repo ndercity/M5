@@ -18,7 +18,7 @@ def init_db():
 def insert_rfid_key(key):
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('INSERT INTO rfid_db (rfid_key) VALUES (?)', key)
+    cursor.execute('INSERT INTO rfid_db (rfid_key) VALUES (?)', (key,))
     db.commit()
 
 def update_rfid_key(key, isActivated):
@@ -29,13 +29,13 @@ def update_rfid_key(key, isActivated):
         activate_value = 'activated'
     else:
         activate_value = 'deactivated'
-    cursor.execute('UPDATE rfid_db SET status = ? WHERE rfid_key = ?', activate_value, key)
+    cursor.execute('UPDATE rfid_db SET status = ? WHERE rfid_key = ?', (activate_value,), (key,))
     db.commit()
 
 def verify_rfid(key):
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('SELECT id FROM rfid_db WHERE rfid_key = ?', key)
+    cursor.execute('SELECT id FROM rfid_db WHERE rfid_key = ?', (key,))
     db.commit()
     row = cursor.fetchone()
 
@@ -47,7 +47,7 @@ def verify_rfid(key):
 def get_rfid_status(key):
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('SELECT status FROM rfid_db WHERE rfid_key = ?', key)
+    cursor.execute('SELECT status FROM rfid_db WHERE rfid_key = ?', (key,))
     db.commit()
     row = cursor.fetchone()
     return row['status'] if row else None
