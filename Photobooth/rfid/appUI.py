@@ -127,6 +127,9 @@ class ScanPage(ctk.CTkFrame):
         self.state.set_rfid(rfid)
         self.rfid_logic.turn_off_rfid()
         self.controller.show_page("OperationsPage")
+    
+    def refreshed(self):
+        self.rfid_logic.turn_on_rfid()
 
     def go_back(self):
         self.controller.show_page("HomePage")
