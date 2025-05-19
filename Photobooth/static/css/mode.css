@@ -14,7 +14,7 @@ body{
         #b4ffdc 5rem
     );
     background-size: 200% 200%;
-    animation: barberpole 30s linear infinite;
+    animation: barberpole 80s linear infinite;
 }
 
 @keyframes barberpole {
