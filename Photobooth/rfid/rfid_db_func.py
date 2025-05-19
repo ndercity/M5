@@ -29,7 +29,7 @@ def update_rfid_key(key, isActivated):
         activate_value = 'activated'
     else:
         activate_value = 'deactivated'
-    cursor.execute('UPDATE rfid_db SET status = ? WHERE rfid_key = ?', (activate_value,), (key,))
+    cursor.execute('UPDATE rfid_db SET status = ? WHERE rfid_key = ?', (activate_value, key))
     db.commit()
 
 def verify_rfid(key):
