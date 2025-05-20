@@ -314,12 +314,8 @@ def allow_access():
 @app.route('/clear_scan')
 def clear_scan():
     rfid.clear_scanned()
-    return jsonify({"rfid status": "cleared"}), 200
-
-@app.route('/restart_rfid')
-def restart_rfid():
     rfid.turn_on_rfid()
-    return jsonify({"rfid status": "on"}), 200
+    return jsonify({"rfid status": "cleared and on"}), 200
 
 #TEST insert
 @app.route('/test_insert_session')
