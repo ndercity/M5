@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const ocean = document.querySelector('.ocean');
     const wave = document.querySelector('.wave');
     let currentIndex = 0;
+    let rfidInterval;
 
     // Create indicators (remove if mas better)
     items.forEach((_, index) => {
@@ -61,11 +62,84 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("carouselProMax").scrollIntoView({behavior:'smooth' , block: 'center'});
     }
 
+    //RFID utils. uncommetn to make it work
+    /*
+    function getRFIDKey(){
+        fetch("/rfid_scan")
+        .then(response => response.json())
+        .then(data => {
+            if (data.scanned_id) {
+                console.log("RFID Key:", data.scanned_id);
+                clearInterval(rfidInterval);
+                verifyRFID(data.scanned_id)
+            } else {
+                console.log("No RFID key scanned yet.");
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching RFID key:", error);
+        });    
+    }
+
+    function verifyRFID(rfidKey){
+        fetch('/allow_access', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                rfid_key: rfidKey
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.key_status === "YES") {
+                console.log("Access granted!");
+                displayEmail(); 
+            } else {
+                console.log("Access denied.");
+                rfidInterval = setInterval(getRFIDKey, 1000); //reinitilize para pwede ulit magscan
+
+                cleanRFID();
+            }
+        })
+        .catch(error => {
+            console.error("Error checking RFID access:", error);
+        });
+    }
+
+    function cleanRFID(){
+        fetch("/clear_scan")
+        .then(response => response.json())
+         .then(data => {
+            console.log("RFID cleared:", data);
+        })
+        .catch(error => {
+            console.error("Error Clearing:", error);
+        });    
+    }
+
+    function turnRFIDOn(){
+        fetch("/turn_on_rfid")
+        .then(response => response.json())
+         .then(data => {
+            console.log("RFID is now on:", data);
+        })
+        .catch(error => {
+            console.error("Error turning on:", error);
+        });    
+
+    }
+        */
+
     function initialize() {
         //Page Initialization
+        //cleanRFID();
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
+        //turnRFIDOn();
+        rfidInterval = setInterval(getRFIDKey, 1000);
     }
 
     function toggleSection(section, show) {
