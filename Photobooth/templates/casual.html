@@ -10,7 +10,7 @@
 
 {% block content %}
 <main>
-    <a href="{{ url_for('mode') }}" class="back-card">
+    <a href="{{ url_for('mode') }}" class="back-card" id="back-card">
         <span class="back-content">Go Back</span>
     </a>
     <!-- Layout Selection -->
@@ -38,8 +38,9 @@
             <div id="countdown-display"></div>
         </div>
         <div class="capture-controls">
-            <button id="back-to-layout" class="secondary-button">Back to Layout</button>
-            <button id="capture-btn" class="primary-button">Capture Pose</button>
+            <div class="control-div">
+                <button id="back-to-layout" class="secondary-button">Back to Layout</button>
+            <img src="/static/others/capture.png" id="capture-btn" class="primary-button"></img>
         </div>
     </div>
 
