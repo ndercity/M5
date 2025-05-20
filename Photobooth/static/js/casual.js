@@ -102,6 +102,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const templateContainer = document.getElementById('template-container');
     const layoutSelection = document.getElementById('layout-selection');
     const layoutName = document.getElementById('layout-name');
+    const backToModeBtn = document.getElementById('back-card');
     
     // Capture Section Elements
     const captureSection = document.getElementById('capture-section');
@@ -1441,6 +1442,7 @@ document.addEventListener("DOMContentLoaded", function() {
         layoutSelection.classList.add('section-inactive');
         captureSection.classList.remove('section-inactive');
         captureSection.classList.add('section-active');
+        backToModeBtn.classList.add('section-inactive');
         
         layoutName.textContent = currentTemplate.name;
         updatePoseCounter();
@@ -1547,6 +1549,7 @@ document.addEventListener("DOMContentLoaded", function() {
         captureSection.classList.add("section-inactive");
         layoutSelection.classList.remove("section-inactive");
         layoutSelection.classList.add("section-active");
+        backToModeBtn.classList.remove("section-inactive");
         stopCamera();
         startCamera();
     }
