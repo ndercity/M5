@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const ocean = document.querySelector('.ocean');
     const wave = document.querySelector('.wave');
     let currentIndex = 0;
+    let rfidInterval;
 
     // Create indicators (remove if mas better)
     items.forEach((_, index) => {
@@ -86,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
-        setInterval(getRFIDKey, 1000);
+        rfidInterval = setInterval(getRFIDKey, 1000);
     }
 
     function toggleSection(section, show) {
