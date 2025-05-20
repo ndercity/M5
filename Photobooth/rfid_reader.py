@@ -25,9 +25,6 @@ class RFID_Reader:
             except Exception as e:
                 print("RFID read error:", e)
             time.sleep(0.2)
-
-            with self.lock:
-                self.active = False
         print("RFID read loop stopped.")
 
     def turn_on_rfid(self):
