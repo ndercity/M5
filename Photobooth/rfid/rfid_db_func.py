@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-DATABASE = os.path.abspath(os.path.join(os.path.dirname(__file__), 'photobooth.db'))
+DATABASE = os.path.abspath(os.join(os.path.dirname(__file__), '..', 'photobooth.db'))
 
 def get_db():
     db = sqlite3.connect(DATABASE)
@@ -10,7 +10,7 @@ def get_db():
 
 def init_db():
     with get_db() as db:
-        schema_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'schema.sql')
+        schema_path = os.path.abspath(os.join(os.path.dirname(__file__), '..', 'schema.sql'))
         with open(schema_path, 'r') as f:
             db.executescript(f.read())
         db.commit()
