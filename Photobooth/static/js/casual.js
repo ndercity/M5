@@ -92,6 +92,66 @@ document.addEventListener("DOMContentLoaded", function() {
                 { x: 156, y: 735.5, width: 323.1, height: 181.7, color: '#C1D7FF' },
                 { x: 1331.3, y: 473.6, width: 449.4, height: 252.8, color: '#FFC1E3' } 
             ]
+        },
+        ten: {
+            name: "Ten",
+            background: "/static/others/frame10.png",
+            areas: [
+                { x: 95, y: 217.8, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
+                { x: 95, y: 731.1, width: 505.2, height: 284.2, color: '#C1FFD7' },
+                { x: 647.4, y: 731.1, width: 505.2, height: 284.2, color: '#C1D7FF' },
+                { x: 1199.6, y: 731.1, width: 505.2, height: 284.2, color: '#FFC1E3' } 
+            ]
+        },
+        eleven: {
+            name: "Eleven",
+            background: "/static/others/frame11.png",
+            areas: [
+                { x: 95, y: 217.8, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
+                { x: 95, y: 698, width: 505.2, height: 284.2, color: '#C1FFD7' },
+                { x: 647.4, y: 698, width: 505.2, height: 284.2, color: '#C1D7FF' },
+                { x: 1199.8, y: 698, width: 505.2, height: 284.2, color: '#FFC1E3' } 
+            ]
+        },
+        twelve: {
+            name: "Twelve",
+            background: "/static/others/frame12.png",
+            areas: [
+                { x: 190.3, y: 170.2, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
+                { x: 913.7, y: 170.2, width: 696.1, height: 391.5, color: '#C1FFD7' },
+                { x: 190.3, y: 591.3, width: 696.1, height: 391.5, color: '#C1D7FF' },
+                { x: 913.7, y: 591.3, width: 696.1, height: 391.5, color: '#FFC1E3' }  
+            ]
+        },
+        thirteen: {
+            name: "Thirteen",
+            background: "/static/others/frame13.png",
+            areas: [
+                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
+                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
+                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
+                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
+            ]
+        },
+        fourteen: {
+            name: "Fourteen",
+            background: "/static/others/frame14.png",
+            areas: [
+                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
+                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
+                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
+                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
+            ]
+        },
+        fifteen: {
+            name: "Fifteen",
+            background: "/static/others/frame15.png",
+            areas: [
+                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
+                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
+                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
+                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
+            ]
         }
     };
 
@@ -117,6 +177,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Preview Section Elements
     const previewSection = document.getElementById('preview-section');
+    const preview = document.getElementById('preview');
     const saveBtn = document.getElementById('save-layout');
     const startOverBtn = document.getElementById('start-over');
     const shutter = document.getElementById('capture-btn');
@@ -692,6 +753,8 @@ document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll('#colors .circle-button').forEach((btn, index) => {
             btn.addEventListener('click', () => applyColorFilter(index));
         });
+        editControls.classList.add('section-inactive');
+        preview.classList.add('section-active');
     }
 
     //ito yung pagpasok mo mismo ng edit part ng site. ito na din ang responsible para maibigay
@@ -709,7 +772,11 @@ document.addEventListener("DOMContentLoaded", function() {
         img.src = capturedImages[index];
         insertSelectedImageInEditMode(capturedImages[index])
         getImageForSticker(capturedImages[index])
-        editControls.classList.remove('hidden');
+
+        preview.classList.remove("section-active");
+        preview.classList.add("section-inactive");
+        editControls.classList.remove('section-inactive');
+        editControls.classList.add('section-active');
     }
 
     //saves sends the image to python for color manipulation
@@ -751,12 +818,14 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(files => {
                 const stickerContainer = document.getElementById("stickers");
+                stickerContainer.style.alignItems = 'center';
+                stickerContainer.style.justifyContent = 'center';
                 stickerContainer.innerHTML = `
+                <button class="sticker-nav-button prev" aria-label="Previous stickers">&#10094;</button>
                     <div class="sticker-carousel-container">
-                        <button class="sticker-nav-button prev" aria-label="Previous stickers">&#10094;</button>
                         <div class="sticker-carousel-track"></div>
-                        <button class="sticker-nav-button next" aria-label="Next stickers">&#10095;</button>
                     </div>
+                <button class="sticker-nav-button next" aria-label="Next stickers">&#10095;</button>
                 `;
                 
                 const track = stickerContainer.querySelector('.sticker-carousel-track');
@@ -862,10 +931,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     //color carousel
     function setupColorCarousel() {
+        const colorsCont = document.querySelector('#colors');
         const container = document.querySelector('#colors .color-carousel-container');
         const track = container.querySelector('.color-carousel-track');
-        const prevBtn = container.querySelector('.color-nav-button.prev');
-        const nextBtn = container.querySelector('.color-nav-button.next');
+        const prevBtn = colorsCont.querySelector('.color-nav-button.prev');
+        const nextBtn = colorsCont.querySelector('.color-nav-button.next');
         const slides = container.querySelectorAll('.color-slide');
         let currentPage = 0;
         const totalPages = slides.length;
@@ -899,8 +969,6 @@ document.addEventListener("DOMContentLoaded", function() {
     //kukunin nito yung index ng pinindot na button mula sa available na filters
     colorButtons.forEach((btn, index)=>{
         btn.addEventListener('click', () => {
-            //console.log('Clicked button index: ', index)
-            //currentButtonIndex = index;
             displayFilterImage(index);
         })
     })
@@ -1012,7 +1080,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     function exitEditMode() {
-        editControls.classList.add('hidden');
+        preview.classList.remove("section-inactive");
+        preview.classList.add("section-active");
+        editControls.classList.remove('section-active');
+        editControls.classList.add('section-inactive');
         isImageRaw = true;
         clearBoundingBoxes();
         removeExistingStickers();
@@ -1091,7 +1162,7 @@ document.addEventListener("DOMContentLoaded", function() {
     //para malaman kung edit na ba talaga
     function monitorEditSection() {
         const observer = new MutationObserver(() => {
-            const isVisible = !editControls.classList.contains('hidden');
+            const isVisible = !editControls.classList.contains('section-inactive');
             
             if (isVisible) {
                 //console.log('edit loaded');
@@ -1111,7 +1182,7 @@ document.addEventListener("DOMContentLoaded", function() {
             attributeFilter: ['class'],
         });
     
-        if (!editControls.classList.contains('hidden')) {
+        if (!editControls.classList.contains('section-inactive')) {
             setTimeout(() => {
                 console.log('edit visible');
                 addStickerEventListener();
