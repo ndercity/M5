@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.scanned_id) {
                 console.log("RFID Key:", data.scanned_id);
                 clearInterval(rfidInterval);
+                verifyRFID(scanned_id)
             } else {
                 console.log("No RFID key scanned yet.");
             }
@@ -79,7 +80,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function verifyRFID(rfidKey){
+        fetch('/allow_access', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                rfid_key: rfidKey
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.key_status === "YES") {
+                console.log("Access granted!");
+                displayEmail(); 
+            } else {
+                console.log("Access denied.");
+                rfidInterval = setInterval(getRFIDKey, 1000); //reinitilize para pwede ulit magscan
 
+            }
+        })
+        .catch(error => {
+            console.error("Error checking RFID access:", error);
+        });
     }
 
     function initialize() {

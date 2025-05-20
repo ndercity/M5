@@ -304,9 +304,12 @@ def rfid_scan():
     scan = rfid.get_last_scan()
     return jsonify({"scanned_id": scan})
 
-@app.route('/allow_access')
+
+@app.route('/allow_access', methods=['POST'])
 def allow_access():
-    print()
+    rfid_key = request.form.get('rfid_key')
+    rfid_status = access_rfid_scan(rfid_key)
+    return jsonify({"key_status": rfid_status})
     
 #TEST insert
 @app.route('/test_insert_session')
