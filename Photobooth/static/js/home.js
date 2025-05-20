@@ -4,9 +4,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevBtn = document.querySelector('.carousel-control.prev');
     const nextBtn = document.querySelector('.carousel-control.next');
     const indicatorsContainer = document.querySelector('.carousel-indicators');
-    const scan = document.querySelector('.scan');
+    const scanbtn = document.querySelector('.scan');
+    const start = document.querySelector('.start-section');
     const emailForm = document.querySelector('.email-form');
     const carouselProMax = document.querySelector('.carouselProMax');
+    const ocean = document.querySelector('.ocean');
+    const wave = document.querySelector('.wave');
     let currentIndex = 0;
 
     // Create indicators (remove if mas better)
@@ -46,12 +49,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayEmail(){
-        toggleSection(scan,false);
         toggleSection(emailForm, true);
+        toggleSection(start, false);
         document.getElementById("email-form").scrollIntoView({behavior:'smooth' , block: 'center'});
     }
 
     function displayCarousel(){
+        /*toggleWaveOrOcean(ocean);*/
         toggleSection(emailForm, false);
         toggleSection(carouselProMax, true);
         document.getElementById("carouselProMax").scrollIntoView({behavior:'smooth' , block: 'center'});
@@ -59,20 +63,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function initialize() {
         //Page Initialization
-    scan.classList.add("section-active");
-    emailForm.classList.add("section-inactive");
-    carouselProMax.classList.add("section-inactive");
+        emailForm.style.display = "none";
+        carouselProMax.style.display = "none";
+        start.classList.add("section-active");
     }
 
     function toggleSection(section, show) {
-        section.classList.toggle("section-active", show);
         section.classList.toggle("section-inactive", !show);
+        section.classList.toggle("section-active", show);
+        if (show){
+            setTimeout(() => {
+                section.style.display = "block";
+            }, 900);
+        }
+        if (!show){
+            setTimeout(() => {
+                section.style.display = "none";
+            }, 900);
+        }
     }
+
+    /* function toggleWaveOrOcean(activeElement) {
+        if (activeElement === wave) {
+            wave.classList.add("wave-active");
+            wave.classList.remove("wave-inactive");
+
+            ocean.classList.add("ocean-inactive");
+            ocean.classList.remove("ocean-active");
+        } else if (activeElement === ocean) {
+            ocean.classList.add("ocean-active");
+            ocean.classList.remove("ocean-inactive");
+
+            wave.classList.add("wave-inactive");
+            wave.classList.remove("wave-active");
+            setTimeout(() => {
+                wave.style.display = "none";
+            }, 0);
+        }
+    }*/
     
     // Event listeners
     nextBtn.addEventListener('click', nextSlide);
     prevBtn.addEventListener('click', prevSlide);
-    scan.addEventListener('click', displayEmail)
+    scanbtn.addEventListener('click', displayEmail)
     
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
