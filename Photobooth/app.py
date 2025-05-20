@@ -21,7 +21,7 @@ camera = Camera()
 color_filter = Color_Filter()
 sticker_filter = Sticker_Filter()
 rfid = RFID_Reader()
-rfid.turn_on_rfid()
+#rfid.turn_on_rfid()
 
 @app.route('/')
 def home():
@@ -304,6 +304,10 @@ def rfid_scan():
     scan = rfid.get_last_scan()
     return jsonify({"scanned_id": scan})
 
+@app.route('/turn_on_rfid')
+def turn_on_rfid():
+    rfid.turn_on_rfid()
+    return jsonify({"rfid status": "rfid is on"}), 200
 
 @app.route('/allow_access', methods=['POST'])
 def allow_access():

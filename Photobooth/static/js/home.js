@@ -96,8 +96,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 displayEmail(); 
             } else {
                 console.log("Access denied.");
-                rfidInterval = setInterval(getRFIDKey, 1000); //reinitilize para pwede ulit magscan
                 cleanRFID();
+                rfidInterval = setInterval(getRFIDKey, 1000); //reinitilize para pwede ulit magscan
             }
             cleanRFID();
         })
@@ -117,12 +117,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });    
     }
 
+    function turnRFIDOn(){
+        fetch("/turn_on_rfid")
+        .then(response => response.json())
+         .then(data => {
+            console.log("RFID is now on:", data);
+        })
+        .catch(error => {
+            console.error("Error turning on:", error);
+        });    
+
+    }
+
     function initialize() {
         //Page Initialization
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
-        cleanRFID();
+        turnRFIDOn();
         rfidInterval = setInterval(getRFIDKey, 1000);
     }
 
