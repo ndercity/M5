@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log("No RFID key scanned yet.");
             }
         })
-        .catch(error => {s
+        .catch(error => {
             console.error("Error fetching RFID key:", error);
         });    
     }
