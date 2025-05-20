@@ -28,11 +28,10 @@ class RFID_Reader:
         print("RFID read loop stopped.")
 
     def turn_on_rfid(self):
-        if not self.active:
-            print("Starting RFID reader...")
-            self.active = True
-            self.thread = threading.Thread(target=self.read_loop, daemon=True)
-            self.thread.start()
+        print("Starting RFID reader...")
+        self.active = True
+        self.thread = threading.Thread(target=self.read_loop, daemon=True)
+        self.thread.start()
 
     def get_last_scan(self):
         return self.last_scanned_id
