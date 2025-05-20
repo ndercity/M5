@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // =============================================
     const TEMPLATE_CONFIG = {
         one: {
-            name: "One",
+            name: "Pic-a-Pi",
             background: "/static/others/frame1.png",
             areas: [
                 { x: 69.8, y: 56.2, width: 814.2, height: 458, color: '#FFDDC1' },
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         two: {
-            name: "Two",
+            name: "Adventure RPG",
             background: "/static/others/frame2.png",
             areas: [
                 { x: 180.4, y: 167.6, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         three: {
-            name: "Three",
+            name: "Meeting",
             background: "/static/others/frame3.png",
             areas: [
                 { x: 120, y: 155, width: 1027.5, height: 578, color: '#FFDDC1' }, 
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         four: {
-            name: "Four",
+            name: "Summer",
             background: "/static/others/frame4.png",
             areas: [
                 { x: 123.2, y: 218.9, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         five: {
-            name: "Five",
+            name: "Neon",
             background: "/static/others/frame5.png",
             areas: [
                 { x: 153.5, y: 167.6, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         six: {
-            name: "Six",
+            name: "Birthday",
             background: "/static/others/frame6.png",
             areas: [
                 { x: 123.2, y: 242.4, width: 724.8, height: 407.7, color: '#FFDDC1' },
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         seven: {
-            name: "Seven",
+            name: "Kill Feed",
             background: "/static/others/frame7.png",
             areas: [
                 { x: 64.2, y: 295.9, width: 426.5, height: 239.9, color: '#FFDDC1' }, 
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         eight: {
-            name: "Eight",
+            name: "Doodle",
             background: "/static/others/frame8.png",
             areas: [
                 { x: 190.3, y: 170.2, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
@@ -84,13 +84,73 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         nine: {
-            name: "Nine",
+            name: "Chicken Jockey",
             background: "/static/others/frame9.png",
             areas: [
                 { x: 839.5, y: 319.7, width: 323.1, height: 181.7, color: '#FFDDC1' }, 
                 { x: 497.7, y: 527.5, width: 323.1, height: 181.7, color: '#C1FFD7' },
                 { x: 156, y: 735.5, width: 323.1, height: 181.7, color: '#C1D7FF' },
                 { x: 1331.3, y: 473.6, width: 449.4, height: 252.8, color: '#FFC1E3' } 
+            ]
+        },
+        ten: {
+            name: "Ten",
+            background: "/static/others/frame10.png",
+            areas: [
+                { x: 95, y: 217.8, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
+                { x: 95, y: 731.1, width: 505.2, height: 284.2, color: '#C1FFD7' },
+                { x: 647.4, y: 731.1, width: 505.2, height: 284.2, color: '#C1D7FF' },
+                { x: 1199.6, y: 731.1, width: 505.2, height: 284.2, color: '#FFC1E3' } 
+            ]
+        },
+        eleven: {
+            name: "Eleven",
+            background: "/static/others/frame11.png",
+            areas: [
+                { x: 95, y: 217.8, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
+                { x: 95, y: 698, width: 505.2, height: 284.2, color: '#C1FFD7' },
+                { x: 647.4, y: 698, width: 505.2, height: 284.2, color: '#C1D7FF' },
+                { x: 1199.8, y: 698, width: 505.2, height: 284.2, color: '#FFC1E3' } 
+            ]
+        },
+        twelve: {
+            name: "Twelve",
+            background: "/static/others/frame12.png",
+            areas: [
+                { x: 190.3, y: 170.2, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
+                { x: 913.7, y: 170.2, width: 696.1, height: 391.5, color: '#C1FFD7' },
+                { x: 190.3, y: 591.3, width: 696.1, height: 391.5, color: '#C1D7FF' },
+                { x: 913.7, y: 591.3, width: 696.1, height: 391.5, color: '#FFC1E3' }  
+            ]
+        },
+        thirteen: {
+            name: "Thirteen",
+            background: "/static/others/frame13.png",
+            areas: [
+                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
+                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
+                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
+                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
+            ]
+        },
+        fourteen: {
+            name: "Fourteen",
+            background: "/static/others/frame14.png",
+            areas: [
+                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
+                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
+                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
+                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
+            ]
+        },
+        fifteen: {
+            name: "Fifteen",
+            background: "/static/others/frame15.png",
+            areas: [
+                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
+                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
+                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
+                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
             ]
         }
     };
@@ -102,6 +162,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const templateContainer = document.getElementById('template-container');
     const layoutSelection = document.getElementById('layout-selection');
     const layoutName = document.getElementById('layout-name');
+    const backToModeBtn = document.getElementById('back-card');
+    
     
     // Capture Section Elements
     const captureSection = document.getElementById('capture-section');
@@ -115,8 +177,10 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Preview Section Elements
     const previewSection = document.getElementById('preview-section');
+    const preview = document.getElementById('preview');
     const saveBtn = document.getElementById('save-layout');
     const startOverBtn = document.getElementById('start-over');
+    const shutter = document.getElementById('capture-btn');
     const backToLayoutBtn = document.getElementById('back-to-layout');
     const imageSelectBtns = document.querySelectorAll('.image-select-btn');
     const selectedImagePreview = document.getElementById('selected-image-preview');
@@ -438,6 +502,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     clearInterval(interval);
                     countdownDisplay.style.display = 'none';
                     countdownDisplay.textContent = '';
+                    shutter.classList.remove("section-inactive")
+                    backToLayoutBtn.classList.remove("section-inactive");
                     resolve();
                 }
             }, 1000);
@@ -687,6 +753,8 @@ document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll('#colors .circle-button').forEach((btn, index) => {
             btn.addEventListener('click', () => applyColorFilter(index));
         });
+        editControls.classList.add('section-inactive');
+        preview.classList.add('section-active');
     }
 
     //ito yung pagpasok mo mismo ng edit part ng site. ito na din ang responsible para maibigay
@@ -704,7 +772,11 @@ document.addEventListener("DOMContentLoaded", function() {
         img.src = capturedImages[index];
         insertSelectedImageInEditMode(capturedImages[index])
         getImageForSticker(capturedImages[index])
-        editControls.classList.remove('hidden');
+
+        preview.classList.remove("section-active");
+        preview.classList.add("section-inactive");
+        editControls.classList.remove('section-inactive');
+        editControls.classList.add('section-active');
     }
 
     //saves sends the image to python for color manipulation
@@ -746,12 +818,14 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(files => {
                 const stickerContainer = document.getElementById("stickers");
+                stickerContainer.style.alignItems = 'center';
+                stickerContainer.style.justifyContent = 'center';
                 stickerContainer.innerHTML = `
+                <button class="sticker-nav-button prev" aria-label="Previous stickers">&#10094;</button>
                     <div class="sticker-carousel-container">
-                        <button class="sticker-nav-button prev" aria-label="Previous stickers">&#10094;</button>
                         <div class="sticker-carousel-track"></div>
-                        <button class="sticker-nav-button next" aria-label="Next stickers">&#10095;</button>
                     </div>
+                <button class="sticker-nav-button next" aria-label="Next stickers">&#10095;</button>
                 `;
                 
                 const track = stickerContainer.querySelector('.sticker-carousel-track');
@@ -857,10 +931,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     //color carousel
     function setupColorCarousel() {
+        const colorsCont = document.querySelector('#colors');
         const container = document.querySelector('#colors .color-carousel-container');
         const track = container.querySelector('.color-carousel-track');
-        const prevBtn = container.querySelector('.color-nav-button.prev');
-        const nextBtn = container.querySelector('.color-nav-button.next');
+        const prevBtn = colorsCont.querySelector('.color-nav-button.prev');
+        const nextBtn = colorsCont.querySelector('.color-nav-button.next');
         const slides = container.querySelectorAll('.color-slide');
         let currentPage = 0;
         const totalPages = slides.length;
@@ -894,8 +969,6 @@ document.addEventListener("DOMContentLoaded", function() {
     //kukunin nito yung index ng pinindot na button mula sa available na filters
     colorButtons.forEach((btn, index)=>{
         btn.addEventListener('click', () => {
-            //console.log('Clicked button index: ', index)
-            //currentButtonIndex = index;
             displayFilterImage(index);
         })
     })
@@ -1007,7 +1080,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     function exitEditMode() {
-        editControls.classList.add('hidden');
+        preview.classList.remove("section-inactive");
+        preview.classList.add("section-active");
+        editControls.classList.remove('section-active');
+        editControls.classList.add('section-inactive');
         isImageRaw = true;
         clearBoundingBoxes();
         removeExistingStickers();
@@ -1086,7 +1162,7 @@ document.addEventListener("DOMContentLoaded", function() {
     //para malaman kung edit na ba talaga
     function monitorEditSection() {
         const observer = new MutationObserver(() => {
-            const isVisible = !editControls.classList.contains('hidden');
+            const isVisible = !editControls.classList.contains('section-inactive');
             
             if (isVisible) {
                 //console.log('edit loaded');
@@ -1106,7 +1182,7 @@ document.addEventListener("DOMContentLoaded", function() {
             attributeFilter: ['class'],
         });
     
-        if (!editControls.classList.contains('hidden')) {
+        if (!editControls.classList.contains('section-inactive')) {
             setTimeout(() => {
                 console.log('edit visible');
                 addStickerEventListener();
@@ -1441,6 +1517,7 @@ document.addEventListener("DOMContentLoaded", function() {
         layoutSelection.classList.add('section-inactive');
         captureSection.classList.remove('section-inactive');
         captureSection.classList.add('section-active');
+        backToModeBtn.classList.add('section-inactive');
         
         layoutName.textContent = currentTemplate.name;
         updatePoseCounter();
@@ -1547,6 +1624,7 @@ document.addEventListener("DOMContentLoaded", function() {
         captureSection.classList.add("section-inactive");
         layoutSelection.classList.remove("section-inactive");
         layoutSelection.classList.add("section-active");
+        backToModeBtn.classList.remove("section-inactive");
         stopCamera();
         startCamera();
     }
@@ -1568,6 +1646,8 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Camera and capture
         captureBtn.addEventListener('click', async () => {
+            shutter.classList.add("section-inactive");
+            backToLayoutBtn.classList.add("section-inactive");
             await startCountdown(3);
             triggerFlash();
             
