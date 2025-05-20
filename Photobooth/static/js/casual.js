@@ -92,6 +92,66 @@ document.addEventListener("DOMContentLoaded", function() {
                 { x: 156, y: 735.5, width: 323.1, height: 181.7, color: '#C1D7FF' },
                 { x: 1331.3, y: 473.6, width: 449.4, height: 252.8, color: '#FFC1E3' } 
             ]
+        },
+        ten: {
+            name: "Ten",
+            background: "/static/others/frame10.png",
+            areas: [
+                { x: 95, y: 217.8, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
+                { x: 95, y: 731.1, width: 505.2, height: 284.2, color: '#C1FFD7' },
+                { x: 647.4, y: 731.1, width: 505.2, height: 284.2, color: '#C1D7FF' },
+                { x: 1199.6, y: 731.1, width: 505.2, height: 284.2, color: '#FFC1E3' } 
+            ]
+        },
+        eleven: {
+            name: "Eleven",
+            background: "/static/others/frame11.png",
+            areas: [
+                { x: 95, y: 217.8, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
+                { x: 95, y: 698, width: 505.2, height: 284.2, color: '#C1FFD7' },
+                { x: 647.4, y: 698, width: 505.2, height: 284.2, color: '#C1D7FF' },
+                { x: 1199.8, y: 698, width: 505.2, height: 284.2, color: '#FFC1E3' } 
+            ]
+        },
+        twelve: {
+            name: "Twelve",
+            background: "/static/others/frame12.png",
+            areas: [
+                { x: 190.3, y: 170.2, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
+                { x: 913.7, y: 170.2, width: 696.1, height: 391.5, color: '#C1FFD7' },
+                { x: 190.3, y: 591.3, width: 696.1, height: 391.5, color: '#C1D7FF' },
+                { x: 913.7, y: 591.3, width: 696.1, height: 391.5, color: '#FFC1E3' }  
+            ]
+        },
+        thirteen: {
+            name: "Thirteen",
+            background: "/static/others/frame13.png",
+            areas: [
+                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
+                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
+                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
+                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
+            ]
+        },
+        fourteen: {
+            name: "Fourteen",
+            background: "/static/others/frame14.png",
+            areas: [
+                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
+                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
+                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
+                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
+            ]
+        },
+        fifteen: {
+            name: "Fifteen",
+            background: "/static/others/frame15.png",
+            areas: [
+                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
+                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
+                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
+                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
+            ]
         }
     };
 
