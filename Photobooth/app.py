@@ -5,10 +5,11 @@ from sticker_filter import Sticker_Filter
 import os
 import time
 import uuid
-from db_functions import get_db, init_db, close_connection, insert_photo_session, update_photo_blob
+from db_functions import get_db, init_db, close_connection, insert_photo_session, update_photo_blob, access_rfid_scan
 import base64
 import io
 from session_flow import start_photo_session, finalize_session
+from rfid_reader import RFID_Reader
 
 app = Flask(__name__)
 #---------
@@ -19,6 +20,8 @@ app.teardown_appcontext(close_connection)
 camera = Camera()
 color_filter = Color_Filter()
 sticker_filter = Sticker_Filter()
+rfid = RFID_Reader()
+rfid.turn_on_rfid()
 
 @app.route('/')
 def home():
@@ -294,6 +297,16 @@ def upload_photo():
         return jsonify({"message": "Photo saved successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+#RFID SCAN
+@app.route('/rfid_scan')
+def rfid_scan():
+    scan = rfid.get_last_scan()
+    return jsonify({"scanned_id": scan})
+
+@app.route('/allow_access')
+def allow_access():
+    print()
     
 #TEST insert
 @app.route('/test_insert_session')

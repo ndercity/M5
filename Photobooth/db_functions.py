@@ -62,3 +62,19 @@ def delete_photo_session(session_id):
     cursor = db.cursor()
     cursor.execute('DELETE FROM photo_sessions WHERE session_id = ?', (session_id,))
     db.commit()
+
+def access_rfid_scan(rfid_key):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("""
+        SELECT 
+            CASE 
+                WHEN status = 'activated' THEN 'YES'
+                ELSE 'NO'
+            END AS is_active 
+        FROM rfid_db 
+        WHERE rfid_key = ?
+    """, (rfid_key,))
+    
+    row = cursor.fetchone()
+    return row['is_active'] if row else None

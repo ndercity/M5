@@ -61,11 +61,27 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("carouselProMax").scrollIntoView({behavior:'smooth' , block: 'center'});
     }
 
+    function getRFIDKey(){
+        fetch("/get_scan")
+        .then(response => response.json())
+        .then(data => {
+            if (data.scanned_id) {
+                console.log("RFID Key:", data.scanned_id);
+            } else {
+                console.log("No RFID key scanned yet.");
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching RFID key:", error);
+        });    
+    }
+
     function initialize() {
         //Page Initialization
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
+        getRFIDKey()
     }
 
     function toggleSection(section, show) {
