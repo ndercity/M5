@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
-        getRFIDKey()
+        setInterval(getRFIDKey, 1000);
     }
 
     function toggleSection(section, show) {
