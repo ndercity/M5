@@ -1,11 +1,8 @@
 /* Base Styles */
 main {
-    max-width: 800px;
+    width: 800px;
     text-align: center;
-}
-
-.hidden {
-    display: none;
+    touch-action: manipulation;
 }
 
 .title{
@@ -16,15 +13,13 @@ main {
 }
 
 /* Capture Section */
+
 .video-container {
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 768px;   /* ADJUST IF MASYADO MALAKI OR MALIIT*/
-    height: 432px;
-    max-width: 768px;
-    max-height: 432px;
+    width: 656px;
+    height: 369px;
     aspect-ratio: 16 / 9;
     background-color: black;
     margin: 20px auto;
@@ -34,18 +29,46 @@ main {
 }
 
 .camera-feed {
+    position: relative;
     max-width: 100%;
     max-height: 100%;
     object-fit: contain; /* ADJUST IF NA COCROP YUNG CAMERA*/
 }
 
 .capture-controls {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin: 20px 0;
+    position:absolute;
+    top: 80%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    gap: 5px;
+    z-index: 10;
 }
 
+#capture-btn{
+    width: 50px;
+    height: 50px;
+    background: none;
+    opacity: 75%;
+}
+
+#back-to-layout{
+    margin-top: -34%;
+    margin-left: 9%;
+    position: absolute;
+    display: flex;
+    align-self: baseline;
+    background: none;
+    border: none;
+    color: white;
+    font-weight: bold;
+    -webkit-text-stroke: 1px black;
+    z-index: 10;
+}
+
+button:focus{
+    background: none;
+}
 /* Canvas Container */
 .canvas-container {
     max-width: 900px;
@@ -74,7 +97,7 @@ main {
 .section-inactive {
     opacity: 0;
     transform: translateY(20px);
-    display: none;
+    display: none !important;
 }
 
 /* Layout Markers */
@@ -253,6 +276,14 @@ main {
     gap: 10px;
 }
 
+#edit-bNa {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
+    gap: 15px;
+}
+
 #edit-btn {
     background: #2196F3;
     color: white;
@@ -264,25 +295,27 @@ main {
 }
 
 /* Edit Preview Styles */
-.edit-preview-wrapper {
+/* .edit-preview-wrapper {
     display: flex;
     gap: 20px;
     position: relative;
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
-}
+} */
 
 #edit-controls {
-    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
     top: 0;
     left: 0;
     right: 0;
-    background: white;
+    /* background: white; */
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.2);
-    z-index: 10;
+   /*  box-shadow: 0 0 20px rgba(0,0,0,0.2); */
 }
 
 .editor-nav-button {
@@ -297,8 +330,8 @@ main {
 .image-container {
     position: relative;
     width: 100%;
-    max-width: 520px;
-    height: 320px;
+    max-width: 445.6px;
+    height: 250.6px;
     background-color: black;
     margin: 0 auto;
     border-radius: 8px;
@@ -366,8 +399,6 @@ main {
 
 .mode-set {
     display: none;
-    justify-content: space-evenly;
-    padding: 15px 0;
 }
 
 .mode-set.visible {
@@ -375,14 +406,12 @@ main {
 }
 
 .mode-container {
-    margin: 15px 0;
+    width: 400px;
 }
 
 .upper-container {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 15px;
 }
 
 .lower-container {
@@ -400,6 +429,7 @@ main {
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s;
+    font-family:  "DynaPuff", system-ui
 }
 
 .secondary-button:hover {
@@ -453,6 +483,15 @@ main {
     margin: 20px 0;
 }
 
+#preview {
+    display: flex;
+    gap: 20px;
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 #preview-section .canvas-container {
     display: none;
 }
@@ -473,6 +512,7 @@ main {
 .sticker-carousel-container {
     display: flex;
     align-items: center;
+    height: 50px;
     width: 100%;
     position: relative;
     overflow: hidden; /* Add this to contain the slides */
@@ -512,12 +552,13 @@ main {
     position: absolute;
 }
 
+/* HARDCODED BTN LOCATION*/
 .sticker-nav-button.prev {
-    left: 5px;
+    left: 175px;
 }
 
 .sticker-nav-button.next {
-    right: 5px;
+    right: 175px;
 }
 
 .sticker-nav-button:hover {
@@ -532,13 +573,14 @@ main {
 .circle-button-sticker {
     border: none;
     padding: 5px;
-    margin: 5px;
+    margin-left: 5px;
     cursor: pointer;
     border-radius: 50%;
     transition: transform 0.2s;
     flex: 0 0 calc(16.666% - 10px); /* 6 items per row accounting for margin */
     box-sizing: border-box;
     position: relative;
+    height: 100%;
 }
 
 .circle-button-sticker img {
@@ -550,18 +592,24 @@ main {
 }
 
 /* Color Carousel Styles */
+#colors {
+    align-items: center;
+    justify-content: center;
+}
+
 .color-carousel-container {
     display: flex;
     align-items: center;
+    height: 50px;
     width: 100%;
     position: relative;
-    overflow: hidden;
+    overflow: hidden; /* Add this to contain the slides */
 }
 
 .color-carousel-track {
     display: flex;
-    width: 100%;
     transition: transform 0.3s ease;
+    height: 100%; /* Ensure full height */
 }
 
 .color-slide {
@@ -592,11 +640,11 @@ main {
 }
 
 .color-nav-button.prev {
-    left: 5px;
+    left: 175px;
 }
 
 .color-nav-button.next {
-    right: 5px;
+    right: 175px;
 }
 
 .color-nav-button:hover {
@@ -610,14 +658,16 @@ main {
 
 .circle-button-color {
     flex: 0 0 calc(16.666% - 10px);
-    margin: 5px;
-    height: 50px;
+    margin-left: 5px;
+    height: 100%;
     border-radius: 50%;
     border: none;
     cursor: pointer;
     transition: transform 0.2s;
     position: relative;
     overflow: hidden;
+    padding: 5px;
+    box-sizing: border-box;
 }
 
 .circle-button-color:hover {
