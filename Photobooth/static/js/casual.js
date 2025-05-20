@@ -164,6 +164,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const layoutName = document.getElementById('layout-name');
     const backToModeBtn = document.getElementById('back-card');
     
+    
     // Capture Section Elements
     const captureSection = document.getElementById('capture-section');
     const videoFeed = document.getElementById('video-feed');
@@ -178,6 +179,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const previewSection = document.getElementById('preview-section');
     const saveBtn = document.getElementById('save-layout');
     const startOverBtn = document.getElementById('start-over');
+    const shutter = document.getElementById('capture-btn');
     const backToLayoutBtn = document.getElementById('back-to-layout');
     const imageSelectBtns = document.querySelectorAll('.image-select-btn');
     const selectedImagePreview = document.getElementById('selected-image-preview');
@@ -499,6 +501,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     clearInterval(interval);
                     countdownDisplay.style.display = 'none';
                     countdownDisplay.textContent = '';
+                    shutter.classList.remove("section-inactive")
+                    backToLayoutBtn.classList.remove("section-inactive");
                     resolve();
                 }
             }, 1000);
@@ -1631,6 +1635,8 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Camera and capture
         captureBtn.addEventListener('click', async () => {
+            shutter.classList.add("section-inactive");
+            backToLayoutBtn.classList.add("section-inactive");
             await startCountdown(3);
             triggerFlash();
             
