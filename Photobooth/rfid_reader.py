@@ -11,6 +11,7 @@ class RFID_Reader:
         self.last_scanned_id = None
 
     def read_loop(self):
+        '''
         print("RFID read loop started.")
         while True:
             with self.lock:
@@ -25,6 +26,27 @@ class RFID_Reader:
             except Exception as e:
                 print("RFID read error:", e)
             time.sleep(0.2)
+        print("RFID read loop stopped.")
+        '''
+        print("RFID read loop started.")
+        while True:
+            with self.lock:
+                if not self.active:
+                    break
+            try:
+                id, text = self.reader.read()
+                if id:
+                    if str(id) != self.last_scanned_id:
+                        print(f"RFID scanned: {id}")
+                        self.last_scanned_id = str(id)
+                        with self.lock:
+                            self.active = False  # stop after successful new scan
+                        break
+                    else:
+                        print("Same RFID scanned again, ignoring.")
+            except Exception as e:
+                print("RFID read error:", e)
+            time.sleep(0.5)
         print("RFID read loop stopped.")
 
     def turn_on_rfid(self):
