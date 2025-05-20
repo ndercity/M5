@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.scanned_id) {
                 console.log("RFID Key:", data.scanned_id);
                 clearInterval(rfidInterval);
-                verifyRFID(scanned_id)
+                verifyRFID(data.scanned_id)
             } else {
                 console.log("No RFID key scanned yet.");
             }
@@ -96,6 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 displayEmail(); 
             } else {
                 console.log("Access denied.");
+                reinitilizeRFID()
                 rfidInterval = setInterval(getRFIDKey, 1000); //reinitilize para pwede ulit magscan
 
             }
@@ -103,6 +104,29 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error("Error checking RFID access:", error);
         });
+        cleanRFID();
+    }
+
+    function cleanRFID(){
+        fetch("/clear_scan")
+        .then(response => response.json())
+         .then(data => {
+            console.log("RFID cleared:", data);
+        })
+        .catch(error => {
+            console.error("Error Clearing:", error);
+        });    
+    }
+
+    function reinitilizeRFID(){
+        fetch("/clear_scan")
+        .then(response => response.json())
+         .then(data => {
+            console.log("RFID cleared:", data);
+        })
+        .catch(error => {
+            console.error("Error Clearing:", error);
+        });    
     }
 
     function initialize() {

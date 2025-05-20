@@ -310,7 +310,17 @@ def allow_access():
     rfid_key = request.form.get('rfid_key')
     rfid_status = access_rfid_scan(rfid_key)
     return jsonify({"key_status": rfid_status})
-    
+
+@app.route('/clear_scan')
+def clear_scan():
+    rfid.clear_scanned()
+    return jsonify({"rfid status": "cleared"}), 200
+
+@app.route('/restart_rfid')
+def restart_rfid():
+    rfid.turn_on_rfid()
+    return jsonify({"rfid status": "on"}), 200
+
 #TEST insert
 @app.route('/test_insert_session')
 def test_insert_session():

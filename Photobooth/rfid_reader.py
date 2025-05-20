@@ -21,6 +21,7 @@ class RFID_Reader:
                 if id:
                     print(f"RFID scanned: {id}")
                     self.last_scanned_id = str(id)
+                    break
             except Exception as e:
                 print("RFID read error:", e)
             time.sleep(0.2)
