@@ -67,13 +67,18 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.scanned_id) {
                 console.log("RFID Key:", data.scanned_id);
+                clearInterval(rfidInterval);
             } else {
                 console.log("No RFID key scanned yet.");
             }
         })
-        .catch(error => {
+        .catch(error => {s
             console.error("Error fetching RFID key:", error);
         });    
+    }
+
+    function verifyRFID(rfidKey){
+
     }
 
     function initialize() {
