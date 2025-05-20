@@ -177,6 +177,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Preview Section Elements
     const previewSection = document.getElementById('preview-section');
+    const preview = document.getElementById('preview');
     const saveBtn = document.getElementById('save-layout');
     const startOverBtn = document.getElementById('start-over');
     const shutter = document.getElementById('capture-btn');
@@ -752,6 +753,8 @@ document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll('#colors .circle-button').forEach((btn, index) => {
             btn.addEventListener('click', () => applyColorFilter(index));
         });
+        editControls.classList.add('section-inactive');
+        preview.classList.add('section-active');
     }
 
     //ito yung pagpasok mo mismo ng edit part ng site. ito na din ang responsible para maibigay
@@ -769,7 +772,11 @@ document.addEventListener("DOMContentLoaded", function() {
         img.src = capturedImages[index];
         insertSelectedImageInEditMode(capturedImages[index])
         getImageForSticker(capturedImages[index])
-        editControls.classList.remove('hidden');
+
+        preview.classList.remove("section-active");
+        preview.classList.add("section-inactive");
+        editControls.classList.remove('section-inactive');
+        editControls.classList.add('section-active');
     }
 
     //saves sends the image to python for color manipulation
@@ -811,12 +818,14 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(files => {
                 const stickerContainer = document.getElementById("stickers");
+                stickerContainer.style.alignItems = 'center';
+                stickerContainer.style.justifyContent = 'center';
                 stickerContainer.innerHTML = `
+                <button class="sticker-nav-button prev" aria-label="Previous stickers">&#10094;</button>
                     <div class="sticker-carousel-container">
-                        <button class="sticker-nav-button prev" aria-label="Previous stickers">&#10094;</button>
                         <div class="sticker-carousel-track"></div>
-                        <button class="sticker-nav-button next" aria-label="Next stickers">&#10095;</button>
                     </div>
+                <button class="sticker-nav-button next" aria-label="Next stickers">&#10095;</button>
                 `;
                 
                 const track = stickerContainer.querySelector('.sticker-carousel-track');
@@ -922,10 +931,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     //color carousel
     function setupColorCarousel() {
+        const colorsCont = document.querySelector('#colors');
         const container = document.querySelector('#colors .color-carousel-container');
         const track = container.querySelector('.color-carousel-track');
-        const prevBtn = container.querySelector('.color-nav-button.prev');
-        const nextBtn = container.querySelector('.color-nav-button.next');
+        const prevBtn = colorsCont.querySelector('.color-nav-button.prev');
+        const nextBtn = colorsCont.querySelector('.color-nav-button.next');
         const slides = container.querySelectorAll('.color-slide');
         let currentPage = 0;
         const totalPages = slides.length;
@@ -959,8 +969,6 @@ document.addEventListener("DOMContentLoaded", function() {
     //kukunin nito yung index ng pinindot na button mula sa available na filters
     colorButtons.forEach((btn, index)=>{
         btn.addEventListener('click', () => {
-            //console.log('Clicked button index: ', index)
-            //currentButtonIndex = index;
             displayFilterImage(index);
         })
     })
@@ -1072,7 +1080,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     function exitEditMode() {
-        editControls.classList.add('hidden');
+        preview.classList.remove("section-inactive");
+        preview.classList.add("section-active");
+        editControls.classList.remove('section-active');
+        editControls.classList.add('section-inactive');
         isImageRaw = true;
         clearBoundingBoxes();
         removeExistingStickers();
@@ -1151,7 +1162,7 @@ document.addEventListener("DOMContentLoaded", function() {
     //para malaman kung edit na ba talaga
     function monitorEditSection() {
         const observer = new MutationObserver(() => {
-            const isVisible = !editControls.classList.contains('hidden');
+            const isVisible = !editControls.classList.contains('section-inactive');
             
             if (isVisible) {
                 //console.log('edit loaded');
@@ -1171,7 +1182,7 @@ document.addEventListener("DOMContentLoaded", function() {
             attributeFilter: ['class'],
         });
     
-        if (!editControls.classList.contains('hidden')) {
+        if (!editControls.classList.contains('section-inactive')) {
             setTimeout(() => {
                 console.log('edit visible');
                 addStickerEventListener();
