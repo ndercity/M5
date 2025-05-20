@@ -56,7 +56,9 @@ class RFID_Reader:
         self.thread.start()
 
     def get_last_scan(self):
+        print("scan value is now: ", self.last_scanned_id)
         return self.last_scanned_id
 
     def clear_scanned(self):
         self.last_scanned_id = None
+        print("Cleared scan value is now: ", self.last_scanned_id)

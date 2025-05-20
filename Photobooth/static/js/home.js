@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const wave = document.querySelector('.wave');
     let currentIndex = 0;
     let rfidInterval;
+    let rfid_key = -1;
 
     // Create indicators (remove if mas better)
     items.forEach((_, index) => {
@@ -68,8 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.scanned_id) {
                 console.log("RFID Key:", data.scanned_id);
+                rfid_key = data.scanned_id
                 clearInterval(rfidInterval);
-                verifyRFID(data.scanned_id)
             } else {
                 console.log("No RFID key scanned yet.");
             }
@@ -77,9 +78,15 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error("Error fetching RFID key:", error);
         });    
+        verifyRFID(rfid_key)
     }
 
     function verifyRFID(rfidKey){
+        if(rfidKey == -1) { 
+            console.log("ignored");
+            return;
+        }
+
         fetch('/allow_access', {
             method: 'POST',
             headers: {
@@ -106,6 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function cleanRFID(){
+        rfid_key = -1;
         fetch("/clear_scan")
         .then(response => response.json())
          .then(data => {
