@@ -9,7 +9,9 @@ from db_functions import get_db, init_db, close_connection, insert_photo_session
 import base64
 import io
 from session_flow import start_photo_session, finalize_session
-from rfid_reader import RFID_Reader
+
+#uncomment to make it work
+#from rfid_reader import RFID_Reader 
 
 app = Flask(__name__)
 #---------
@@ -20,8 +22,12 @@ app.teardown_appcontext(close_connection)
 camera = Camera()
 color_filter = Color_Filter()
 sticker_filter = Sticker_Filter()
+
+#uncomment to make it work
+'''
 rfid = RFID_Reader()
 #rfid.turn_on_rfid()
+'''
 
 @app.route('/')
 def home():
@@ -297,7 +303,9 @@ def upload_photo():
         return jsonify({"message": "Photo saved successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+#uncomment to make it work
+'''
 #RFID SCAN
 @app.route('/rfid_scan')
 def rfid_scan():
@@ -320,6 +328,7 @@ def clear_scan():
     rfid.clear_scanned()
     rfid.turn_on_rfid()
     return jsonify({"rfid status": "cleared and on"}), 200
+'''
 
 #TEST insert
 @app.route('/test_insert_session')
