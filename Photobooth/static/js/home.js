@@ -97,13 +97,13 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 console.log("Access denied.");
                 rfidInterval = setInterval(getRFIDKey, 1000); //reinitilize para pwede ulit magscan
-
+                cleanRFID();
             }
+            cleanRFID();
         })
         .catch(error => {
             console.error("Error checking RFID access:", error);
         });
-        cleanRFID();
     }
 
     function cleanRFID(){
@@ -122,6 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
+        cleanRFID();
         rfidInterval = setInterval(getRFIDKey, 1000);
     }
 
