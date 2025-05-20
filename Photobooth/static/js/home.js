@@ -131,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function initialize() {
         //Page Initialization
+        cleanRFID();
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
