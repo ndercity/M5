@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getRFIDKey(){
-        fetch("/get_scan")
+        fetch("/rfid_scan")
         .then(response => response.json())
         .then(data => {
             if (data.scanned_id) {
