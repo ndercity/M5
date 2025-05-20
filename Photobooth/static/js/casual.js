@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // =============================================
     const TEMPLATE_CONFIG = {
         one: {
-            name: "One",
+            name: "Pic-a-Pi",
             background: "/static/others/frame1.png",
             areas: [
                 { x: 69.8, y: 56.2, width: 814.2, height: 458, color: '#FFDDC1' },
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         two: {
-            name: "Two",
+            name: "Adventure RPG",
             background: "/static/others/frame2.png",
             areas: [
                 { x: 180.4, y: 167.6, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         three: {
-            name: "Three",
+            name: "Meeting",
             background: "/static/others/frame3.png",
             areas: [
                 { x: 120, y: 155, width: 1027.5, height: 578, color: '#FFDDC1' }, 
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         four: {
-            name: "Four",
+            name: "Summer",
             background: "/static/others/frame4.png",
             areas: [
                 { x: 123.2, y: 218.9, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         five: {
-            name: "Five",
+            name: "Neon",
             background: "/static/others/frame5.png",
             areas: [
                 { x: 153.5, y: 167.6, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         six: {
-            name: "Six",
+            name: "Birthday",
             background: "/static/others/frame6.png",
             areas: [
                 { x: 123.2, y: 242.4, width: 724.8, height: 407.7, color: '#FFDDC1' },
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         seven: {
-            name: "Seven",
+            name: "Kill Feed",
             background: "/static/others/frame7.png",
             areas: [
                 { x: 64.2, y: 295.9, width: 426.5, height: 239.9, color: '#FFDDC1' }, 
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         eight: {
-            name: "Eight",
+            name: "Doodle",
             background: "/static/others/frame8.png",
             areas: [
                 { x: 190.3, y: 170.2, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         nine: {
-            name: "Nine",
+            name: "Chicken Jockey",
             background: "/static/others/frame9.png",
             areas: [
                 { x: 839.5, y: 319.7, width: 323.1, height: 181.7, color: '#FFDDC1' }, 
