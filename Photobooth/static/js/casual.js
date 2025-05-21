@@ -240,11 +240,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // =============================================
     // INITIALIZATION
     // =============================================
-    window.addEventListener('load', startCamera);
-    window.addEventListener('beforeunload', stopCamera);
-    window.addEventListener('load', monitorEditSection);
-
-
     function initialize() {
         resultCanvas.width = 1800;
         resultCanvas.height = 1200;
@@ -259,6 +254,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
         selectItem(currentIndex);
         console.log(currentIndex);
+
+        if (videoFeed) {
+            startCamera(); //START AGAD 
+        }
     }
 
     // =============================================
@@ -608,7 +607,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function selectImage(index) {
         currentlySelectedImageIndex = index;
-        console.log("current index is: ", currentEditImageIndex)
+        console.log("current index is: ", currentlySelectedImageIndex)
         imageSelectBtns.forEach(btn => {
             btn.classList.toggle('active', parseInt(btn.dataset.index) === index);
         });
@@ -761,6 +760,7 @@ document.addEventListener("DOMContentLoaded", function() {
     //ang image doon sa container
 
     function enterEditMode(index) {
+        monitorEditSection();
         currentEditImageIndex = index;
         const img = new Image();
         
@@ -1093,10 +1093,10 @@ document.addEventListener("DOMContentLoaded", function() {
     function applyEdit() {
         const editCanvas = document.getElementById('edit-canvas');
         const mergedCanvas = document.createElement('canvas');
-        mergedCanvas.width = 1920;  // base resolution
-        mergedCanvas.height = 1080;
+        mergedCanvas.width = 853;  // base resolution
+        mergedCanvas.height = 480;
         const ctx = mergedCanvas.getContext('2d');
-        ctx.drawImage(editCanvas, 0, 0, 1920, 1080);
+        ctx.drawImage(editCanvas, 0, 0, 853, 480);  //copy here
 
 
         if(!isObjectEmpty(stickerMetaData)){
@@ -1625,8 +1625,8 @@ document.addEventListener("DOMContentLoaded", function() {
         layoutSelection.classList.remove("section-inactive");
         layoutSelection.classList.add("section-active");
         backToModeBtn.classList.remove("section-inactive");
-        stopCamera();
-        startCamera();
+        //stopCamera();
+        //startCamera();
     }
 
     function startOver() {
@@ -1641,6 +1641,9 @@ document.addEventListener("DOMContentLoaded", function() {
     // EVENT LISTENERS SETUP
     // =============================================
     function setupEventListeners() {
+
+        
+        
         // Template selection
         templateContainer.addEventListener('click', handleTemplateClick);
         
@@ -1687,7 +1690,7 @@ document.addEventListener("DOMContentLoaded", function() {
         capturedImages.forEach(img => {
             if (img) URL.revokeObjectURL(img);
         });
-        stopCamera();
+        //stopCamera();
     }
 
     // =============================================
