@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         ten: {
-            name: "Ten",
+            name: "Racer",
             background: "/static/others/frame10.png",
             areas: [
                 { x: 95, y: 217.8, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         eleven: {
-            name: "Eleven",
+            name: "Outer Space",
             background: "/static/others/frame11.png",
             areas: [
                 { x: 95, y: 217.8, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         twelve: {
-            name: "Twelve",
+            name: "Apt.",
             background: "/static/others/frame12.png",
             areas: [
                 { x: 190.3, y: 170.2, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         thirteen: {
-            name: "Thirteen",
+            name: "Sunrise",
             background: "/static/others/frame13.png",
             areas: [
                 { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         fourteen: {
-            name: "Fourteen",
+            name: "Sunset",
             background: "/static/others/frame14.png",
             areas: [
                 { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         fifteen: {
-            name: "Fifteen",
+            name: "Clear Sky",
             background: "/static/others/frame15.png",
             areas: [
                 { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
@@ -1690,7 +1690,7 @@ document.addEventListener("DOMContentLoaded", function() {
         capturedImages.forEach(img => {
             if (img) URL.revokeObjectURL(img);
         });
-        //stopCamera();
+        stopCamera();
     }
 
     // =============================================
