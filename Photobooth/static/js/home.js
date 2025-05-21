@@ -134,11 +134,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function initialize() {
         //Page Initialization
-        //cleanRFID();
+        cleanRFID();
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
-        //turnRFIDOn();
+        turnRFIDOn();
         rfidInterval = setInterval(getRFIDKey, 1000);
     }
 
