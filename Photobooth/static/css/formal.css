@@ -8,8 +8,9 @@
     color: #333;
     width: 800px;
     height: 480px;
+    overflow: hidden;
 }
-
+/*
 body{
     background-image: 
     repeating-linear-gradient(
@@ -27,7 +28,7 @@ body{
     100% {
     background-position: 100% 100%;
     }
-}
+}*/
 
 h2, h3, h4 {
     color: #2c3e50;
@@ -40,7 +41,7 @@ p {
 }
 
 /* =====================
-   Section Styles
+    Section Styles
    ===================== */
 .section-active {
     opacity: 1;
@@ -64,7 +65,7 @@ p {
 }
 
 /* =====================
-   Camera Feed Styles
+    Camera Feed Styles
    ===================== */
 .video-container {
     position: relative;
@@ -95,7 +96,7 @@ p {
 }
 
 /* =====================
-   Button Styles
+    Button Styles
    ===================== */
 button {
     display: inline-block;
@@ -136,17 +137,23 @@ button:disabled {
 }
 
 /* Primary action button */
-#capture-btn, #download-btn {
-    background-color: #2ecc71;
+#capture-btn{
+    position: absolute;
+    background: none;
+    top:80%;
 }
-
-#capture-btn:hover, #download-btn:hover {
-    background-color: #27ae60;
+#download-btn {
+    position: relative;
+    background: #2ecc71;
+    top:80%;
 }
 
 /* Secondary action button */
-#capture-again-btn, #back-to-preview-btn {
+#capture-again-btn {
     background-color: #e74c3c;
+}
+#back-to-preview-btn{
+    display: absolute;
 }
 
 #capture-again-btn:hover, #back-to-preview-btn:hover {
@@ -165,20 +172,17 @@ button:disabled {
 }
 
 /* =====================
-   Preview Section Styles
+    Preview Section Styles
    ===================== */
 #preview-section {
-    background: white;
-    padding: 30px;
     border-radius: 12px;
     margin: 20px auto;
-    max-width: 1000px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
 }
 
 .main-preview {
     max-width: 100%;
-    max-height: 500px;
+    max-height: 200px;
     margin: 20px auto;
     display: block;
     border-radius: 8px;
@@ -187,20 +191,17 @@ button:disabled {
 }
 
 /* =====================
-   Results Section Styles
+    Results Section Styles
    ===================== */
 #results-section {
-    background: white;
     padding: 30px;
     border-radius: 12px;
     margin: 20px auto;
-    max-width: 1000px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    max-width: 450px;
     text-align: center;
 }
 
 .template-container {
-    margin: 25px 0;
     overflow: auto;
     max-width: 100%;
     border: 1px solid #ecf0f1;
@@ -218,18 +219,16 @@ button:disabled {
 }
 
 /* =====================
-   Control Groups
+    Control Groups
    ===================== */
 .preview-controls, .results-controls {
-    margin-top: 30px;
     display: flex;
     justify-content: center;
     gap: 20px;
 }
 
+
 .customization-options {
-    margin: 25px 0;
-    padding: 20px;
     background: #f8f9fa;
     border-radius: 8px;
     border: 1px solid #ecf0f1;
@@ -299,7 +298,7 @@ button:disabled {
 }
 
 /* =====================
-   Back Button
+    Back Button
    ===================== */
 .btn-link {
     display: inline-block;
