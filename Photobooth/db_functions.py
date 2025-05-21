@@ -63,44 +63,18 @@ def delete_photo_session(session_id):
     cursor.execute('DELETE FROM photo_sessions WHERE session_id = ?', (session_id,))
     db.commit()
 
-####################################################################
-#RFID UTILS
-####################################################################
-
-def insert_rfid_key(key):
+def access_rfid_scan(rfid_key):
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('INSERT INTO rfid_db (rfid_key) VALUES (?)', key)
-    db.commit()
-
-def update_rfid_key(key, isActivated):
-    db = get_db()
-    cursor = db.cursor()
-    activate_value = None
-    if isActivated:
-        activate_value = 'activated'
-    else:
-        activate_value = 'deactivated'
-    cursor.execute('UPDATE rfid_db SET status = ? WHERE rfid_key = ?', activate_value, key)
-    db.commit()
-
-def verify_rfid(key):
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute('SELECT id FROM rfid_db WHERE rfid_key = ?', key)
-    db.commit()
+    cursor.execute("""
+        SELECT 
+            CASE 
+                WHEN status = 'activated' THEN 'YES'
+                ELSE 'NO'
+            END AS is_active 
+        FROM rfid_db 
+        WHERE rfid_key = ?
+    """, (rfid_key,))
+    
     row = cursor.fetchone()
-
-    if row:
-        return True
-    else:
-        return False
-
-def get_rfid_status(key):
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute('SELECT status FROM rfid_db WHERE rfid_key = ?', key)
-    db.commit()
-    row = cursor.fetchone()
-    return row['status'] if row else None
-
+    return row['is_active'] if row else None

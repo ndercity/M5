@@ -2,7 +2,6 @@ import mediapipe as mp
 import cv2
 import numpy as np
 
-
 '''
 must store the landmark of the face/s for the stickers
 must declare all the landmarks to be used and the faces of the users
@@ -40,21 +39,45 @@ class Sticker_Filter:
             "mustache_center": 164,
             "left_mustache": 410,
             "right_mustache": 186,
+
             #for swag glasses
             "upper_nasal_bone": 168, #might change this to 8
-            "lower_left_eyes_":230,
+            "lower_left_eyes":230,
             "lower_right_eyes":450,
+
             #for puppy glasses
             "upper_left_eye": 223,
             "upper_right_eye": 443,
             "left_forehead": 67,
             "right_forehead":297,
+
             #dog
             "center_nose":1,
+
             #blue crown
             "center_forehead": 10,
             "left_midline_forehead":104,
-            "right_midline_forehead":333
+            "right_midline_forehead":333,
+
+            #rat
+            "upper_center_nose": 5,
+            "left_lips": 216,
+            "right_lips": 436,
+
+            #anime eyes
+            "lower_left_eyebrows": 46,
+            "lower_right_eyebrows": 276,
+
+            #bunny
+            "upper_right_forehead": 103,
+            "upper_left_forehead": 332,
+
+            #neon glasses
+            "between_eyebrows": 8,
+
+            #zoro
+            "mid_left_eye": 23,
+            "mid_right_eye": 253
         }
 
     #tawagin muna ito para mapagana yung buong class
@@ -131,11 +154,8 @@ class Sticker_Filter:
 
         self.get_all_target_landmarks()
         match sticker_type:
-            case "AoA":
-                path = "static/stickers/AoA.png"
             case "blue_crown":
                 path = "static/stickers/blue_crown.png"
-
                 crown_c = self.target_landmarks["center_forehead"]
                 crown_r = self.target_landmarks["right_midline_forehead"]
                 crown_l = self.target_landmarks["left_midline_forehead"]
@@ -143,21 +163,6 @@ class Sticker_Filter:
                 self.src_points = [[23,352], [381,121], [724, 352]] # ponts starting from left to right depending on the sticker
                 self.dest_points = [crown_l, crown_c, crown_r]
 
-            case "DoD":
-                path = "static/stickers/DoD.png"
-            case "dog":
-                path = "static/stickers/dog.png"
-                dog_left = self.target_landmarks["left_forehead"]
-                dog_center = self.target_landmarks["center_nose"]
-                dog_right = self.target_landmarks["right_forehead"]
-
-                self.src_points = [[112,24], [151,143], [195,24]] # ponts starting from left to right depending on the sticker
-                self.dest_points = [dog_left, dog_center, dog_right]
-
-            case "EoE":
-                path = "static/stickers/EoE.png"
-            case "IoI":
-                path = "static/stickers/IoI.png"
             case "mustache":
                 path = "static/stickers/mustache.png"
                 mustache_c = self.target_landmarks["mustache_center"]
@@ -167,13 +172,11 @@ class Sticker_Filter:
                 self.src_points = [[47, 110], [100, 60], [153, 110]] # ponts starting from left to right depending on the sticker
                 self.dest_points = [mustache_l, mustache_c, mustache_r]
 
-            case "OoO":
-                path = "static/stickers/OoO.png"
-            case "puppy": #may prob ito
+            case "puppy": 
                 path = "static/stickers/puppy.png"
                
                 puppy_center = self.target_landmarks["center_forehead"]
-                puppy_lower_left_eye = self.target_landmarks["lower_left_eyes_"]
+                puppy_lower_left_eye = self.target_landmarks["lower_left_eyes"]
                 puppy_lower_right_eye = self.target_landmarks["lower_right_eyes"]
 
                 self.src_points = [[62,178],[100,39],[144,176]] # ponts starting from left to right depending on the sticker
@@ -181,23 +184,125 @@ class Sticker_Filter:
 
             case "rat":
                 path = "static/stickers/rat.png"
+
+                rat_center = self.target_landmarks["upper_center_nose"]
+                rat_left = self.target_landmarks["left_lips"]
+                rat_right = self.target_landmarks["right_lips"]
+
+                self.src_points = [[93,172], [149,119], [207,172]]
+                self.dest_points = [rat_left, rat_center, rat_right] #left to right again 
+
             case "swag":
                 path = "static/stickers/swag.png"
                 swag_center = self.target_landmarks["upper_nasal_bone"]
-                swag_left = self.target_landmarks["lower_left_eyes_"]
+                swag_left = self.target_landmarks["lower_left_eyes"]
                 swag_right = self.target_landmarks["lower_right_eyes"]
 
                 self.src_points = [[50,39], [101,4], [153,31]]
                 self.dest_points = [swag_left, swag_center, swag_right] #left to right again 
 
-            case "UoU":
-                path = "static/stickers/UoU.png"
+            case "anime_eyes":
+                path = "static/stickers/anime_eyes.png"
+                aeyes_center = self.target_landmarks["center_nose"]
+                aeyes_right = self.target_landmarks["lower_right_eyebrows"]
+                aeyes_left = self.target_landmarks["lower_left_eyebrows"]
+
+                self.src_points = [[276,440], [497,644], [740,440]]
+                self.dest_points = [aeyes_left, aeyes_center, aeyes_right] #left to right again 
+
+            case "enderman":
+                path = "static/stickers/enderman.png"
+
+                enderman_center = self.target_landmarks["center_forehead"]
+                enderman_left = self.target_landmarks["left_lips"]
+                enderman_right = self.target_landmarks["right_lips"]
+
+                self.src_points = [[264, 700], [512,140], [768,700]]
+                self.dest_points = [enderman_left, enderman_center, enderman_right] #left to right again 
+
+            case "steve":
+                path = "static/stickers/steve.png"
+
+                zombie_center = self.target_landmarks["center_forehead"]
+                zombie_left = self.target_landmarks["left_lips"]
+                zombie_right = self.target_landmarks["right_lips"]
+
+                self.src_points = [[264, 700], [512,140], [768,700]]
+                self.dest_points = [zombie_left, zombie_center, zombie_right] #left to right again 
+
+            case "zombie":
+                path = "static/stickers/zombie.png"
+
+                zombie_center = self.target_landmarks["center_forehead"]
+                zombie_left = self.target_landmarks["left_lips"]
+                zombie_right = self.target_landmarks["right_lips"]
+
+                self.src_points = [[264, 700], [512,140], [768,700]]
+                self.dest_points = [zombie_left, zombie_center, zombie_right] #left to right again 
+
+            case "neon_glasses":
+                path = "static/stickers/neon_glasses.png"
+
+                nglasses_center = self.target_landmarks["between_eyebrows"]
+                nglasses_left = self.target_landmarks["lower_left_eyes"]
+                nglasses_right = self.target_landmarks["lower_right_eyes"]
+
+                self.src_points = [[152,185], [293,89], [434,185]]
+                self.dest_points = [nglasses_left, nglasses_center, nglasses_right] #left to right again 
+
+            case "roblox_face":
+                path = "static/stickers/roblox_face.png"
+
+                roblox_center = self.target_landmarks["center_forehead"]
+                roblox_left = self.target_landmarks["left_lips"]
+                roblox_right = self.target_landmarks["right_lips"]
+
+                self.src_points = [[264, 700], [512,140], [768,700]]
+                self.dest_points = [roblox_left, roblox_center, roblox_right] #left to right again 
+
+            case "pink_cat":
+                path = "static/stickers/pink_cat.png"
+                pink_center = self.target_landmarks["center_nose"]
+                pink_left = self.target_landmarks["left_forehead"]
+                pink_right = self.target_landmarks["right_forehead"]
+
+                self.src_points = [[161,141], [276,410], [390,141]]
+                self.dest_points = [pink_left, pink_center, pink_right] #left to right again 
+
+            case "superhero_mask":
+                path = "static/stickers/superhero_mask.png"
+                superhero_center = self.target_landmarks["center_forehead"]
+                superhero_left = self.target_landmarks["lower_left_eyes"]
+                superhero_right = self.target_landmarks["lower_right_eyes"]
+
+                self.src_points = [[146,494], [301,66], [456,494]]
+                self.dest_points = [superhero_left, superhero_center, superhero_right] #left to right again 
+
+            case "tiara":
+                path = "static/stickers/tiara.png"
+                tiara_center = self.target_landmarks["center_forehead"]
+                tiara_left = self.target_landmarks["upper_left_forehead"]
+                tiara_right = self.target_landmarks["upper_right_forehead"]
+
+                self.src_points = [[2,322], [276,262], [550, 322]]
+                self.dest_points = [tiara_left, tiara_center, tiara_right] #left to right again 
+
+            case "zoro":
+                path = "static/stickers/zoro.png"
+
+                zoro_center = self.target_landmarks["between_eyebrows"]
+                zoro_left = self.target_landmarks["mid_left_eye"]
+                zoro_right = self.target_landmarks["mid_right_eye"]
+
+                self.src_points = [[177,182], [304,30], [436,182]]
+                self.dest_points = [zoro_left, zoro_center, zoro_right] #left to right again 
+
             case default:
                 print("sticker doesn't exist")
         self.sticker_type_path = path
 
         print(index, sticker_type)
-
+        # rat_center = self.target_landmarks[""]
     def warp_image(self):
 
         if not self.sticker_type_path or not self.src_points or not self.dest_points:

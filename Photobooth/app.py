@@ -5,10 +5,13 @@ from sticker_filter import Sticker_Filter
 import os
 import time
 import uuid
-from db_functions import get_db, init_db, close_connection, insert_photo_session, update_photo_blob
+from db_functions import get_db, init_db, close_connection, insert_photo_session, update_photo_blob, access_rfid_scan
 import base64
 import io
 from session_flow import start_photo_session, finalize_session
+
+#uncomment to make it work
+from rfid_reader import RFID_Reader 
 
 app = Flask(__name__)
 #---------
@@ -19,6 +22,12 @@ app.teardown_appcontext(close_connection)
 camera = Camera()
 color_filter = Color_Filter()
 sticker_filter = Sticker_Filter()
+
+#uncomment to make it work
+
+rfid = RFID_Reader()
+#rfid.turn_on_rfid()
+
 
 @app.route('/')
 def home():
@@ -294,7 +303,32 @@ def upload_photo():
         return jsonify({"message": "Photo saved successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+#uncomment to make it work
+
+#RFID SCAN
+@app.route('/rfid_scan')
+def rfid_scan():
+    scan = rfid.get_last_scan()
+    return jsonify({"scanned_id": scan})
+
+@app.route('/turn_on_rfid')
+def turn_on_rfid():
+    rfid.turn_on_rfid()
+    return jsonify({"rfid status": "rfid is on"}), 200
+
+@app.route('/allow_access', methods=['POST'])
+def allow_access():
+    rfid_key = request.form.get('rfid_key')
+    rfid_status = access_rfid_scan(rfid_key)
+    return jsonify({"key_status": rfid_status})
+
+@app.route('/clear_scan')
+def clear_scan():
+    rfid.clear_scanned()
+    rfid.turn_on_rfid()
+    return jsonify({"rfid status": "cleared and on"}), 200
+
 #TEST insert
 @app.route('/test_insert_session')
 def test_insert_session():
@@ -323,4 +357,4 @@ def test_insert_session():
 #if using python app.py
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
