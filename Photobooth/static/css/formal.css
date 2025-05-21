@@ -10,7 +10,7 @@
     height: 480px;
     overflow: hidden;
 }
-/*
+
 body{
     background-image: 
     repeating-linear-gradient(
@@ -28,7 +28,7 @@ body{
     100% {
     background-position: 100% 100%;
     }
-}*/
+}
 
 h2, h3, h4 {
     color: #2c3e50;
@@ -47,16 +47,12 @@ p {
     opacity: 1;
     transform: translateY(0);
     display: block;
-    position: relative;
-    animation: fadeIn 0.3s ease-out;
 }
 
 .section-inactive {
     opacity: 0;
     transform: translateY(20px);
-    display: none;
-    height: 0;
-    overflow: hidden;
+    display: none !important;
 }
 
 @keyframes fadeIn {
