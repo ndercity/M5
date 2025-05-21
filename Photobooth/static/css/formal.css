@@ -10,7 +10,7 @@
     height: 480px;
     overflow: hidden;
 }
-
+/*
 body{
     background-image: 
     repeating-linear-gradient(
@@ -28,7 +28,7 @@ body{
     100% {
     background-position: 100% 100%;
     }
-}
+}*/
 
 h2, h3, h4 {
     color: #2c3e50;
@@ -177,7 +177,7 @@ button:disabled {
 #preview-section {
     border-radius: 12px;
     margin: 20px auto;
-    max-width: 450px;
+    max-width: 800px;
 }
 
 .main-preview {
