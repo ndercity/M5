@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     //RFID utils. uncommetn to make it work
-    /*
+    
     function getRFIDKey(){
         fetch("/rfid_scan")
         .then(response => response.json())
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });    
 
     }
-        */
+        
 
     function initialize() {
         //Page Initialization
