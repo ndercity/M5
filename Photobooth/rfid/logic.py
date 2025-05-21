@@ -3,11 +3,7 @@ import os
 import threading
 import time
 from mfrc522 import SimpleMFRC522 #uncomment this in raspi
-
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(parent_dir)
-
-import db_functions as dbf
+import rfid_db_func as dbf
 
 class AppState:
     def __init__(self):
@@ -19,23 +15,29 @@ class AppState:
         self.current_rfid_status = dbf.get_rfid_status(rfid_key)
 
     def get_current_rfid_details(self):
+        self.current_rfid_status = dbf.get_rfid_status(self.current_rfid)
         return self.current_rfid, self.current_rfid_status
     
     def clear_details(self):
         self.current_rfid = None
         self.current_rfid_status = None
 
-    def manipulate_rfid(self, rfid, isUpdate):
-        if dbf.verify_rfid(rfid):
-            if isUpdate:
+    def manipulate_rfid(self, rfid, is_update):
+        is_exist = dbf.verify_rfid(rfid) 
+        if is_exist:
+            if is_update:
                 dbf.update_rfid_key(rfid, True)
-            elif not isUpdate:
+            elif not is_update:
                 dbf.update_rfid_key(rfid, False)
-        else:
+        elif not is_exist and not is_update:
+            dbf.insert_rfid_key(rfid)
+            dbf.update_rfid_key(rfid, False)
+        elif not is_exist and is_update:
             dbf.insert_rfid_key(rfid)
 
 class RFID_Logic:
     def __init__(self, on_scan_callback):
+        dbf.get_db()
         self.reader = None
         self.thread = None
         self.on_scan_callback = on_scan_callback

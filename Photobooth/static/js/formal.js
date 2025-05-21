@@ -35,6 +35,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // DOM Elements
     // =====================
     const elements = {
+        //Universal Control
+        goBackBtn: document.getElementById('back-content'),
+
         // Camera controls
         countdownDisplay: document.getElementById('countdown-display'),
         flashOverlay: document.getElementById('flash-overlay'),
@@ -101,6 +104,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function setupEventListeners() {
         // Camera controls
         elements.captureBtn.addEventListener('click', async () => {
+            elements.captureBtn.classList.add("section-inactive");
+            elements.goBackBtn.classList.add("section-inactive");
             await startCountdown(3);
             triggerFlash();
             
@@ -185,6 +190,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     clearInterval(interval);
                     elements.countdownDisplay.style.display = 'none';
                     elements.countdownDisplay.textContent = '';
+                    elements.captureBtn.classList.remove("section-inactive");
+                    elements.goBackBtn.classList.remove("section-inactive");
                     resolve();
                 }
             }, 1000);
