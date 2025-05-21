@@ -19,8 +19,8 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 656px;
-    height: 369px;
+    width: 640px;
+    height: 360px;
     aspect-ratio: 16 / 9;
     background-color: black;
     margin: 20px auto;
@@ -32,7 +32,7 @@ main {
 .camera-feed {
     position: relative;
     max-width: 100%;
-    max-height: 100%;
+    /*max-height: 100%;*/
     object-fit: contain; /* ADJUST IF NA COCROP YUNG CAMERA*/
 }
 
