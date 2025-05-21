@@ -3,10 +3,13 @@
 {% block title %}Home - Photo Booth{% endblock %}
 <meta name="HandheldFriendly" content="true" />
 {% block extra_css %}
+<!--<link rel="stylesheet" href="dist/kioskboard-2.3.0.min.css" />-->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 {% endblock %}
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+<!--<script defer src="dist/kioskboard-aio-2.3.0.min.js"></script>-->
+<script defer src="{{ url_for('static', filename='js/home.js') }}"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -21,7 +24,7 @@
         <div class="ocean"></div>
 
         <form class="email-form" id="email-form">
-            <input type="email" id="email" name="email" required placeholder="Enter your email">
+            <input type="email" id="email" name="email" class="js-kioskboard-input" required placeholder="Enter your email">
             <button type="submit" class="emailButton">Confirm</button>
         </form>
         <div class="carouselProMax" id="carouselProMax">

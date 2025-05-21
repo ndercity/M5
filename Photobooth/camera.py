@@ -12,8 +12,8 @@ class Camera:
             raise Exception("Could not open video device")
         
         # Set desired resolution (e.g., 1920x1080 for HD)
-        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 960)
-        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 540)
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
     def stop(self):
         """Stop the webcam feed"""

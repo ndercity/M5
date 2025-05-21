@@ -12,6 +12,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const wave = document.querySelector('.wave');
     let currentIndex = 0;
     let rfidInterval;
+    
+    //console.log("KioskBoard:", window.KioskBoard);
+    /*
+    KioskBoard.init({
+        keysArrayOfObjects: null,
+        keysJsonUrl: null,
+
+        keysSpecialCharsArrayOfStrings: ['!', '@', '#', '$'],
+        keysNumpadArrayOfNumbers: [1, 2, 3, 0, 4, 5, 6, 7, 8, 9],
+
+        language: 'en',
+        theme: 'light',
+        autoScroll: false,
+        capsLockActive: false,
+        allowRealKeyboard: false,
+        allowMobileKeyboard: false,
+        cssAnimations: true,
+        cssAnimationsDuration: 360,
+        cssAnimationsStyle: 'slide',
+        keysAllowSpacebar: true,
+        keysSpacebarText: 'Space',
+        keysFontFamily: 'sans-serif',
+        keysFontSize: '22px',
+        keysFontWeight: 'normal',
+        keysIconSize: '25px',
+        keysEnterText: 'Enter',
+        keysEnterCallback: undefined,
+        keysEnterCanClose: true,
+    });
+    */
 
     // Create indicators (remove if mas better)
     items.forEach((_, index) => {

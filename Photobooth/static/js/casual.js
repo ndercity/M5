@@ -765,6 +765,8 @@ document.addEventListener("DOMContentLoaded", function() {
         const img = new Image();
         
         img.onload = function() {
+            console.log("Image width:", img.width);
+            console.log("Image height:", img.height);
             editCanvas.width = img.width;
             editCanvas.height = img.height;
             editCtx.drawImage(img, 0, 0);
@@ -1089,14 +1091,13 @@ document.addEventListener("DOMContentLoaded", function() {
         removeExistingStickers();
     }
 
-    //ADJUSTED FROM 640x480 to 1920x1080.
     function applyEdit() {
         const editCanvas = document.getElementById('edit-canvas');
         const mergedCanvas = document.createElement('canvas');
-        mergedCanvas.width = 1920;  // base resolution
-        mergedCanvas.height = 1080;
+        mergedCanvas.width = 1280;  // base resolution
+        mergedCanvas.height = 720;
         const ctx = mergedCanvas.getContext('2d');
-        ctx.drawImage(editCanvas, 0, 0, 1920, 1080);
+        ctx.drawImage(editCanvas, 0, 0, 1280, 720);
 
 
         if(!isObjectEmpty(stickerMetaData)){
