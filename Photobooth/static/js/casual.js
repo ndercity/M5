@@ -1094,10 +1094,10 @@ document.addEventListener("DOMContentLoaded", function() {
     function applyEdit() {
         const editCanvas = document.getElementById('edit-canvas');
         const mergedCanvas = document.createElement('canvas');
-        mergedCanvas.width = 853;  // base resolution
-        mergedCanvas.height = 480;
+        mergedCanvas.width = 640;  // base resolution
+        mergedCanvas.height = 360;
         const ctx = mergedCanvas.getContext('2d');
-        ctx.drawImage(editCanvas, 0, 0, 853, 480);  //copy here
+        ctx.drawImage(editCanvas, 0, 0, 640, 360);  //copy here
 
 
         if(!isObjectEmpty(stickerMetaData)){
