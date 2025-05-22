@@ -10,6 +10,8 @@ class AppUI:
         #self.logic = RFID_Logic()
         self.root.title("Pic-a-Pi RFID")
         self.root.geometry("800x480")
+
+        self.root.bind("<Escape>", lambda event: self.quit_app())
         
         self.container = ctk.CTkFrame(self.root)
         self.container.pack(fill="both", expand=True)
@@ -31,6 +33,11 @@ class AppUI:
         frame.tkraise()
         if hasattr (frame, "refresh"):
             frame.refresh()
+
+    def quit_app(self):
+        if self.current_page == "HomePage":
+            print("Escape pressed on HomePage. Quitting app.")
+            self.root.destroy()
         
 
 class HomePage(ctk.CTkFrame):
