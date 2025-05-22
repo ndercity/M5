@@ -229,6 +229,7 @@ button:focus{
     gap: 20px;
     justify-content: center;
     flex-direction: column;
+    margin-top: 5px;
 }
 
 .image-select-btn {
@@ -495,6 +496,7 @@ button:focus{
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
+    justify-content: center;
 }
 
 #preview-section .canvas-container {

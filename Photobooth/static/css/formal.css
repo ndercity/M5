@@ -1,7 +1,7 @@
 /* =====================
     Base Styles
    ===================== */
-    main {
+main {
     text-align: center;
     position: relative;
     min-height: 100vh;
@@ -191,12 +191,14 @@ button:disabled {
     Results Section Styles
    ===================== */
 #results-section {
+    margin-top: 0px;
     display: flex;
     padding: 20px;
     border-radius: 8px;
     text-align: center;
     flex-direction: column;
     align-items: center;
+    padding-top: 0px;
 }
 
 .template-container {
