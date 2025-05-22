@@ -5,3 +5,5 @@ __pycache__/
 photobooth.db
 *.db
 .env
+env_node/
+node_modules/

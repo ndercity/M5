@@ -765,6 +765,8 @@ document.addEventListener("DOMContentLoaded", function() {
         const img = new Image();
         
         img.onload = function() {
+            console.log("Image width:", img.width);
+            console.log("Image height:", img.height);
             editCanvas.width = img.width;
             editCanvas.height = img.height;
             editCtx.drawImage(img, 0, 0);
@@ -1089,7 +1091,6 @@ document.addEventListener("DOMContentLoaded", function() {
         removeExistingStickers();
     }
 
-    //ADJUSTED FROM 640x480 to 1920x1080.
     function applyEdit() {
         const editCanvas = document.getElementById('edit-canvas');
         const mergedCanvas = document.createElement('canvas');
