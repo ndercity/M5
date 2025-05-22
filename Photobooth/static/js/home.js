@@ -161,7 +161,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     }
         */
-        
 
     function initialize() {
         //Page Initialization

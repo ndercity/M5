@@ -11,7 +11,7 @@ import io
 from session_flow import start_photo_session, finalize_session
 
 #uncomment to make it work
-#rom rfid_reader import RFID_Reader 
+#from rfid_reader import RFID_Reader 
 
 app = Flask(__name__)
 #---------
@@ -52,14 +52,20 @@ def stop_camera():
     return redirect(url_for('home'))  # Redirect to home or mode selection
 
 def generate_frames():
-    """ Generator function to stream video frames """
-    camera.start()  # Make sure the camera starts before streaming
-    while True:
-        frame = camera.get_frame()
-        if frame is None:
-            continue
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+    if camera.is_active():
+        camera.stop()  # "Destroy" the previous stream
+
+    camera.start()
+    try:
+        while True:
+            frame = camera.get_frame()
+            if frame is None:
+                continue
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+            #time.sleep(0.07)
+    except GeneratorExit:
+        print("Client disconnected from video feed")
 
 @app.route('/video_feed')
 def video_feed():
@@ -329,6 +335,7 @@ def clear_scan():
     rfid.turn_on_rfid()
     return jsonify({"rfid status": "cleared and on"}), 200
 '''
+
 #TEST insert
 @app.route('/test_insert_session')
 def test_insert_session():

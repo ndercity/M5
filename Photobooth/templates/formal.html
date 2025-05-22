@@ -7,7 +7,7 @@
 {% block content %}
 <main>
     <a href="{{ url_for('mode') }}" class="back-card">
-        <span class="back-content">Go Back</span>
+        <span class="back-content" id="back-content">Go Back</span>
     </a>
     <!-- Capture Section -->
     <div id="capture-section">
@@ -16,8 +16,9 @@
             <img id="formal-guide" src="/static/others/1x1and2x2guide.png" alt="guide">
             <div id="flash-overlay"></div>
             <div id="countdown-display"></div>
+            <img src="/static/others/capture.png" id="capture-btn"></img>
         </div>
-        <button id="capture-btn">Capture</button>
+        
     </div>
 
     <!-- Preview Section -->
@@ -61,5 +62,10 @@
             <button id="download-btn">Send Photo to E-Mail</button>
             <button id="back-to-preview-btn">Back to Preview</button>
         </div>
+    </div>
+
+    <div id="sendingOverlay" class="overlay section-inactive">
+        <div class="spinner"></div>
+        <p>Sending your photo... Please wait.</p>
     </div>
 {% endblock %}
