@@ -47,6 +47,7 @@ p {
     opacity: 1;
     transform: translateY(0);
     display: block;
+    margin-top: 10vh;
 }
 
 .section-inactive {
@@ -68,10 +69,10 @@ p {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 438px;
-    height: 438px;
-    max-width: 438px;   /* ADJUST MAX WIDTH AND HEIGHT IF NEED*/
-    max-height: 438px;
+    width: 400px;
+    height: 400px;
+    max-width: 400px;   /* ADJUST MAX WIDTH AND HEIGHT IF NEED*/
+    max-height: 400px;
     background-color: #2c3e50;
     margin: 20px auto;
     border-radius: 8px;
@@ -351,7 +352,7 @@ a{
     text-decoration: none;
     top: 0;
     left: -7px;
-    z-index: 10;
+    color: white;
 }
 .back-content{
     background:#5bc8ff;
