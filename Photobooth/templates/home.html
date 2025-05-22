@@ -4,10 +4,12 @@
 <meta name="HandheldFriendly" content="true" />
 {% block extra_css %}
 <!--<link rel="stylesheet" href="dist/kioskboard-2.3.0.min.css" />-->
+<link rel="stylesheet" href="{{ url_for('static', filename='kioskboard/kioskboard.css') }}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 {% endblock %}
 {% block extra_js %}
 <!--<script defer src="dist/kioskboard-aio-2.3.0.min.js"></script>-->
+<script defer src="{{ url_for('static', filename='kioskboard/kioskboard.js') }}"></script>
 <script defer src="{{ url_for('static', filename='js/home.js') }}"></script>
 
 {% endblock %}

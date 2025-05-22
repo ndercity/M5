@@ -13,17 +13,17 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentIndex = 0;
     let rfidInterval;
     
-    //console.log("KioskBoard:", window.KioskBoard);
-    /*
+    console.log("KioskBoard:", window.KioskBoard);
+    
     KioskBoard.init({
-        keysArrayOfObjects: null,
-        keysJsonUrl: null,
 
-        keysSpecialCharsArrayOfStrings: ['!', '@', '#', '$'],
-        keysNumpadArrayOfNumbers: [1, 2, 3, 0, 4, 5, 6, 7, 8, 9],
-
+        keysJsonUrl: '/static/kioskboard/kioskboard-keys-english.json', // Make sure this file exists
         language: 'en',
         theme: 'light',
+
+        keysSpecialCharsArrayOfStrings: ['!', '@', '#', '$' ,'.'],
+        keysNumpadArrayOfNumbers: [1, 2, 3, 0, 4, 5, 6, 7, 8, 9],
+
         autoScroll: false,
         capsLockActive: false,
         allowRealKeyboard: false,
@@ -34,14 +34,13 @@ document.addEventListener('DOMContentLoaded', function() {
         keysAllowSpacebar: true,
         keysSpacebarText: 'Space',
         keysFontFamily: 'sans-serif',
-        keysFontSize: '22px',
+        keysFontSize: '14px', // Slightly smaller font
         keysFontWeight: 'normal',
-        keysIconSize: '25px',
+        keysIconSize: '18px',
         keysEnterText: 'Enter',
-        keysEnterCallback: undefined,
         keysEnterCanClose: true,
     });
-    */
+    
 
     // Create indicators (remove if mas better)
     items.forEach((_, index) => {
@@ -82,6 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayEmail(){
         toggleSection(emailForm, true);
         toggleSection(start, false);
+        KioskBoard.run('.js-kioskboard-input');
         document.getElementById("email-form").scrollIntoView({behavior:'smooth' , block: 'center'});
     }
 
