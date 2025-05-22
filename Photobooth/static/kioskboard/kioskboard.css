@@ -16,10 +16,12 @@
   background: linear-gradient(to right bottom, #eee, #ebebeb, #e8e8e8, #e6e6e6, #e3e3e3);
   -webkit-box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.25), 0 0 20px -8px rgba(0, 0, 0, 0.15);
   box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.25), 0 0 20px -8px rgba(0, 0, 0, 0.15);
-  padding: 25px 20px 20px;
+  padding: 10px 10px 10px;
   left: 0;
   right: 0;
-  margin: auto;
+  top: 240px;
+  /* margin: auto;
+  height: 240px; */
 }
 
 #KioskBoard-VirtualKeyboard.kioskboard-placement-bottom {
@@ -57,6 +59,8 @@
   -webkit-flex-direction: row;
   -ms-flex-direction: row;
   flex-direction: row;
+  height: 100%;
+  gap: 3px;
 }
 
 #KioskBoard-VirtualKeyboard .kioskboard-wrapper.kioskboard-overflow {
@@ -84,13 +88,13 @@
 
 /* KioskBoard: Row: begin */
 #KioskBoard-VirtualKeyboard .kioskboard-row {
-  position: relative;
+  /* position: relative; */
   width: 100%;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
+  /* display: -webkit-box; */
+  /* display: -webkit-flex;
+  display: -ms-flexbox; */
   display: flex;
-  -webkit-flex-wrap: wrap;
+  /* -webkit-flex-wrap: wrap;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   -webkit-box-orient: horizontal;
@@ -100,13 +104,14 @@
   flex-direction: row;
   -webkit-box-align: center;
   -webkit-align-items: center;
-  -ms-flex-align: center;
+  -ms-flex-align: center; */
   align-items: center;
-  -webkit-box-pack: center;
+  /* -webkit-box-pack: center;
   -webkit-justify-content: center;
-  -ms-flex-pack: center;
+  -ms-flex-pack: center; */
   justify-content: center;
   text-align: center;
+  gap: 10px;
 }
 
 /* KioskBoard: Row: end */
@@ -129,8 +134,8 @@
   font-weight: normal;
   font-family: sans-serif;
   max-width: 6.25%;
-  margin: 8px 8px 12px;
-  padding: 12px 12px 22px;
+  /* margin: 8px 8px 12px;
+  padding: 12px 12px 22px; */
   border-radius: 8px;
   background: #fafafa;
   color: #707070;
@@ -195,8 +200,6 @@
 
 /* KioskBoard: Row & Keys Top Group: begin */
 #KioskBoard-VirtualKeyboard .kioskboard-row-top {
-  padding: 0 0 10px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   margin: 0 0 10px;
 }
 
@@ -204,14 +207,13 @@
 
 /* KioskBoard: Row & Keys Bottom Group: begin */
 #KioskBoard-VirtualKeyboard .kioskboard-row-bottom {
-  padding: 10px 0 0;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
   margin: 10px 0 0;
 }
 
 #KioskBoard-VirtualKeyboard .kioskboard-row-bottom span.kioskboard-key-capslock {
   max-width: 100%;
-  min-height: 60px;
+  min-height: 40px;
   width: 140px;
   -webkit-box-flex: 1;
   -webkit-flex: 1 1 auto;
@@ -239,7 +241,7 @@
 #KioskBoard-VirtualKeyboard .kioskboard-row-bottom span.kioskboard-key-backspace {
   position: relative;
   max-width: 100%;
-  min-height: 60px;
+  min-height: 40px;
   width: 140px;
   -webkit-box-flex: 1;
   -webkit-flex: 1 1 auto;
@@ -249,7 +251,7 @@
 
 /* 140+16=>CapsLock && 140+16=>BackSpace && 140+16=>Enter */
 #KioskBoard-VirtualKeyboard .kioskboard-row-bottom span.kioskboard-key-space {
-  min-height: 60px;
+  min-height: 40px;
   max-width: 100%;
   width: calc(100% - 16px - 140px - 16px - 140px - 16px - 140px - 16px);
   -webkit-box-flex: 1;
@@ -271,7 +273,7 @@
 #KioskBoard-VirtualKeyboard .kioskboard-with-specialcharacter span.kioskboard-key-specialcharacter {
   position: relative;
   max-width: 100%;
-  min-height: 60px;
+  min-height: 40px;
   width: 140px;
   -webkit-box-flex: 1;
   -webkit-flex: 1 1 auto;
@@ -291,7 +293,7 @@
 /* stylelint-disable no-descending-specificity */
 #KioskBoard-VirtualKeyboard .kioskboard-row-numpad span[class^="kioskboard-key"] {
   max-width: 100%;
-  min-height: 60px;
+  min-height: 40px;
   width: calc(33.3333% - 16px);
   -webkit-box-flex: 1;
   -webkit-flex: 1 1 auto;
@@ -601,8 +603,8 @@
   #KioskBoard-VirtualKeyboard .kioskboard-row-bottom span.kioskboard-key-backspace,
   #KioskBoard-VirtualKeyboard .kioskboard-with-specialcharacter span.kioskboard-key-specialcharacter,
   #KioskBoard-VirtualKeyboard .kioskboard-row-bottom span.kioskboard-key-capslock {
-    max-width: 60px;
-    min-height: 45px;
+    max-width: 40px;
+    min-height: 40px;
     margin-bottom: 4px;
   }
 
