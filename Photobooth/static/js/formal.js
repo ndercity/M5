@@ -271,6 +271,7 @@ document.addEventListener("DOMContentLoaded", function () {
             drawTemplateImages(img);
         };
         img.src = state.currentImageUrl;
+        elements.goBackBtn.classList.add("section-inactive");
     }
 
     function drawTemplateImages(img) {
@@ -331,6 +332,7 @@ document.addEventListener("DOMContentLoaded", function () {
         toggleSection(elements.resultsSection, false);
         toggleSection(elements.previewSection, true);
         scrollToTop();
+        elements.goBackBtn.classList.remove("section-inactive");
     }
 
     function showResultsSection() {
