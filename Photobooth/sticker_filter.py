@@ -92,6 +92,9 @@ class Sticker_Filter:
             height, width = self.raw_image.shape[:2]
             print(f"Width: {width}, Height: {height}")
 
+            height, width = self.raw_image.shape[:2]
+            print(f"Width: {width}, Height: {height}")
+
             image_rgb = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)
             results = self.face_detection.process(image_rgb)
 

@@ -34,7 +34,7 @@ class RFID_Reader:
                 if not self.active:
                     break
             try:
-                id, text = self.reader.read()
+                id, _ = self.reader.read_no_block()  # Faster non-blocking read
                 if id:
                     if str(id) != self.last_scanned_id:
                         print(f"RFID scanned: {id}")
@@ -46,9 +46,9 @@ class RFID_Reader:
                         print("Same RFID scanned again, ignoring.")
             except Exception as e:
                 print("RFID read error:", e)
-            time.sleep(0.5)
+            time.sleep(0.05)  # Reduce delay for more responsiveness
         print("RFID read loop stopped.")
-
+        
     def turn_on_rfid(self):
         print("Starting RFID reader...")
         self.active = True
