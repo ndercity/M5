@@ -52,14 +52,20 @@ def stop_camera():
     return redirect(url_for('home'))  # Redirect to home or mode selection
 
 def generate_frames():
-    """ Generator function to stream video frames """
-    camera.start()  # Make sure the camera starts before streaming
-    while True:
-        frame = camera.get_frame()
-        if frame is None:
-            continue
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+    if camera.is_active():
+        camera.stop()  # "Destroy" the previous stream
+
+    camera.start()
+    try:
+        while True:
+            frame = camera.get_frame()
+            if frame is None:
+                continue
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+            #time.sleep(0.07)
+    except GeneratorExit:
+        print("Client disconnected from video feed")
 
 @app.route('/video_feed')
 def video_feed():
@@ -305,9 +311,8 @@ def upload_photo():
         return jsonify({"error": str(e)}), 500
 
 #uncomment to make it work
-
-#RFID SCAN
 '''
+#RFID SCAN
 @app.route('/rfid_scan')
 def rfid_scan():
     scan = rfid.get_last_scan()
@@ -329,7 +334,7 @@ def clear_scan():
     rfid.clear_scanned()
     rfid.turn_on_rfid()
     return jsonify({"rfid status": "cleared and on"}), 200
-    '''
+'''
 
 #TEST insert
 @app.route('/test_insert_session')

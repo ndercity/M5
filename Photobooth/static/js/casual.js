@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         ten: {
-            name: "Ten",
+            name: "Racer",
             background: "/static/others/frame10.png",
             areas: [
                 { x: 95, y: 217.8, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         eleven: {
-            name: "Eleven",
+            name: "Outer Space",
             background: "/static/others/frame11.png",
             areas: [
                 { x: 95, y: 217.8, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         twelve: {
-            name: "Twelve",
+            name: "Apt.",
             background: "/static/others/frame12.png",
             areas: [
                 { x: 190.3, y: 170.2, width: 696.1, height: 391.5, color: '#FFDDC1' }, 
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         thirteen: {
-            name: "Thirteen",
+            name: "Sunrise",
             background: "/static/others/frame13.png",
             areas: [
                 { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         fourteen: {
-            name: "Fourteen",
+            name: "Sunset",
             background: "/static/others/frame14.png",
             areas: [
                 { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         fifteen: {
-            name: "Fifteen",
+            name: "Clear Sky",
             background: "/static/others/frame15.png",
             areas: [
                 { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
@@ -240,11 +240,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // =============================================
     // INITIALIZATION
     // =============================================
-    window.addEventListener('load', startCamera);
-    window.addEventListener('beforeunload', stopCamera);
-    window.addEventListener('load', monitorEditSection);
-
-
     function initialize() {
         resultCanvas.width = 1800;
         resultCanvas.height = 1200;
@@ -259,6 +254,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
         selectItem(currentIndex);
         console.log(currentIndex);
+
+        if (videoFeed) {
+            startCamera(); //START AGAD 
+        }
     }
 
     // =============================================
@@ -608,7 +607,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function selectImage(index) {
         currentlySelectedImageIndex = index;
-        console.log("current index is: ", currentEditImageIndex)
+        console.log("current index is: ", currentlySelectedImageIndex)
         imageSelectBtns.forEach(btn => {
             btn.classList.toggle('active', parseInt(btn.dataset.index) === index);
         });
@@ -761,10 +760,13 @@ document.addEventListener("DOMContentLoaded", function() {
     //ang image doon sa container
 
     function enterEditMode(index) {
+        monitorEditSection();
         currentEditImageIndex = index;
         const img = new Image();
         
         img.onload = function() {
+            console.log("Image width:", img.width);
+            console.log("Image height:", img.height);
             editCanvas.width = img.width;
             editCanvas.height = img.height;
             editCtx.drawImage(img, 0, 0);
@@ -1089,14 +1091,13 @@ document.addEventListener("DOMContentLoaded", function() {
         removeExistingStickers();
     }
 
-    //ADJUSTED FROM 640x480 to 1920x1080.
     function applyEdit() {
         const editCanvas = document.getElementById('edit-canvas');
         const mergedCanvas = document.createElement('canvas');
-        mergedCanvas.width = 1920;  // base resolution
-        mergedCanvas.height = 1080;
+        mergedCanvas.width = 853;  // base resolution
+        mergedCanvas.height = 480;
         const ctx = mergedCanvas.getContext('2d');
-        ctx.drawImage(editCanvas, 0, 0, 1920, 1080);
+        ctx.drawImage(editCanvas, 0, 0, 853, 480);  //copy here
 
 
         if(!isObjectEmpty(stickerMetaData)){
@@ -1565,7 +1566,7 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(data => {
                 if (data.message === "Photo saved successfully") {
-                    alert("Photo saved! Sending email...");
+                    document.getElementById("sendingOverlay").classList.remove("section-inactive");
     
                     // Directly call finalize_session with session_id only
                     const finalizeForm = new FormData();
@@ -1586,9 +1587,11 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(finalizeData => {
                 if (finalizeData.status === 'sent') {
                     alert("Email sent! Redirecting to home...");
+                    document.getElementById("sendingOverlay").classList.add("section-inactive");
                     window.location.href = "/";
                 } else {
                     alert("Failed to send email. Redirecting to home...");
+                    document.getElementById("sendingOverlay").classList.add("section-inactive");
                     window.location.href = "/";
                 }
             })
@@ -1625,8 +1628,8 @@ document.addEventListener("DOMContentLoaded", function() {
         layoutSelection.classList.remove("section-inactive");
         layoutSelection.classList.add("section-active");
         backToModeBtn.classList.remove("section-inactive");
-        stopCamera();
-        startCamera();
+        //stopCamera();
+        //startCamera();
     }
 
     function startOver() {
@@ -1641,6 +1644,9 @@ document.addEventListener("DOMContentLoaded", function() {
     // EVENT LISTENERS SETUP
     // =============================================
     function setupEventListeners() {
+
+        
+        
         // Template selection
         templateContainer.addEventListener('click', handleTemplateClick);
         

@@ -35,6 +35,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // DOM Elements
     // =====================
     const elements = {
+        //Universal Control
+        goBackBtn: document.getElementById('back-content'),
+
         // Camera controls
         countdownDisplay: document.getElementById('countdown-display'),
         flashOverlay: document.getElementById('flash-overlay'),
@@ -101,6 +104,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function setupEventListeners() {
         // Camera controls
         elements.captureBtn.addEventListener('click', async () => {
+            elements.captureBtn.classList.add("section-inactive");
+            elements.goBackBtn.classList.add("section-inactive");
             await startCountdown(3);
             triggerFlash();
             
@@ -185,6 +190,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     clearInterval(interval);
                     elements.countdownDisplay.style.display = 'none';
                     elements.countdownDisplay.textContent = '';
+                    elements.captureBtn.classList.remove("section-inactive");
+                    elements.goBackBtn.classList.remove("section-inactive");
                     resolve();
                 }
             }, 1000);
@@ -404,7 +411,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(data => {
                 if (data.message === "Photo saved successfully") {
-                    alert("Photo saved! Sending email...");
+                    document.getElementById("sendingOverlay").classList.remove("section-inactive");
     
                     // Directly call finalize_session with session_id only
                     const finalizeForm = new FormData();
@@ -425,9 +432,11 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(finalizeData => {
                 if (finalizeData.status === 'sent') {
                     alert("Email sent! Redirecting to home...");
+                    document.getElementById("sendingOverlay").classList.add("section-inactive");
                     window.location.href = "/";
                 } else {
                     alert("Failed to send email. Redirecting to home...");
+                    document.getElementById("sendingOverlay").classList.add("section-inactive");
                     window.location.href = "/";
                 }
             })
