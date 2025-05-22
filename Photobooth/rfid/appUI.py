@@ -20,6 +20,8 @@ class AppUI:
         self.container.grid_columnconfigure(0, weight=1)
 
         self.pages = {} #container ito ng page states
+        self.current_page = None
+
         for PageClass in (HomePage, ScanPage, OperationsPage, CompeleteOperation):
             page_name = PageClass.__name__
             frame = PageClass(self.container, self, self.state)
@@ -29,6 +31,7 @@ class AppUI:
         self.show_page("HomePage")
 
     def show_page(self, page_name):
+        self.current_page = page_name
         frame = self.pages[page_name]
         frame.tkraise()
         if hasattr (frame, "refresh"):
