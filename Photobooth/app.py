@@ -311,9 +311,8 @@ def upload_photo():
         return jsonify({"error": str(e)}), 500
 
 #uncomment to make it work
-
-#RFID SCAN
 '''
+#RFID SCAN
 @app.route('/rfid_scan')
 def rfid_scan():
     scan = rfid.get_last_scan()
@@ -335,7 +334,7 @@ def clear_scan():
     rfid.clear_scanned()
     rfid.turn_on_rfid()
     return jsonify({"rfid status": "cleared and on"}), 200
-    '''
+'''
 
 #TEST insert
 @app.route('/test_insert_session')

@@ -4,6 +4,65 @@ main {
     max-height: 480px;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+/*kiosk galaw*/
+.kioskboard-container {
+    transform: scale(0.1); /* Adjust: 0.5 = 50%, try 0.4 or 0.3 if needed */
+    transform-origin: bottom left; /* So it shrinks toward the corner */
+    width: max-content;
+    background-color: transparent !important;
+    box-shadow: none !important;
+
+}
+.kioskboard {
+    background-color: transparent !important;
+}
+
+.kioskboard-key {
+    background-color: #f0f0f0;  /* Light grey keys */
+    border: 1px solid #ddd;
+    color: #333;
+    padding: 6px !important;
+    font-size: 16px !important;
+}
+
+.kioskboard-key-special {
+    flex: 1 1 auto !important;      /* Make it shrink */
+    max-width: 30px !important;     /* Limit max width */
+    font-size: 16px !important;     /* Optional: shrink font */
+    padding: 6px 8px !important;    /* Optional: shrink padding */
+}
+
+/* Optional: shrink buttons and layout */
+.kioskboard-row {
+    margin: 0 !important;
+}
+
+/*                                                  
+
+
+
+
+
+
+
+
+
+
+
+*/
+
 .titleName{
     color:#99ffd0;
     text-shadow: 0px 3px 2px #198050;
