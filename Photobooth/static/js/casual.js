@@ -1565,7 +1565,7 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(data => {
                 if (data.message === "Photo saved successfully") {
-                    alert("Photo saved! Sending email...");
+                    document.getElementById("sendingOverlay").classList.remove("section-inactive");
     
                     // Directly call finalize_session with session_id only
                     const finalizeForm = new FormData();
@@ -1586,9 +1586,11 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(finalizeData => {
                 if (finalizeData.status === 'sent') {
                     alert("Email sent! Redirecting to home...");
+                    document.getElementById("sendingOverlay").classList.add("section-inactive");
                     window.location.href = "/";
                 } else {
                     alert("Failed to send email. Redirecting to home...");
+                    document.getElementById("sendingOverlay").classList.add("section-inactive");
                     window.location.href = "/";
                 }
             })
