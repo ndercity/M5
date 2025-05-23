@@ -1,4 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
+    //START COUNTDOWN
+    let endTime = localStorage.getItem('countdownEnd')
+	if (!endTime) {
+		endTime = Date.now() + 10 * 60 * 1000;
+		localStorage.setItem('countdownEnd', endTime);
+	}
+
     // =============================================
     // CONSTANTS AND CONFIGURATION
     // =============================================
@@ -1553,6 +1560,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function downloadResult() {
+        localStorage.removeItem('countdownEnd');    //RESET TIMER
+        stopCamera();
         /*
         const link = document.createElement('a');
         link.download = `photo-booth-${currentTemplate.name.toLowerCase().replace(/ /g, '-')}-${new Date().getTime()}.png`;
@@ -1567,7 +1576,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const session_id = localStorage.getItem('session_id');
 
         resultCanvas.toBlob(blob => {
-	    stopCamera();
             if (!blob) {
                 alert("Failed to get image blob!");
                 return;
