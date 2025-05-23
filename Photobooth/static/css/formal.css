@@ -1,7 +1,7 @@
 /* =====================
     Base Styles
    ===================== */
-    main {
+main {
     text-align: center;
     position: relative;
     min-height: 100vh;
@@ -191,20 +191,22 @@ button:disabled {
     Results Section Styles
    ===================== */
 #results-section {
-    padding: 30px;
-    border-radius: 12px;
-    margin: 20px auto;
-    max-width: 450px;
+    margin-top: 0px;
+    display: flex;
+    padding: 20px;
+    border-radius: 8px;
     text-align: center;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0px;
 }
 
 .template-container {
     overflow: auto;
-    max-width: 100%;
-    border: 1px solid #ecf0f1;
-    padding: 15px;
+    max-width: 500px;
     background: #f8f9fa;
     border-radius: 8px;
+    padding: 5px;
 }
 
 #result-canvas {

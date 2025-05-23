@@ -10,6 +10,8 @@ class AppUI:
         #self.logic = RFID_Logic()
         self.root.title("Pic-a-Pi RFID")
         self.root.geometry("800x480")
+
+        self.root.bind("<Escape>", lambda event: self.quit_app())
         
         self.container = ctk.CTkFrame(self.root)
         self.container.pack(fill="both", expand=True)
@@ -18,6 +20,8 @@ class AppUI:
         self.container.grid_columnconfigure(0, weight=1)
 
         self.pages = {} #container ito ng page states
+        self.current_page = None
+
         for PageClass in (HomePage, ScanPage, OperationsPage, CompeleteOperation):
             page_name = PageClass.__name__
             frame = PageClass(self.container, self, self.state)
@@ -27,10 +31,16 @@ class AppUI:
         self.show_page("HomePage")
 
     def show_page(self, page_name):
+        self.current_page = page_name
         frame = self.pages[page_name]
         frame.tkraise()
         if hasattr (frame, "refresh"):
             frame.refresh()
+
+    def quit_app(self):
+        if self.current_page == "HomePage":
+            print("Escape pressed on HomePage. Quitting app.")
+            self.root.destroy()
         
 
 class HomePage(ctk.CTkFrame):

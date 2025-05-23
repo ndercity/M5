@@ -124,18 +124,28 @@ document.addEventListener("DOMContentLoaded", function() {
             ]
         },
         thirteen: {
-            name: "Sunrise",
+            name: "Pormula 1",
             background: "/static/others/frame13.png",
             areas: [
-                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
-                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
-                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
-                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
+                { x: 332.9, y: 236, width: 486.3, height: 273.5, color: '#FFDDC1' },
+                { x: 943.2, y: 372.7, width: 486.3, height: 273.5, color: '#C1FFD7' },
+                { x: 335.8, y: 646.2, width: 486.3, height: 273.5, color: '#C1D7FF' },
+                { x: 943.2, y: 783, width: 486.3, height: 273.5, color: '#FFC1E3' }
             ]
         },
         fourteen: {
-            name: "Sunset",
+            name: "Halloween",
             background: "/static/others/frame14.png",
+            areas: [
+                { x: 101, y: 157.7, width: 724.8, height: 407.7, color: '#FFDDC1' }, 
+                { x: 101, y: 629.3, width: 505.2, height: 284.2, color: '#C1FFD7' },
+                { x: 647.4, y: 629.3, width: 505.2, height: 284.2, color: '#C1D7FF' },
+                { x: 1193.6, y: 629.3, width: 505.2, height: 284.2, color: '#FFC1E3' } 
+            ]
+        },
+        fifteen: {
+            name: "Sunrise",
+            background: "/static/others/frame15.png",
             areas: [
                 { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
                 { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
@@ -143,9 +153,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
             ]
         },
-        fifteen: {
+        sixteen: {
+            name: "Sunset",
+            background: "/static/others/frame16.png",
+            areas: [
+                { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
+                { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
+                { x: 61.5, y: 617.5, width: 822.3, height: 462.5, color: '#C1D7FF' },
+                { x: 916.2, y: 617.5, width: 822.3, height: 462.5, color: '#FFC1E3' }
+            ]
+        },
+        seventeen: {
             name: "Clear Sky",
-            background: "/static/others/frame15.png",
+            background: "/static/others/frame17.png",
             areas: [
                 { x: 61.5, y: 120, width: 822.3, height: 462.5, color: '#FFDDC1' },
                 { x: 916.2, y: 120, width: 822.3, height: 462.5, color: '#C1FFD7' },
@@ -679,61 +699,61 @@ document.addEventListener("DOMContentLoaded", function() {
     function renderTemplate() {
         ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
 
-        // Draw images and template areas first
-        drawTemplateAreasAndImages();
-
-        if (selectedBG) {
-            const bgImage = new Image();
-            bgImage.onload = function () {
-                ctx.drawImage(bgImage, 0, 0, resultCanvas.width, resultCanvas.height);
-            };
-            bgImage.src = selectedBG;
-        }
-    }
-
-
-    function drawTemplateAreasAndImages() {
-        // Draw colored background for each area
+        // 1. First draw the colored template areas
         currentTemplate.areas.forEach(area => {
-            ctx.fillStyle = area.color + '80';
+            ctx.fillStyle = area.color + '80'; // Semi-transparent
             ctx.fillRect(area.x, area.y, area.width, area.height);
         });
 
-        // Draw the images
-        currentTemplate.areas.forEach((area, index) => {
-            if (capturedImages[index]) {
-                drawImageInArea(area, index);
-            }
-        });
-    }
+        // 2. Then draw the captured images
+        const imagePromises = currentTemplate.areas.map((area, index) => {
+            if (!capturedImages[index]) return Promise.resolve();
+            
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = function() {
+                    const scale = Math.max(
+                        area.width / img.width,
+                        area.height / img.height
+                    );
 
-    function drawImageInArea(area, index) {
-        const img = new Image();
-        img.onload = function() {
-            const scale = Math.max(
-                area.width / img.width,
-                area.height / img.height
-            );
-    
-            const scaledWidth = img.width * scale;
-            const scaledHeight = img.height * scale;
-            const sx = (scaledWidth - area.width) / 2;
-            const sy = (scaledHeight - area.height) / 2;
-    
-            const offCanvas = document.createElement('canvas');
-            offCanvas.width = area.width;
-            offCanvas.height = area.height;
-            const offCtx = offCanvas.getContext('2d');
-    
-            offCtx.drawImage(img, -sx, -sy, scaledWidth, scaledHeight);
-            ctx.drawImage(offCanvas, area.x, area.y);
-    
-            // Optional border
-            ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-            ctx.lineWidth = 4;
-            ctx.strokeRect(area.x, area.y, area.width, area.height);
-        };
-        img.src = capturedImages[index];
+                    const scaledWidth = img.width * scale;
+                    const scaledHeight = img.height * scale;
+                    const sx = (scaledWidth - area.width) / 2;
+                    const sy = (scaledHeight - area.height) / 2;
+
+                    const offCanvas = document.createElement('canvas');
+                    offCanvas.width = area.width;
+                    offCanvas.height = area.height;
+                    const offCtx = offCanvas.getContext('2d');
+
+                    offCtx.drawImage(img, -sx, -sy, scaledWidth, scaledHeight);
+                    ctx.drawImage(offCanvas, area.x, area.y);
+
+                    // Optional border
+                    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+                    ctx.lineWidth = 4;
+                    ctx.strokeRect(area.x, area.y, area.width, area.height);
+                    resolve();
+                };
+                img.src = capturedImages[index];
+            });
+        });
+
+        // 3. After all images are drawn, add the frame overlay
+        return Promise.all(imagePromises).then(() => {
+            if (selectedBG) {
+                return new Promise((resolve) => {
+                    const frameImg = new Image();
+                    frameImg.onload = function() {
+                        ctx.drawImage(frameImg, 0, 0, resultCanvas.width, resultCanvas.height);
+                        resolve();
+                    };
+                    frameImg.src = selectedBG;
+                });
+            }
+            return Promise.resolve();
+        });
     }
 
     // =============================================
@@ -1094,10 +1114,10 @@ document.addEventListener("DOMContentLoaded", function() {
     function applyEdit() {
         const editCanvas = document.getElementById('edit-canvas');
         const mergedCanvas = document.createElement('canvas');
-        mergedCanvas.width = 853;  // base resolution
-        mergedCanvas.height = 480;
+        mergedCanvas.width = 640;  // base resolution
+        mergedCanvas.height = 360;
         const ctx = mergedCanvas.getContext('2d');
-        ctx.drawImage(editCanvas, 0, 0, 853, 480);  //copy here
+        ctx.drawImage(editCanvas, 0, 0, 640, 360);  //copy here
 
 
         if(!isObjectEmpty(stickerMetaData)){
@@ -1524,8 +1544,8 @@ document.addEventListener("DOMContentLoaded", function() {
         updatePoseCounter();
     }
 
-    function saveLayout() {
-        renderTemplate();
+    async function saveLayout() {
+        await renderTemplate();
         previewSection.classList.remove("section-active");
         previewSection.classList.add("section-inactive");
         finalResultSection.classList.remove("section-inactive");
