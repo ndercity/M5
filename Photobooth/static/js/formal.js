@@ -1,225 +1,504 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // DOM Elements
-    const toggleCameraButton = document.getElementById("toggle-camera");
-    const videoFeed = document.getElementById("video-feed");
-    const previewButton = document.getElementById("preview-btn");
-    const captureAgainButton = document.getElementById("capture-again-btn");
-    const captureButton = document.getElementById("capture-btn");
-    const showGridButton = document.getElementById("show-grid-btn");
-    const saveButton = document.getElementById("save-photo");
-    const captureSection = document.getElementById("capture-section");
-    const previewSection = document.getElementById("preview-section");
-    const mainPreview = document.getElementById("main-preview");
-    const brightnessControl = document.getElementById("brightness");
-    const contrastControl = document.getElementById("contrast");
+    //START COUNTDOWN
+    let endTime = localStorage.getItem('countdownEnd')
+	if (!endTime) {
+		endTime = Date.now() + 10 * 60 * 1000;
+		localStorage.setItem('countdownEnd', endTime);
+	}
 
-    let cameraActive = false;
-    let currentImageUrl = null;
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    // Initialize sections
-    captureSection.classList.add("section-active");
-    previewSection.classList.add("section-inactive");
-
-    // Camera Control
-    toggleCameraButton.addEventListener("click", toggleCamera);
-    
-    function toggleCamera() {
-        if (cameraActive) {
-            stopCamera();
-        } else {
-            startCamera();
+    // =====================
+    // Configuration
+    // =====================
+    const CONFIG = {
+        template: {
+            width: 1800,
+            height: 1200,
+            areas: [
+                // 4 Large (2×2) Photos - Each 600×600
+                { x: 0, y: 0, width: 600, height: 600 },
+                { x: 600, y: 0, width: 600, height: 600 },
+                { x: 0, y: 600, width: 600, height: 600 },
+                { x: 600, y: 600, width: 600, height: 600 },
+                
+                // 8 Small (1×1) Photos - Each 300×300
+                { x: 1200, y: 0, width: 300, height: 300 },
+                { x: 1500, y: 0, width: 300, height: 300 },
+                { x: 1200, y: 300, width: 300, height: 300 },
+                { x: 1500, y: 300, width: 300, height: 300 },
+                { x: 1200, y: 600, width: 300, height: 300 },
+                { x: 1500, y: 600, width: 300, height: 300 },
+                { x: 1200, y: 900, width: 300, height: 300 },
+                { x: 1500, y: 900, width: 300, height: 300 }
+            ]
+        },
+        canvasStyle: {
+            borderColor: '#333',
+            borderWidth: 3,
+            backgroundColor: 'white'
         }
+    };
+
+    // =====================
+    // DOM Elements
+    // =====================
+    const elements = {
+        //Universal Control
+        goBackBtn: document.getElementById('back-content'),
+
+        // Camera controls
+        countdownDisplay: document.getElementById('countdown-display'),
+        flashOverlay: document.getElementById('flash-overlay'),
+        videoFeed: document.getElementById("video-feed"),
+        captureBtn: document.getElementById("capture-btn"),
+        
+        // Preview controls
+        mainPreview: document.getElementById("main-preview"),
+        brightnessControl: document.getElementById("brightness"),
+        contrastControl: document.getElementById("contrast"),
+        finalizeBtn: document.getElementById("finalize-btn"),
+        captureAgainBtn: document.getElementById("capture-again-btn"),
+        
+        // Results controls
+        resultsSection: document.getElementById("results-section"),
+        downloadBtn: document.getElementById("download-btn"),
+        backToPreviewBtn: document.getElementById("back-to-preview-btn"),
+        resultCanvas: document.getElementById("result-canvas"),
+        
+        // Sections
+        captureSection: document.getElementById("capture-section"),
+        previewSection: document.getElementById("preview-section")
+    };
+
+    // Canvas context
+    const ctx = elements.resultCanvas.getContext("2d");
+
+    // =====================
+    // State Management
+    // =====================
+    const state = {
+        cameraActive: false,
+        currentImageUrl: null
+    };
+
+    // =====================
+    // Initialization
+    // =====================
+    function initialize() {
+        // Set up canvas
+        setupCanvas();
+        if (!state.cameraActive) startCamera();
+        
+        // Initialize sections
+        elements.captureSection.classList.add("section-active");
+        elements.previewSection.classList.add("section-inactive");
+        elements.resultsSection.classList.add("section-inactive");
+        
+        // Set up event listeners
+        setupEventListeners();
+    }
+
+    function setupCanvas() {
+        elements.resultCanvas.width = CONFIG.template.width;
+        elements.resultCanvas.height = CONFIG.template.height;
+        clearCanvas();
+    }
+
+    function clearCanvas() {
+        ctx.fillStyle = CONFIG.canvasStyle.backgroundColor;
+        ctx.fillRect(0, 0, CONFIG.template.width, CONFIG.template.height);
+    }
+
+    function setupEventListeners() {
+        // Camera controls
+        elements.captureBtn.addEventListener('click', async () => {
+            elements.captureBtn.classList.add("section-inactive");
+            elements.goBackBtn.classList.add("section-inactive");
+            await startCountdown(3);
+            triggerFlash();
+            
+            setTimeout(() => {
+                capturePhoto();
+            }, 150);
+        });
+        
+        // Preview controls
+        elements.finalizeBtn.addEventListener("click", showResultsSection);
+        elements.captureAgainBtn.addEventListener("click", showCaptureSection);
+        elements.brightnessControl.addEventListener("input", applyEdits);
+        elements.contrastControl.addEventListener("input", applyEdits);
+        
+        // Results controls
+        elements.downloadBtn.addEventListener("click", savePhoto);
+        elements.backToPreviewBtn.addEventListener("click", showPreviewSection);
+        
+        // Clean up on page unload
+        window.addEventListener("beforeunload", cleanup);
+
+
+    }
+
+    // =====================
+    // Camera Functions
+    // =====================
+    function toggleCamera() {
+        state.cameraActive ? stopCamera() : startCamera();
     }
 
     function startCamera() {
-        videoFeed.onerror = null;
-        videoFeed.src = "/video_feed?" + new Date().getTime();
+        elements.videoFeed.onerror = null;
+        elements.videoFeed.src = "/video_feed?" + new Date().getTime();
         
-        videoFeed.onerror = () => {
-            if (cameraActive) {
+        elements.videoFeed.onerror = () => {
+            if (state.cameraActive) {
                 alert("Could not access camera. Please check permissions.");
                 stopCamera();
             }
         };
         
-        toggleCameraButton.textContent = "Close Camera";
-        cameraActive = true;
+        state.cameraActive = true;
     }
 
     function stopCamera() {
-        videoFeed.onerror = null;
-        videoFeed.src = "";
-        toggleCameraButton.textContent = "Open Camera";
-        cameraActive = false;
+        elements.videoFeed.onerror = null;
+        elements.videoFeed.src = "";
+        state.cameraActive = false;
         fetch("/stop_camera");
     }
 
-    // Capture Functionality
-    captureButton.addEventListener("click", capturePhoto);
-    
+    // =====================
+    // Capture Functions
+    // =====================
     function capturePhoto() {
-        if (!cameraActive) {
+        if (!state.cameraActive) {
             alert("Please enable the camera first");
             return;
         }
 
-        captureButton.disabled = true;
-        captureButton.textContent = "Capturing...";
+        disableCaptureButton(true);
 
         fetch("/capture_snapshot")
-            .then(response => {
-                if (!response.ok) throw new Error("Capture failed");
-                return response.blob();
-            })
-            .then(imageBlob => {
-                const newImageUrl = URL.createObjectURL(imageBlob);
-                
-                // Clear previous image URL if exists
-                if (currentImageUrl) {
-                    URL.revokeObjectURL(currentImageUrl);
+            .then(handleCaptureResponse)
+            .then(handleCaptureSuccess)
+            .catch(handleCaptureError)
+            .finally(() => disableCaptureButton(false));
+    }
+
+    function startCountdown(seconds) {
+        return new Promise((resolve) => {
+            elements.countdownDisplay.style.display = 'block';
+            let count = seconds;
+
+            const interval = setInterval(() => {
+                elements.countdownDisplay.textContent = '';
+                elements.countdownDisplay.textContent = count;
+                count--;
+
+                if (count < 0) {
+                    clearInterval(interval);
+                    elements.countdownDisplay.style.display = 'none';
+                    elements.countdownDisplay.textContent = '';
+                    elements.captureBtn.classList.remove("section-inactive");
+                    elements.goBackBtn.classList.remove("section-inactive");
+                    resolve();
                 }
-                
-                currentImageUrl = newImageUrl;
-                updateImageDisplay();
-                showPreviewSection();
-            })
-            .catch(error => {
-                console.error("Error capturing:", error);
-                alert("Failed to capture photo. Please try again.");
-            })
-            .finally(() => {
-                captureButton.disabled = false;
-                captureButton.textContent = "Capture";
-            });
+            }, 1000);
+        });
     }
 
-    function updateImageDisplay() {
-        // Update main preview
-        mainPreview.src = currentImageUrl;
-        applyEditsToMainPreview();
-        
-        // Update grid if visible
-        if (document.querySelector(".parent").classList.contains("active")) {
-            updateGridWithCurrentImage();
+    function triggerFlash() {
+        elements.flashOverlay.style.opacity = '1';
+        setTimeout(() => {
+            elements.flashOverlay.style.opacity = '0';
+        }, 100);
+    }
+
+    function disableCaptureButton(disabled) {
+        elements.captureBtn.disabled = disabled;
+        elements.captureBtn.textContent = disabled ? "Capturing..." : "Capture";
+    }
+
+    function handleCaptureResponse(response) {
+        if (!response.ok) throw new Error("Capture failed");
+        return response.blob();
+    }
+
+    function handleCaptureSuccess(imageBlob) {
+        if (state.currentImageUrl) {
+            URL.revokeObjectURL(state.currentImageUrl);
         }
+    
+        const img = new Image();
+        img.onload = function () {
+            // Crop to square (smallest side)
+            const size = Math.min(img.width, img.height);
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = size;
+            tempCanvas.height = size;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Draw centered crop
+            const offsetX = (img.width - size) / 2;
+            const offsetY = (img.height - size) / 2;
+            tempCtx.drawImage(img, offsetX, offsetY, size, size, 0, 0, size, size);
+    
+            // Save the cropped image
+            tempCanvas.toBlob(blob => {
+                state.currentImageUrl = URL.createObjectURL(blob);
+                updateMainPreview();
+                showPreviewSection();
+            }, 'image/png');
+        };
+        img.src = URL.createObjectURL(imageBlob);
+    }
+    
+
+    function handleCaptureError(error) {
+        console.error("Error capturing:", error);
+        alert("Failed to capture photo. Please try again.");
     }
 
-    // Navigation
-    previewButton.addEventListener("click", showPreviewSection);
-    captureAgainButton.addEventListener("click", showCaptureSection);
+    // =====================
+    // Preview Functions
+    // =====================
+    function updateMainPreview() {
+        elements.mainPreview.src = state.currentImageUrl;
+        applyEditsToMainPreview();
+    }
 
+    // =====================
+    // Template Functions
+    // =====================
+    function renderTemplate() {
+        if (!state.currentImageUrl) return;
+        
+        clearCanvas();
+        
+        const img = new Image();
+        img.onload = function() {
+            drawTemplateImages(img);
+        };
+        img.src = state.currentImageUrl;
+        elements.goBackBtn.classList.add("section-inactive");
+    }
+
+    function drawTemplateImages(img) {
+        const brightness = elements.brightnessControl.value;
+        const contrast = elements.contrastControl.value;
+        const filter = `brightness(${100 + parseInt(brightness)}%) contrast(${100 + parseInt(contrast)}%)`;
+        
+        CONFIG.template.areas.forEach(area => {
+            // Draw image with filters
+            drawImageWithFilter(img, area, filter);
+            
+            // Draw border
+            drawBorder(area);
+        });
+    }
+
+    function drawImageWithFilter(img, area, filter) {
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = area.width;
+        tempCanvas.height = area.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        
+        tempCtx.filter = filter;
+        tempCtx.drawImage(img, 0, 0, area.width, area.height);
+        ctx.drawImage(tempCanvas, area.x, area.y, area.width, area.height);
+    }
+
+    function drawBorder(area) {
+        ctx.strokeStyle = CONFIG.canvasStyle.borderColor;
+        ctx.lineWidth = CONFIG.canvasStyle.borderWidth;
+        ctx.strokeRect(area.x, area.y, area.width, area.height);
+    }
+
+    // =====================
+    // Editing Functions
+    // =====================
+    function applyEdits() {
+        applyEditsToMainPreview();
+    }
+
+    function applyEditsToMainPreview() {
+        const brightness = elements.brightnessControl.value;
+        const contrast = elements.contrastControl.value;
+        elements.mainPreview.style.filter = 
+            `brightness(${100 + parseInt(brightness)}%) contrast(${100 + parseInt(contrast)}%)`;
+    }
+
+    // =====================
+    // Navigation Functions
+    // =====================
     function showPreviewSection() {
-        if (!currentImageUrl) {
+        if (!state.currentImageUrl) {
             alert("Please capture a photo first");
             return;
         }
-        captureSection.classList.remove("section-active");
-        captureSection.classList.add("section-inactive");
         
-        previewSection.classList.remove("section-inactive");
-        previewSection.classList.add("section-active");
+        toggleSection(elements.captureSection, false);
+        toggleSection(elements.resultsSection, false);
+        toggleSection(elements.previewSection, true);
+        scrollToTop();
+        elements.goBackBtn.classList.remove("section-inactive");
+    }
+
+    function showResultsSection() {
+        if (!state.currentImageUrl) {
+            alert("Please capture and finalize a photo first");
+            return;
+        }
         
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
+        // Render template for final output
+        renderTemplate();
+        
+        toggleSection(elements.captureSection, false);
+        toggleSection(elements.previewSection, false);
+        toggleSection(elements.resultsSection, true);
+        scrollToTop();
     }
 
     function showCaptureSection() {
         // Clear previous image
-        if (currentImageUrl) {
-            URL.revokeObjectURL(currentImageUrl);
-            currentImageUrl = null;
+        if (state.currentImageUrl) {
+            URL.revokeObjectURL(state.currentImageUrl);
+            state.currentImageUrl = null;
         }
+
+        // Reset sliders
+        elements.brightnessControl.value = 0;
+        elements.contrastControl.value = 0;
+        applyEdits();
         
-        previewSection.classList.remove("section-active");
-        previewSection.classList.add("section-inactive");
+        toggleSection(elements.previewSection, false);
+        toggleSection(elements.resultsSection, false);
+        toggleSection(elements.captureSection, true);
+        scrollToTop();
         
-        captureSection.classList.remove("section-inactive");
-        captureSection.classList.add("section-active");
-        
+        if (!state.cameraActive) startCamera();
+    }
+
+    function toggleSection(section, show) {
+        section.classList.toggle("section-active", show);
+        section.classList.toggle("section-inactive", !show);
+    }
+
+    function scrollToTop() {
         window.scrollTo({
             top: 0,
             behavior: "smooth"
         });
-        
-        // Reset grid view
-        document.querySelector(".parent").classList.remove("active");
-        showGridButton.textContent = "Show Grid View";
-        
-        if (!cameraActive) startCamera();
     }
 
-    // Grid Toggle
-    showGridButton.addEventListener("click", toggleGrid);
-    
-    function toggleGrid() {
-        const grid = document.querySelector(".parent");
-        grid.classList.toggle("active");
-        
-        if (grid.classList.contains("active")) {
-            updateGridWithCurrentImage();
-            showGridButton.textContent = "Hide Grid View";
-        } else {
-            showGridButton.textContent = "Show Grid View";
-        }
-    }
-
-    function updateGridWithCurrentImage() {
-        if (!currentImageUrl) return;
-        
-        const divs = document.querySelectorAll(".parent div");
-        divs.forEach(div => {
-            div.style.backgroundImage = `url(${currentImageUrl})`;
-            applyEditsToGrid(div);
-        });
-    }
-
-    // Image Editing
-    brightnessControl.addEventListener("input", applyEdits);
-    contrastControl.addEventListener("input", applyEdits);
-
-    function applyEdits() {
-        applyEditsToMainPreview();
-        
-        // Apply to grid if visible
-        if (document.querySelector(".parent").classList.contains("active")) {
-            const divs = document.querySelectorAll(".parent div");
-            divs.forEach(div => applyEditsToGrid(div));
-        }
-    }
-
-    function applyEditsToMainPreview() {
-        const brightness = brightnessControl.value;
-        const contrast = contrastControl.value;
-        mainPreview.style.filter = `brightness(${100 + parseInt(brightness)}%) contrast(${100 + parseInt(contrast)}%)`;
-    }
-
-    function applyEditsToGrid(element) {
-        const brightness = brightnessControl.value;
-        const contrast = contrastControl.value;
-        element.style.filter = `brightness(${100 + parseInt(brightness)}%) contrast(${100 + parseInt(contrast)}%)`;
-    }
-
-    // Save Functionality
-    saveButton.addEventListener("click", savePhoto);
-    
+    // =====================
+    // Save Functions
+    // =====================
     function savePhoto() {
-        if (!currentImageUrl) {
+        localStorage.removeItem('countdownEnd');    //RESET TIMER
+	    stopCamera();
+        if (!state.currentImageUrl) {
             alert("No photo to save!");
             return;
         }
-        // Implement your save logic here
-        alert("Photo saved with current edits!");
+    
+        const session_id = localStorage.getItem('session_id');
+    
+        elements.resultCanvas.toBlob(blob => {
+            if (!blob) {
+                alert("Failed to get image blob!");
+                return;
+            }
+    
+            const formData = new FormData();
+            formData.append('photo', blob, 'photo.png');
+            formData.append('session_id', session_id);
+    
+            fetch('/upload_photo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                if (data.message === "Photo saved successfully") {
+                    document.getElementById("sendingOverlay").classList.remove("section-inactive");
+    
+                    // Directly call finalize_session with session_id only
+                    const finalizeForm = new FormData();
+                    finalizeForm.append('session_id', session_id);
+    
+                    return fetch('/finalize_session', {
+                        method: 'POST',
+                        body: finalizeForm
+                    });
+                } else {
+                    throw new Error(data.error || 'Failed to save photo');
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to finalize session');
+                return response.json();
+            })
+            .then(finalizeData => {
+                if (finalizeData.status === 'sent') {
+                    alert("Email sent! Redirecting to home...");
+                    document.getElementById("sendingOverlay").classList.add("section-inactive");
+                    window.location.href = "/";
+                } else {
+                    alert("Failed to send email. Redirecting to home...");
+                    document.getElementById("sendingOverlay").classList.add("section-inactive");
+                    window.location.href = "/";
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Error during photo save or email sending: ' + error.message + ' Redirecting to home...');
+                window.location.href = "/";
+            });
+    
+        }, 'image/png');
+    }    
+
+    function showDownloadConfirmation() {
+        const confirmation = document.createElement('div');
+        confirmation.textContent = 'Download started!';
+        confirmation.className = 'download-confirmation';
+        elements.resultsSection.appendChild(confirmation);
+        
+        setTimeout(() => {
+            confirmation.remove();
+        }, 2000);
     }
 
-    // Clean up
-    window.addEventListener("beforeunload", function() {
-        if (currentImageUrl) {
-            URL.revokeObjectURL(currentImageUrl);
+    //
+    function finalizeAndSendPdf(pdfBlob) {
+        const session_id = localStorage.getItem('session_id');
+        const formData = new FormData();
+        formData.append('pdf', pdfBlob, 'session.pdf');
+        formData.append('session_id', session_id);
+    
+        return fetch('/finalize_session', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        });
+    }
+    
+
+    // =====================
+    // Cleanup
+    // =====================
+    function cleanup() {
+        if (state.currentImageUrl) {
+            URL.revokeObjectURL(state.currentImageUrl);
         }
         stopCamera();
-    });
+    }
+
+    // Initialize the application
+    initialize();
 });

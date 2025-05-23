@@ -1,37 +1,58 @@
 import cv2
-import numpy as np
+import threading
+import time
 
 class Camera:
     def __init__(self):
         self.capture = None
+        self.frame = None
+        self.active_stream = False
+        self.thread = None
+        self.lock = threading.Lock()
+        self.stopped = False
 
     def start(self):
-        """Start the webcam feed"""
-        self.capture = cv2.VideoCapture(0)
-        if not self.capture.isOpened():
-            raise Exception("Could not open video device")
+        if self.capture is None or not self.capture.isOpened():
+            self.capture = cv2.VideoCapture(0)
+            self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+            self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 360)
+            self.capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
+            self.active_stream = True
+            self.stopped = False
+
+            self.thread = threading.Thread(target=self._update_frame, daemon=True)
+            self.thread.start()
 
     def stop(self):
-        """Stop the webcam feed"""
-        if self.capture:
+        self.stopped = True
+        if self.thread is not None:
+            self.thread.join()
+            self.thread = None
+
+        if self.capture and self.capture.isOpened():
             self.capture.release()
+            self.capture = None
+            self.active_stream = False
+
+    def is_active(self):
+        return self.active_stream
+
+    def _update_frame(self):
+        while not self.stopped:
+            if self.capture:
+                ret, frame = self.capture.read()
+                if not ret:
+                    continue
+                with self.lock:
+                    self.frame = frame
+            time.sleep(0.01)  # Small delay to prevent 100% CPU usage
 
     def get_frame(self):
-        """Get a frame from the webcam as JPEG byte data"""
-        if self.capture:
-            ret, frame = self.capture.read()
-            if not ret:
+        with self.lock:
+            if self.frame is None:
                 return None
-            ret, jpeg = cv2.imencode('.jpg', frame)
+            ret, jpeg = cv2.imencode('.jpg', self.frame, [int(cv2.IMWRITE_JPEG_QUALITY), 70])
             return jpeg.tobytes()
-        return None
 
     def capture_snapshot(self):
-        """Capture a snapshot (single frame) from the webcam"""
-        if self.capture:
-            ret, frame = self.capture.read()
-            if not ret:
-                return None
-            ret, jpeg = cv2.imencode('.jpg', frame)
-            return jpeg.tobytes()
-        return None
+        return self.get_frame()

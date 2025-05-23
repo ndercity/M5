@@ -1,18 +1,79 @@
 {% extends "base.html" %}
 
 {% block title %}Home - Photo Booth{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">{% endblock %}
-{% block extra_js %}<script src="{{ url_for('static', filename='js/home.js') }}"></script>{% endblock %}
+<meta name="HandheldFriendly" content="true" />
+{% block extra_css %}
+<!--<link rel="stylesheet" href="dist/kioskboard-2.3.0.min.css" />-->
+<link rel="stylesheet" href="{{ url_for('static', filename='kioskboard/kioskboard.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+{% block extra_js %}
+<script> localStorage.removeItem('countdownEnd'); </script>
+<!--<script defer src="dist/kioskboard-aio-2.3.0.min.js"></script>-->
+<script defer src="{{ url_for('static', filename='kioskboard/kioskboard.js') }}"></script>
+<script defer src="{{ url_for('static', filename='js/home.js') }}"></script>
+
+{% endblock %}
 
 {% block content %}
     <main>
-        <h2>Welcome to the Photo Booth</h2>
-        <p>Follow these guidelines for the best experience!</p>
-        <ul>
-            <li>Ensure good lighting for better image quality.</li>
-            <li>Stay within the frame before capturing.</li>
-            <li>Follow the instructions on each step.</li>
-        </ul>
-        <a href="{{ url_for('mode') }}" class="btn-link">Proceed to Mode Selection</a>
+        <div class="start-section">
+            <a class="titleName">Pic-a-Pi</a>
+            <p>A Raspberry Pi Photobooth</p>
+            <button class="scan">-Scan The Card to Start-</button>
+        </div>
+
+        <div class="wave"></div>
+        <div class="ocean"></div>
+
+        <form class="email-form" id="email-form">
+            <input type="email" id="email" name="email" class="js-kioskboard-input" required placeholder="Enter your email">
+            <button type="submit" class="emailButton">Confirm</button>
+        </form>
+        <div class="carouselProMax" id="carouselProMax">
+            <div class="carousel-container" id="carousel-container">
+                <div class="carousel">
+                    <div class="carousel-item active">
+                        <h2>Select Mode</h2>
+                        <p>Choose between Formal or Casual</p>
+                    </div>
+                    
+                    <div class="carousel-item">
+                        <h2>Capture</h2>
+                        <p>Get Ready and Press the Capture Button</p>
+                    </div>
+                    
+                    <div class="carousel-item">
+                        <h2>Strike a Pose</h2>
+                        <p>Your picture will be taken after the countdown</p>
+                    </div>
+                    
+                    <div class="carousel-item">
+                        <h2>Redo?</h2>
+                        <p>Need a redo? Tap Retake to try again</p>
+                    </div>
+                    
+                    <div class="carousel-item">
+                        <h2>Edit</h2>
+                        <p>Customize the photos to your hearts content</p>
+                    </div>
+                    
+                    <div class="carousel-item">
+                        <h2>Send</h2>
+                        <p>Send the photo to your e-mail and save it</p>
+                    </div>
+                </div>
+            
+                <button class="carousel-control prev" aria-label="Previous slide">&#10094;</button>
+                <button class="carousel-control next" aria-label="Next slide">&#10095;</button>
+            </div>
+    
+            <div class="carousel-indicators">
+                <!-- Indicators will be added by JavaScript -->
+            </div>
+    
+                <a href="{{ url_for('mode') }}" class="btn-link">Proceed to Mode Selection</a>
+            </div>
+        </div>
     </main>
 {% endblock %}
