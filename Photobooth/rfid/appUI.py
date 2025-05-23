@@ -46,6 +46,7 @@ class AppUI:
 class HomePage(ctk.CTkFrame):
     def __init__(self, parent, controller, state):
         super().__init__(parent)
+        self.controller = controller
         self.button_height = 60
         self.button_width = 200
 
@@ -54,6 +55,11 @@ class HomePage(ctk.CTkFrame):
         
         self.bg_image_label = ctk.CTkLabel(self, image = self.bg_image, text = "")
         self.bg_image_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+        self.close_image = ctk.CTkImage(light_image = Image.open('images/close_button.png'), size = (40,40))
+        self.bg_image_label = ctk.CTkLabel(self, image = self.close_image, text = "", bg_color="#000001")
+        self.bg_image_label.place(x=740, y=21)
+        self.bg_image_label.bind("<Button-1>", self.exit_app)
 
         self.scan_button = ctk.CTkButton(self, height = self.button_height, width = self.button_width,
                                             text = "Scan RFID",
@@ -68,6 +74,9 @@ class HomePage(ctk.CTkFrame):
 
         self.scan_button.place(x=(800/2) - 100, y=350)
         ##pws.set_opacity(self.scan_button, color="#000001")
+
+    def exit_app(self, event=None):
+        self.controller.root.destroy()
 
 
 class ScanPage(ctk.CTkFrame):
