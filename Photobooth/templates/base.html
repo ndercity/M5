@@ -8,8 +8,8 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <div id="timer" style="position: fixed; top:10px; right:10px; font-size:24px;"></div>
     {% block content %}{% endblock %}
-    
     <script src="{{ url_for('static', filename='js/global.js') }}"></script>
     {% block extra_js %}{% endblock %}
 </body>
