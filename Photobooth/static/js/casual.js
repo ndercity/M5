@@ -1,4 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
+    //START COUNTDOWN
+    let endTime = localStorage.getItem('countdownEnd')
+	if (!endTime) {
+		endTime = Date.now() + 10 * 60 * 1000;
+		localStorage.setItem('countdownEnd', endTime);
+	}
+
     // =============================================
     // CONSTANTS AND CONFIGURATION
     // =============================================
@@ -231,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let stickerImages = [];
     const stickerTracker = {};
     const stickerMetaData = {};
-    const picEditState = [false, false, false, false]; //ito ang magiindicate kung naedit na ba yung pic or hindi
+    let picEditState = [false, false, false, false]; //ito ang magiindicate kung naedit na ba yung pic or hindi
     let isImageRaw = true; //titignan neto kung raw pa ba ang image or hindi na
 
     // =============================================
@@ -1553,6 +1560,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function downloadResult() {
+        localStorage.removeItem('countdownEnd');    //RESET TIMER
+        stopCamera();
         /*
         const link = document.createElement('a');
         link.download = `photo-booth-${currentTemplate.name.toLowerCase().replace(/ /g, '-')}-${new Date().getTime()}.png`;
@@ -1657,6 +1666,8 @@ document.addEventListener("DOMContentLoaded", function() {
             resetCaptureState();
             switchToCaptureSection();
             updatePoseCounter();
+	    picEditState = [false, false, false, false];
+
         }
     }
 

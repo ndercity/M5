@@ -1,4 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
+    //START COUNTDOWN
+    let endTime = localStorage.getItem('countdownEnd')
+	if (!endTime) {
+		endTime = Date.now() + 10 * 60 * 1000;
+		localStorage.setItem('countdownEnd', endTime);
+	}
+
     // =====================
     // Configuration
     // =====================
@@ -386,6 +393,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Save Functions
     // =====================
     function savePhoto() {
+        localStorage.removeItem('countdownEnd');    //RESET TIMER
+	    stopCamera();
         if (!state.currentImageUrl) {
             alert("No photo to save!");
             return;
