@@ -79,12 +79,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayEmail(){
-	let endTime =localStorage.getItem('countdownEnd')
-	if (!endTime) {
-		endTime = Date.now() + 10 * 60 * 1000;
-		localStorage.setItem('countdownEnd', endTime);
-	}
-
         toggleSection(emailForm, true);
         toggleSection(start, false);
         KioskBoard.run('.js-kioskboard-input');
