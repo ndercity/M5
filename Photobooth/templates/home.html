@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 {% endblock %}
 {% block extra_js %}
+<script> localStorage.removeItem('countdownEnd'); </script>
 <!--<script defer src="dist/kioskboard-aio-2.3.0.min.js"></script>-->
 <script defer src="{{ url_for('static', filename='kioskboard/kioskboard.js') }}"></script>
 <script defer src="{{ url_for('static', filename='js/home.js') }}"></script>

@@ -386,6 +386,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Save Functions
     // =====================
     function savePhoto() {
+	stopCamera();
         if (!state.currentImageUrl) {
             alert("No photo to save!");
             return;

@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let stickerImages = [];
     const stickerTracker = {};
     const stickerMetaData = {};
-    const picEditState = [false, false, false, false]; //ito ang magiindicate kung naedit na ba yung pic or hindi
+    let picEditState = [false, false, false, false]; //ito ang magiindicate kung naedit na ba yung pic or hindi
     let isImageRaw = true; //titignan neto kung raw pa ba ang image or hindi na
 
     // =============================================
@@ -1567,6 +1567,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const session_id = localStorage.getItem('session_id');
 
         resultCanvas.toBlob(blob => {
+	    stopCamera();
             if (!blob) {
                 alert("Failed to get image blob!");
                 return;
@@ -1657,6 +1658,8 @@ document.addEventListener("DOMContentLoaded", function() {
             resetCaptureState();
             switchToCaptureSection();
             updatePoseCounter();
+	    picEditState = [false, false, false, false];
+
         }
     }
 
