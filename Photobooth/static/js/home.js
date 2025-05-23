@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         autoScroll: false,
         capsLockActive: false,
-        allowRealKeyboard: false,
-        allowMobileKeyboard: false,
+        allowRealKeyboard: true,
+        allowMobileKeyboard: true,
         cssAnimations: true,
         cssAnimationsDuration: 360,
         cssAnimationsStyle: 'slide',
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     //RFID utils. uncommetn to make it work
-    
+    /*
     function getRFIDKey(){
         fetch("/rfid_scan")
         .then(response => response.json())
@@ -161,14 +161,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     }
         
-
+*/
     function initialize() {
         //Page Initialization
-        cleanRFID();
+      //  cleanRFID();
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
-        turnRFIDOn();
+       // turnRFIDOn();
         rfidInterval = setInterval(getRFIDKey, 1000);
     }
 
