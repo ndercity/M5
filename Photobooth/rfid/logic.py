@@ -2,14 +2,21 @@ import sys
 import os
 import threading
 import time
-from mfrc522 import SimpleMFRC522 #uncomment this in raspi
+#from mfrc522 import SimpleMFRC522 #uncomment this in raspi
 import rfid_db_func as dbf
 
 class AppState:
     def __init__(self):
         self.current_rfid = None
         self.current_rfid_status = None
+        self.page_destination = None
 
+    def set_page_destination(self, page):
+        self.page_destination = page
+    
+    def get_page_destination(self):
+        return self.page_destination
+    
     def set_rfid(self, rfid_key):
         self.current_rfid = rfid_key
         self.current_rfid_status = dbf.get_rfid_status(rfid_key)
@@ -37,6 +44,7 @@ class AppState:
 
 class RFID_Logic:
     def __init__(self, on_scan_callback):
+        dbf.init_db()
         dbf.get_db()
         self.reader = None
         self.thread = None

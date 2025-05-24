@@ -1,5 +1,6 @@
 import customtkinter as ctk
-from logic import RFID_Logic, AppState
+from logic import AppState
+#from logic import RFID_Logic
 from PIL import Image
 #import pywinstyles as #pws
 
@@ -22,7 +23,7 @@ class AppUI:
         self.pages = {} #container ito ng page states
         self.current_page = None
 
-        for PageClass in (HomePage, ScanPage, OperationsPage, CompeleteOperation):
+        for PageClass in (HomePage, ScanPage, CustomerOperationsPage, AdminOperationsPage, CompeleteOperation, HistoryPage):
             page_name = PageClass.__name__
             frame = PageClass(self.container, self, self.state)
             self.pages[page_name] = frame
@@ -47,8 +48,9 @@ class HomePage(ctk.CTkFrame):
     def __init__(self, parent, controller, state):
         super().__init__(parent)
         self.controller = controller
-        self.button_height = 60
-        self.button_width = 200
+        self.button_height = 45
+        self.button_width = 144
+        self.state = state
 
         self.bg_image = ctk.CTkImage(light_image = Image.open('images/home_design.png'), 
                                                                 size = (800,480)) #just to make sure
@@ -61,8 +63,9 @@ class HomePage(ctk.CTkFrame):
         self.bg_image_label.place(x=740, y=21)
         self.bg_image_label.bind("<Button-1>", self.exit_app)
 
-        self.scan_button = ctk.CTkButton(self, height = self.button_height, width = self.button_width,
-                                            text = "Scan RFID",
+
+        self.ad_cards_button = ctk.CTkButton(self, height = self.button_height, width = self.button_width,
+                                            text = "Admin Cards",
                                             text_color = "#000000",
                                             font = ("Helvetica", 15),
                                             #corner_radius = 20,
@@ -70,14 +73,41 @@ class HomePage(ctk.CTkFrame):
                                             bg_color="transparent",
                                             border_color = "#FFFFFF",
                                             border_width=4,
-                                            command=lambda: controller.show_page("ScanPage"))
+                                            command=lambda: self.set_target_page("AdminOperationsPage"))
+        self.ad_cards_button.place(x=162, y=351)
 
-        self.scan_button.place(x=(800/2) - 100, y=350)
+        self.customer_button = ctk.CTkButton(self, height = self.button_height, width = self.button_width,
+                                            text = "Customer",
+                                            text_color = "#000000",
+                                            font = ("Helvetica", 15),
+                                            #corner_radius = 20,
+                                            fg_color = "#99FFD0",
+                                            bg_color="transparent",
+                                            border_color = "#FFFFFF",
+                                            border_width=4,
+                                            command=lambda: self.set_target_page("CustomerOperationsPage"))
+        self.customer_button.place(x=328, y=351)
         ##pws.set_opacity(self.scan_button, color="#000001")
+
+
+        self.history_button = ctk.CTkButton(self, height = self.button_height, width = self.button_width,
+                                            text = "History",
+                                            text_color = "#000000",
+                                            font = ("Helvetica", 15),
+                                            #corner_radius = 20,
+                                            fg_color = "#99FFD0",
+                                            bg_color="transparent",
+                                            border_color = "#FFFFFF",
+                                            border_width=4,
+                                            command=lambda: self.set_target_page("HistoryPage"))
+        self.history_button.place(x=494, y=351)
 
     def exit_app(self, event=None):
         self.controller.root.destroy()
 
+    def set_target_page(self, page):
+        self.state.set_page_destination(page)
+        self.controller.show_page("ScanPage")
 
 class ScanPage(ctk.CTkFrame):
     def __init__(self, parent, controller, state):
@@ -110,7 +140,7 @@ class ScanPage(ctk.CTkFrame):
         self.bg_image_label.place(x=(800/2) - (167/2), y=223)
         ##pws.set_opacity(self.bg_image_label, color="#000001")
 
-        self.rfid_logic = RFID_Logic(self.on_rfid_scanned)
+        #self.rfid_logic = RFID_Logic(self.on_rfid_scanned)
 
         self.back_button = ctk.CTkButton(self, height = 54, width = 181, 
                                         text="Back", 
@@ -124,9 +154,25 @@ class ScanPage(ctk.CTkFrame):
                                         command=lambda: self.go_back())
         self.back_button.place(x=(800/2) - (181/2), y=378)
         ##pws.set_opacity(self.back_button, color="#000001")
-        self.rfid_logic = RFID_Logic(self.on_rfid_scanned)
-        self.rfid_logic.turn_on_rfid()
+        #self.rfid_logic = RFID_Logic(self.on_rfid_scanned)
+        #self.rfid_logic.turn_on_rfid()
 
+        #will remove this shit
+        self.next_button = ctk.CTkButton(self, height = 54, width = 181, 
+                                        text="next", 
+                                        text_color = "#000000",
+                                        font = ("Helvetica", 15),
+                                        #corner_radius = 20,
+                                        fg_color = "#99FFD0",
+                                        bg_color="transparent",
+                                        border_color = "#FFFFFF",
+                                        border_width=4,                                         
+                                        command=lambda: self.next_page())
+        self.next_button.place(x=(800/2) - (181/2), y=378 + 20)
+
+
+
+    '''
     def on_rfid_scanned(self, rfid):
         self.state.set_rfid(rfid)
         self.rfid_logic.turn_off_rfid()
@@ -134,12 +180,16 @@ class ScanPage(ctk.CTkFrame):
     
     def refresh(self):
         self.rfid_logic.turn_on_rfid()
-
+'''
     def go_back(self):
         self.controller.show_page("HomePage")
         #self.rfid_logic.turn_off_rfid()
+        
+    def next_page(self):
+        page_dest = self.state.get_page_destination()
+        self.controller.show_page(page_dest)
 
-class OperationsPage(ctk.CTkFrame):
+class CustomerOperationsPage(ctk.CTkFrame):
     def __init__(self, parent, controller, state):
         self.controller = controller
         self.state = state
@@ -161,12 +211,6 @@ class OperationsPage(ctk.CTkFrame):
         self.text_container = ctk.CTkFrame(self.bg_panel, fg_color="transparent")
         self.text_container.place(relx=0.5, rely=0.5, anchor="center")
 
-        self.scan_label = ctk.CTkLabel(self.text_container,
-                                       text = "Scan Complete ",
-                                       font = ("Helvetica", 25),
-                                       text_color = "#000000")
-        self.scan_label.pack()   
-
         self.rfid_num_label = ctk.CTkLabel(self.text_container,
                                        text = f"RFID Number: ",
                                        font = ("Helvetica", 25),
@@ -178,6 +222,21 @@ class OperationsPage(ctk.CTkFrame):
                                        font = ("Helvetica", 25),
                                        text_color = "#000000")
         self.rfid_status_label.pack()
+
+        self.customer_name_label = ctk.CTkLabel(self.text_container,
+                                                text="Customer Name:",
+                                                font=("Helvetica", 25),
+                                                text_color="#000000")
+        self.customer_name_label.pack(pady=(10, 0))  # Add spacing above
+
+        # Customer Name Text Entry
+        self.customer_name_entry = ctk.CTkEntry(self.text_container,
+                                                font=("Helvetica", 20),
+                                                width=300,
+                                                height=35,
+                                                text_color="#000000")
+        self.customer_name_entry.pack(pady=(5, 0))  # Add small gap between label and entry
+
 
         self.rfid_display  = None
         self.rfid_status = None
@@ -221,6 +280,186 @@ class OperationsPage(ctk.CTkFrame):
         self.back_button.place(x=(800/2) - (181/2), y=378)
         #pws.set_opacity(self.back_button, color="#000001")
 
+        self.next_button = ctk.CTkButton(self, height = 54, width = 181, 
+                                        text="Back", 
+                                        text_color = "#000000",
+                                        font = ("Helvetica", 15),
+                                        #corner_radius = 20,
+                                        fg_color = "#99FFD0",
+                                        bg_color="transparent",
+                                        border_color = "#FFFFFF",
+                                        border_width=4,                                         
+                                        command=lambda: self.clear())
+        self.next_button.place(x=(800/2) - (181/2) + 20, y=378)
+
+    def rfid_operation(self, rfid, isUpdate):
+        #self.state.manipulate_rfid(rfid, isUpdate)
+        #self.controller.show_page("CompeleteOperation")
+        cust_name = self.customer_name_entry.get()
+        #print(cust_name)
+
+    def clear(self):
+        self.state.clear_details()
+        self.controller.show_page("HomePage")
+    
+    def get_current_rfid(self):
+        self.rfid_display, self.rfid_status = self.state.get_current_rfid_details()
+        return self.rfid_display
+    
+    def refresh(self):
+        self.rfid_display,self.rfid_status = self.state.get_current_rfid_details()
+
+        if self.rfid_status == None:
+            self.rfid_status = "Doesn't Exist"
+
+        self.rfid_num_label.configure(text = f"RFID Number: {self.rfid_display}")
+        self.rfid_status_label.configure(text = f"Status: {self.rfid_status}")
+
+
+
+class AdminOperationsPage(ctk.CTkFrame):
+    def __init__(self, parent, controller, state):
+        self.controller = controller
+        self.state = state
+        super().__init__(parent)
+
+        self.button_width = 180
+        self.button_height = 56
+
+        self.bg_image = ctk.CTkImage(light_image = Image.open('images/scan_design.png'), 
+                                                                size = (800,480)) #just to make sure
+        
+        self.bg_image_label = ctk.CTkLabel(self, image = self.bg_image, text = "")
+        self.bg_image_label.place(x=0, y=0)
+
+        # Main panel
+        self.bg_panel = ctk.CTkFrame(self, width=683, height=203,
+                                    fg_color="#99FFD0",
+                                    border_color="#FFFFFF", border_width=4,
+                                    bg_color="transparent")
+        self.bg_panel.grid_propagate(False)  # Just in case
+        self.bg_panel.pack_propagate(False)
+        self.bg_panel.place(x=(800/2) - (683/2), y=52)
+
+        # Stack everything vertically in this container
+        self.text_container = ctk.CTkFrame(self.bg_panel, fg_color="transparent")
+        self.text_container.pack(expand=True)
+
+        # RFID Number label
+        self.rfid_num_label = ctk.CTkLabel(self.text_container,
+                                        text="RFID Number: 000000000000",
+                                        font=("Helvetica", 25),
+                                        text_color="#000000")
+        self.rfid_num_label.pack(pady=(10, 0))
+
+        # Status label
+        self.rfid_status_label = ctk.CTkLabel(self.text_container,
+                                            text="Status: Doesn’t Exist",
+                                            font=("Helvetica", 25, "bold"),
+                                            text_color="#000000")
+        self.rfid_status_label.pack(pady=(0, 10))
+
+        # Admin Name (Label + Entry in one row)
+        self.admin_name_container = ctk.CTkFrame(self.text_container, fg_color="transparent")
+        self.admin_name_container.pack(pady=(0, 5))
+
+        self.admin_name_label = ctk.CTkLabel(self.admin_name_container,
+                                            text="Admin Name:",
+                                            font=("Helvetica", 22),
+                                            text_color="#000000")
+        self.admin_name_label.pack(side="left", padx=(0, 10))
+
+        self.admin_name_entry = ctk.CTkEntry(self.admin_name_container,
+                                            font=("Helvetica", 20),
+                                            width=300,
+                                            height=35,
+                                            text_color="#000000")
+        self.admin_name_entry.pack(side="left")
+
+        # Contact (Label + Entry in one row)
+        self.admin_cont_container = ctk.CTkFrame(self.text_container, fg_color="transparent")
+        self.admin_cont_container.pack(pady=(0, 10))
+
+        self.admin_cont_label = ctk.CTkLabel(self.admin_cont_container,
+                                            text="Contact:",
+                                            font=("Helvetica", 22),
+                                            text_color="#000000")
+        self.admin_cont_label.pack(side="left", padx=(0, 10))
+
+        self.admin_cont_entry = ctk.CTkEntry(self.admin_cont_container,
+                                            font=("Helvetica", 20),
+                                            width=300,
+                                            height=35,
+                                            text_color="#000000")
+        self.admin_cont_entry.pack(side="left")
+
+        self.rfid_display  = None
+        self.rfid_status = None
+
+        self.register_button = ctk.CTkButton(self, width = self.button_width, height = self.button_height, 
+                                        text="Activate", 
+                                        text_color = "#000000",
+                                        font = ("Helvetica", 15),
+                                        #corner_radius = 20,
+                                        fg_color = "#99FFD0",
+                                        bg_color="transparent",
+                                        border_color = "#FFFFFF",
+                                        border_width=4,                                         
+                                        command=lambda: self.rfid_operation(self.rfid_display, True)) 
+        self.register_button.place(x=105, y=293)
+        #pws.set_opacity(self.register_button, color="#000001")
+
+        self.update_button = ctk.CTkButton(self, width = self.button_width, height = self.button_height, 
+                                        text="Update", 
+                                        text_color = "#000000",
+                                        font = ("Helvetica", 15),
+                                        #corner_radius = 20,
+                                        fg_color = "#99FFD0",
+                                        bg_color="transparent",
+                                        border_color = "#FFFFFF",
+                                        border_width=4,                                         
+                                        command=lambda: self.rfid_operation(self.rfid_display, False)) 
+        self.update_button.place(x=309, y=293)
+        #pws.set_opacity(self.deactivate_button, color="#000001")
+
+        self.deactivate_button = ctk.CTkButton(self, width = self.button_width, height = self.button_height, 
+                                        text="Deactivate", 
+                                        text_color = "#000000",
+                                        font = ("Helvetica", 15),
+                                        #corner_radius = 20,
+                                        fg_color = "#99FFD0",
+                                        bg_color="transparent",
+                                        border_color = "#FFFFFF",
+                                        border_width=4,                                         
+                                        command=lambda: self.rfid_operation(self.rfid_display, False)) 
+        self.deactivate_button.place(x=515, y=293)
+        #pws.set_opacity(self.deactivate_button, color="#000001")
+
+        self.back_button = ctk.CTkButton(self, width = self.button_width, height = self.button_height, 
+                                        text="Back", 
+                                        text_color = "#000000",
+                                        font = ("Helvetica", 15),
+                                        #corner_radius = 20,
+                                        fg_color = "#99FFD0",
+                                        bg_color="transparent",
+                                        border_color = "#FFFFFF",
+                                        border_width=4,                                         
+                                        command=lambda: self.clear())
+        self.back_button.place(x=309, y=378)
+        #pws.set_opacity(self.back_button, color="#000001")
+
+        self.next_button = ctk.CTkButton(self, height = 54, width = 181, 
+                                        text="Back", 
+                                        text_color = "#000000",
+                                        font = ("Helvetica", 15),
+                                        #corner_radius = 20,
+                                        fg_color = "#99FFD0",
+                                        bg_color="transparent",
+                                        border_color = "#FFFFFF",
+                                        border_width=4,                                         
+                                        command=lambda: self.clear())
+        self.next_button.place(x=309 + 20, y=378)
+
     def rfid_operation(self, rfid, isUpdate):
         self.state.manipulate_rfid(rfid, isUpdate)
         self.controller.show_page("CompeleteOperation")
@@ -241,6 +480,7 @@ class OperationsPage(ctk.CTkFrame):
 
         self.rfid_num_label.configure(text = f"RFID Number: {self.rfid_display}")
         self.rfid_status_label.configure(text = f"Status: {self.rfid_status}")
+
 
 
 class CompeleteOperation(ctk.CTkFrame):
@@ -322,3 +562,93 @@ class CompeleteOperation(ctk.CTkFrame):
         self.rfid_num_label.configure(text = f"RFID Number: {self.rfid_display}")
         self.rfid_status_label.configure(text = f"Status: {self.rfid_status}")
 
+class HistoryPage(ctk.CTkFrame):
+    def __init__(self, parent, controller, state):
+        super().__init__(parent)
+        self.controller = controller
+        self.state = state
+        self.ad_name = None
+        self.ad_number = None
+        self.ad_rfid = None
+
+        self.bg_image = ctk.CTkImage(light_image = Image.open('images/light_green.png'), 
+                                                                size = (800,480)) #just to make sure
+        
+        self.bg_image_label = ctk.CTkLabel(self, image = self.bg_image, text = "")
+        self.bg_image_label.place(x=0, y=0)
+
+        ####################
+        #Admin Details Display
+        ####################
+        self.admin_details_bg = ctk.CTkFrame(self, width = 469, height = 83,
+                                            fg_color="#99FFD0",
+                                            border_color="#FFFFFF", border_width=2,
+                                            bg_color="transparent")
+        self.admin_details_bg.place(x=315,y=12)
+
+
+        self.text_container = ctk.CTkFrame(self.admin_details_bg, fg_color = "transparent")
+        self.text_container.pack(expand=True)
+
+        self.admin_name_cont = ctk.CTkFrame(self.text_container, fg_color="transparent")
+
+        self.admin_name = ctk.CTkLabel(self.text_container,
+                                   text="Admin Name: ",
+                                   font=("Helvetica", 20),
+                                   text_color="#000000")
+        self.admin_name.pack()
+
+        self.admin_number = ctk.CTkLabel(self.text_container,
+                                   text="Contact Number: ",
+                                   font=("Helvetica", 20),
+                                   text_color="#000000")
+        self.admin_number.pack()
+
+        self.admin_rfid = ctk.CTkLabel(self.text_container,
+                                   text="RFID Key: ",
+                                   font=("Helvetica", 20),
+                                   text_color="#000000")
+        self.admin_rfid.pack()
+
+        ##############################
+        # Customer Details
+        ##############################
+        self.cust_details_bg = ctk.CTkFrame(self, width = 770, height = 358,
+                                            fg_color="#198050",
+                                            border_color="#000000", border_width=0,
+                                            bg_color="transparent")
+        self.cust_details_bg.place(x=15,y=110)
+
+        self.cust_details_header_bg = ctk.CTkFrame(self, width = 759, height = 41,
+                                                fg_color = "#99FFD0",
+                                                border_color="#000000", border_width=1,
+                                                bg_color="transparent")
+        self.cust_details_header_bg.place(x=21,y=118)
+
+        self.cust_details_header = ctk.CTkLabel(self, text="Transactions",
+                                                font=("Helvetica", 25),
+                                                fg_color = "#99FFD0",
+                                                text_color="#000000")
+        self.cust_details_header.place(x = 321,y =121 ) 
+
+        self.card_container = ctk.CTkFrame(self, width = 759, height = 215,
+                                            fg_color = "#ff0000")
+        self.card_container.place(x = 20,y =216) 
+
+
+class CustomerDetailsCard(ctk.CTkFrame):
+    def __init__(self, parent, date, name, email, status, number, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+         # Content (you can style/layout it further)
+        self.date_label = ctk.CTkLabel(self, text=f"Date: {date}", font=("Helvetica", 14))
+        self.name_label = ctk.CTkLabel(self, text=f"Name: {name}", font=("Helvetica", 14))
+        self.email_label = ctk.CTkLabel(self, text=f"Email: {email}", font=("Helvetica", 14))
+        self.status_label = ctk.CTkLabel(self, text=f"Status: {status}", font=("Helvetica", 14))
+        self.number_label = ctk.CTkLabel(self, text=f"Number: {number}", font=("Helvetica", 14))
+
+        # Pack content
+        self.date_label.pack(anchor="w", padx=10, pady=2)
+        self.name_label.pack(anchor="w", padx=10, pady=2)
+        self.email_label.pack(anchor="w", padx=10, pady=2)
+        self.status_label.pack(anchor="w", padx=10, pady=2)
+        self.number_label.pack(anchor="w", padx=10, pady=2)
