@@ -52,3 +52,25 @@ def get_rfid_status(key):
     row = cursor.fetchone()
     return row['status'] if row else None
 
+def get_all_customer_details(key):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('''
+                    SELECT 
+                        ps.email,
+                        cd.customer_name,
+                        ps.status,
+                        cd.session_date
+                    FROM 
+                        photo_sessions ps
+                    JOIN 
+                        cust_db cd ON ps.rfid_key = cd.rfid_key
+                    WHERE 
+                        cd.rfid_key = ?
+                    ORDER BY 
+                        cd.session_date DESC;
+                    ''', (key,))
+    results = cursor.fetchall() 
+    return results  
+
+
