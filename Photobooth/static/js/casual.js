@@ -1577,12 +1577,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const session_id = localStorage.getItem('session_id');
         console.log(session_id);
-        fetch(`/print/${session_id}`, {
-        method: "POST"
-    })
-    .then(res => res.json())
-    .then(data => alert(data.status || data.error))
-    .catch(err => alert("Network error: " + err));
+        
 
         resultCanvas.toBlob(blob => {
             if (!blob) {
@@ -1640,6 +1635,14 @@ document.addEventListener("DOMContentLoaded", function() {
             });
     
         }, 'image/png');
+
+        fetch(`/print/${session_id}`, {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => alert(data.status || data.error))
+    .catch(err => alert("Network error: " + err));
+
     }
 
     function returnToLayout() {
