@@ -1,51 +1,43 @@
 import cups
 import tempfile
-import os
+import time
 
 def print_pdf(pdf_data, printer_name=None):
     """
-    Print a PDF document using CUPS.
-    
-    Args:
-        pdf_data (bytes): The PDF data to print
-        printer_name (str, optional): Name of the printer to use. If None, uses default printer.
-        options (dict, optional): Printing options like {'media': 'A4', 'fit-to-page': 'True'}
-    
-    Returns:
-        tuple: (success: bool, job_id: int/str, message: str)
+    Print PDF with job verification
+    Returns: (success: bool, job_id: int, message: str)
     """
     try:
-        # Create a temporary file to hold the PDF
-        with tempfile.NamedTemporaryFile(prefix='print_', suffix='.pdf', delete=False) as tmp_file:
-            tmp_file.write(pdf_data)
-            tmp_path = tmp_file.name
-        
-        # Connect to CUPS
+        # 1. Connect to CUPS
         conn = cups.Connection()
         
-        # Get printer if not specified
-        if not printer_name:
-            printer_name = conn.getDefault()
-            if not printer_name:
-                raise Exception("No default printer available")
+        # 2. Select printer
+        printers = conn.getPrinters()
+        if not printers:
+            return False, None, "No printers available"
+            
+        printer = printer_name or conn.getDefault() or list(printers.keys())[0]
         
-        # Set default options if none provided
-
-        
-        # Print the file
-        job_id = conn.printFile(printer_name, tmp_path, "Python Print Job")
-        
-        # Clean up the temporary file
-        os.unlink(tmp_path)
-        
-        # Get printer status
-        printer_status = conn.getPrinterAttributes(printer_name).get('printer-state-message', '')
-        
-        return True, job_id, printer_status
-    
+        # 3. Create temp file
+        with tempfile.NamedTemporaryFile(suffix='.pdf') as tmp:
+            tmp.write(pdf_data)
+            tmp.flush()
+            
+            # 4. Submit job
+            job_id = conn.printFile(printer, tmp.name, "PDF Print", {})
+            
+            # 5. Verify job completion
+            for _ in range(10):  # Check for 10 seconds
+                time.sleep(1)
+                job_info = conn.getJobAttributes(job_id)
+                if job_info['job-state'] == 9:  # 9 = completed
+                    return True, job_id, "Print successful"
+                elif job_info['job-state'] in (5, 6, 7):  # 5=held, 6=stopped, 7=canceled
+                    return False, job_id, f"Print failed - state {job_info['job-state']}"
+            
+            return False, job_id, "Print timed out"
+            
     except cups.IPPError as e:
-        error_msg = f"CUPS IPP Error: {e}"
-        return False, -1, error_msg
+        return False, None, f"Printer error: {e.message}"
     except Exception as e:
-        error_msg = f"Printing error: {e}"
-        return False, -1, error_msg
+        return False, None, f"Print failed: {str(e)}"
