@@ -1563,12 +1563,7 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.removeItem('countdownEnd');    //RESET TIMER
         stopCamera();
 
-        fetch(`/print/${session_id}`, {
-        method: "POST"
-    })
-    .then(res => res.json())
-    .then(data => alert(data.status || data.error))
-    .catch(err => alert("Network error: " + err));
+        
         /*
         const link = document.createElement('a');
         link.download = `photo-booth-${currentTemplate.name.toLowerCase().replace(/ /g, '-')}-${new Date().getTime()}.png`;
@@ -1581,6 +1576,13 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         const session_id = localStorage.getItem('session_id');
+
+        fetch(`/print/${session_id}`, {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => alert(data.status || data.error))
+    .catch(err => alert("Network error: " + err));
 
         resultCanvas.toBlob(blob => {
             if (!blob) {
