@@ -7,6 +7,8 @@ import rfid_db_func as dbf
 
 class AppState:
     def __init__(self):
+        dbf.get_db()
+        dbf.init_db()
         self.current_rfid = None
         self.current_rfid_status = None
         self.page_destination = None
@@ -42,10 +44,13 @@ class AppState:
         elif not is_exist and is_update:
             dbf.insert_rfid_key(rfid)
 
+    def get_customer_details(self, key):
+        results = dbf.get_all_customer_details(key)
+        #print(results)
+        return results
+
 class RFID_Logic:
     def __init__(self, on_scan_callback):
-        dbf.init_db()
-        dbf.get_db()
         self.reader = None
         self.thread = None
         self.on_scan_callback = on_scan_callback

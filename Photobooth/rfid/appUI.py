@@ -570,6 +570,9 @@ class HistoryPage(ctk.CTkFrame):
         self.ad_name = None
         self.ad_number = None
         self.ad_rfid = None
+        self.current_index = 0         # where the visible slice starts
+        self.page_size = 4             # how many cards to show at a time
+        self.results = []              # full data list from the DB
 
         self.bg_image = ctk.CTkImage(light_image = Image.open('images/light_green.png'), 
                                                                 size = (800,480)) #just to make sure
@@ -631,24 +634,71 @@ class HistoryPage(ctk.CTkFrame):
                                                 text_color="#000000")
         self.cust_details_header.place(x = 321,y =121 ) 
 
+        #up button for navigation
+        self.navigate_up_db_image = ctk.CTkImage(light_image = Image.open('images/navigate_up.png'), size = (53,20))
+        self.bg_up_image_label = ctk.CTkLabel(self, image = self.navigate_up_db_image, text = "", bg_color = "#198050")
+        self.bg_up_image_label.place(x=387, y=182)
+        self.bg_up_image_label.bind("<Button-1>", self.scroll_up)
+
+        #down button for navigation
+        self.navigate_down_db_image = ctk.CTkImage(light_image = Image.open('images/navigate_down.png'), size = (53,20))
+        self.bg_down_image_label = ctk.CTkLabel(self, image = self.navigate_down_db_image, text = "", bg_color = "#198050")
+        self.bg_down_image_label.place(x=387, y=439)
+        self.bg_down_image_label.bind("<Button-1>", self.scroll_down)
+
+
         self.card_container = ctk.CTkFrame(self, width = 759, height = 215,
-                                            fg_color = "#ff0000")
+                                            bg_color = "#198050")
         self.card_container.place(x = 20,y =216) 
 
+    def refresh(self):
+        for widget in self.card_container.winfo_children():
+                widget.destroy()  # Clear previous cards
 
+        results = self.state.get_customer_details('04A3BC8D99')
+        for i, row in enumerate(results):
+            email, name, status, date = row
+            card = CustomerDetailsCard(self.card_container, date=date, name=name, email=email, status=status)
+            card.place(x=0, y=i * 55)  # Stack vertically
+
+    def scroll_up(self, event=None):
+        print("up called")
+        if self.current_index - self.page_size >= 0:
+            self.current_index -= self.page_size
+            print("i go up")
+            self.refresh()
+
+    def scroll_down(self, event=None):
+        print("down called")
+        if self.current_index + self.page_size < len(self.results):
+            self.current_index += self.page_size
+            print("i go down")
+            self.refresh()
+
+
+
+#this is for the customer cards
 class CustomerDetailsCard(ctk.CTkFrame):
-    def __init__(self, parent, date, name, email, status, number, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
-         # Content (you can style/layout it further)
-        self.date_label = ctk.CTkLabel(self, text=f"Date: {date}", font=("Helvetica", 14))
-        self.name_label = ctk.CTkLabel(self, text=f"Name: {name}", font=("Helvetica", 14))
-        self.email_label = ctk.CTkLabel(self, text=f"Email: {email}", font=("Helvetica", 14))
-        self.status_label = ctk.CTkLabel(self, text=f"Status: {status}", font=("Helvetica", 14))
-        self.number_label = ctk.CTkLabel(self, text=f"Number: {number}", font=("Helvetica", 14))
+    def __init__(self, parent, date, name, email, status, *args, **kwargs):
+        super().__init__(parent, width=758, height=49, *args, **kwargs)
+        self.configure(fg_color="#99FFD0", border_color="black", border_width=1)
 
-        # Pack content
-        self.date_label.pack(anchor="w", padx=10, pady=2)
-        self.name_label.pack(anchor="w", padx=10, pady=2)
-        self.email_label.pack(anchor="w", padx=10, pady=2)
-        self.status_label.pack(anchor="w", padx=10, pady=2)
-        self.number_label.pack(anchor="w", padx=10, pady=2)
+        # Create and place Date label
+        self.date_label = ctk.CTkLabel(self, text=f"Date:\n{date}", font=("Helvetica", 12), text_color="#000000", anchor="w")
+        self.date_label.place(x=10, y=5)
+
+        # Name label
+        self.name_label = ctk.CTkLabel(self, text=f"Name:\n{name}", font=("Helvetica", 12), text_color="#000000", anchor="w")
+        self.name_label.place(x=150, y=5)
+
+        # Email label
+        self.email_label = ctk.CTkLabel(self, text=f"E-mail:\n{email}", font=("Helvetica", 12), text_color="#000000", anchor="w")
+        self.email_label.place(x=300, y=5)
+
+        # Status label
+        self.status_label = ctk.CTkLabel(self, text=f"Status:\n{status}", font=("Helvetica", 12), text_color="#000000", anchor="w")
+        self.status_label.place(x=550, y=5)
+
+        # Print Button
+        self.print_button = ctk.CTkButton(self, text="Print", width=60, height=30, font=("Helvetica", 12), fg_color="#00695C")
+        self.print_button.place(x=680, y=9)
