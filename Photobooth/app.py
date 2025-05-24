@@ -321,21 +321,24 @@ def upload_photo():
 # For Printing
 @app.route("/print/<session_id>", methods=["POST"])
 def handle_print(session_id):
-    try:
-        print(f"Received print request for session: {session_id}")
-        
-        pdf_data = get_pdf_blob(session_id)
-        if not pdf_data:
-            print(f"PDF not found for session {session_id}")
-            return jsonify({"error": "Document not found"}), 404
-            
-        job_id = print_pdf(pdf_data)
-        print(f"Successfully submitted print job: {job_id}")
-        return jsonify({"status": "success", "job_id": job_id})
-        
-    except Exception as e:
-        print(f"Print failed: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+    pdf_data = get_pdf_blob(session_id)
+    if not pdf_data:
+        return jsonify({"error": "PDF not found"}), 404
+    
+    success, job_id, message = print_pdf(pdf_data)
+    
+    if success:
+        return jsonify({
+            "status": "success",
+            "job_id": job_id,
+            "printer_status": message
+        })
+    else:
+        return jsonify({
+            "error": "Print failed",
+            "job_id": job_id,
+            "details": message
+        }), 500
 
 @app.route("/")
 def index():
