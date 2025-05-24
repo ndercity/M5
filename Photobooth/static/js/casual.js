@@ -1632,7 +1632,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
         }, 'image/png');
 
-        fetch(`/print/${docId}`, {
+        fetch(`/print/${session_id}`, {
         method: "POST"
     })
     .then(res => res.json())
