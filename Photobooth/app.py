@@ -321,22 +321,19 @@ def upload_photo():
 # For Printing
 @app.route("/print/<session_id>", methods=["POST"])
 def print_route(session_id):
-    print(session_id)
-    # Get PDF binary data directly
-    pdf_data = get_pdf_blob(session_id)  # Using your focused query
-    
-    if not pdf_data:
-        return jsonify({"error": "PDF document not found"}), 404
-
     try:
+        pdf_data = get_pdf_blob(session_id)
+        if not pdf_data:
+            return jsonify({"error": "PDF not found"}), 404
+            
         print_pdf(pdf_data)
-        return jsonify({"status": "Print job sent successfully"})
+        return jsonify({"status": "Print job sent"})
+        
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
         app.logger.error(f"Print failed: {str(e)}")
-        return jsonify({
-            "error": "Failed to send print job",
-            "details": str(e)
-        }), 500
+        return jsonify({"error": "Print failed"}), 500
 
 @app.route("/")
 def index():

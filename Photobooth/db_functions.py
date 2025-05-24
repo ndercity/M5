@@ -81,9 +81,48 @@ def access_rfid_scan(rfid_key):
 
 
 def get_pdf_blob(session_id):
-    print("sa db_functions to: " + session_id)
+    """
+    Retrieves PDF binary data from the database for a given session ID.
+    
+    Args:
+        session_id: The session identifier
+        
+    Returns:
+        bytes: The PDF binary data or None if not found
+        
+    Raises:
+        ValueError: If the retrieved data is not valid PDF binary data
+    """
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('SELECT pdf_data FROM photo_sessions WHERE session_id = ?', (session_id,))
-    row = cursor.fetchone()
-    return row['pdf_data'] if row else None
+    
+    try:
+        cursor.execute(
+            'SELECT pdf_data FROM photo_sessions WHERE session_id = ?', 
+            (session_id,)
+        )
+        row = cursor.fetchone()
+        
+        if not row or row['pdf_data'] is None:
+            app.logger.warning(f"No PDF data found for session {session_id}")
+            return None
+            
+        pdf_data = row['pdf_data']
+        
+        # Ensure we have bytes (some SQLite drivers return memoryview)
+        if isinstance(pdf_data, memoryview):
+            pdf_data = pdf_data.tobytes()
+        elif isinstance(pdf_data, str):
+            # If somehow stored as text (shouldn't happen for PDFs)
+            raise ValueError("PDF data was stored as text instead of binary")
+            
+        # Basic PDF validation
+        if len(pdf_data) < 8 or not pdf_data.startswith(b'%PDF-'):
+            app.logger.error(f"Invalid PDF header for session {session_id}")
+            raise ValueError("Retrieved data doesn't appear to be a valid PDF")
+            
+        return pdf_data
+        
+    except Exception as e:
+        app.logger.error(f"Error retrieving PDF for session {session_id}: {str(e)}")
+        raise  # Re-raise for the calling function to handle
