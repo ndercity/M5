@@ -82,47 +82,28 @@ def access_rfid_scan(rfid_key):
 
 def get_pdf_blob(session_id):
     """
-    Retrieves PDF binary data from the database for a given session ID.
+    Retrieve PDF binary data from database for given session ID
     
     Args:
-        session_id: The session identifier
+        session_id: The session identifier string
         
     Returns:
-        bytes: The PDF binary data or None if not found
-        
-    Raises:
-        ValueError: If the retrieved data is not valid PDF binary data
+        bytes: Raw PDF binary data or None if not found
     """
-    db = get_db()
-    cursor = db.cursor()
+    cursor = get_db().cursor()
+    cursor.execute(
+        'SELECT pdf_data FROM photo_sessions WHERE session_id = ?', 
+        (session_id,)
+    )
+    row = cursor.fetchone()
     
-    try:
-        cursor.execute(
-            'SELECT pdf_data FROM photo_sessions WHERE session_id = ?', 
-            (session_id,)
-        )
-        row = cursor.fetchone()
+    if not row or row[0] is None:
+        return None
         
-        if not row or row['pdf_data'] is None:
-            app.logger.warning(f"No PDF data found for session {session_id}")
-            return None
-            
-        pdf_data = row['pdf_data']
-        
-        # Ensure we have bytes (some SQLite drivers return memoryview)
-        if isinstance(pdf_data, memoryview):
-            pdf_data = pdf_data.tobytes()
-        elif isinstance(pdf_data, str):
-            # If somehow stored as text (shouldn't happen for PDFs)
-            raise ValueError("PDF data was stored as text instead of binary")
-            
-        # Basic PDF validation
-        if len(pdf_data) < 8 or not pdf_data.startswith(b'%PDF-'):
-            app.logger.error(f"Invalid PDF header for session {session_id}")
-            raise ValueError("Retrieved data doesn't appear to be a valid PDF")
-            
-        return pdf_data
-        
-    except Exception as e:
-        app.logger.error(f"Error retrieving PDF for session {session_id}: {str(e)}")
-        raise  # Re-raise for the calling function to handle
+    # Convert whatever blob format we get to bytes
+    pdf_data = row['pdf_data']
+    if isinstance(pdf_data, memoryview):
+        return pdf_data.tobytes()
+    if isinstance(pdf_data, str):
+        return pdf_data.encode('latin1')  # Fallback for text storage
+    return bytes(pdf_data)
