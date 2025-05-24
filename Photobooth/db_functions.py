@@ -81,6 +81,7 @@ def access_rfid_scan(rfid_key):
 
 
 def get_pdf_blob(session_id):
+    print("sa db_functions to: " + session_id)
     db = get_db()
     cursor = db.cursor()
     cursor.execute('SELECT pdf_data FROM photo_sessions WHERE session_id = ?', (session_id,))

@@ -321,6 +321,7 @@ def upload_photo():
 # For Printing
 @app.route("/print/<session_id>", methods=["POST"])
 def print_route(session_id):
+    print(session_id)
     # Get PDF binary data directly
     pdf_data = get_pdf_blob(session_id)  # Using your focused query
     

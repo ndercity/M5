@@ -1576,7 +1576,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         const session_id = localStorage.getItem('session_id');
-
+        console.log(session_id);
         fetch(`/print/${session_id}`, {
         method: "POST"
     })
