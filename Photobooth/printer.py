@@ -13,6 +13,7 @@ def print_pdf(binary_data, printer_name=None):
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp:
         temp.write(binary_data)
+        print(type(binary_data))
         temp.flush()
 
         conn = cups.Connection()
