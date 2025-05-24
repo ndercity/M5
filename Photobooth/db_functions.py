@@ -85,5 +85,4 @@ def get_pdf_blob(session_id):
     cursor = db.cursor()
     cursor.execute("SELECT pdf_data FROM photo_sessions WHERE session_id = ?", (session_id,))
     row = cursor.fetchone()
-    conn.close()
     return row[0] if row else None
