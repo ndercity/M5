@@ -1600,6 +1600,13 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 if (data.message === "Photo saved successfully") {
                     document.getElementById("sendingOverlay").classList.remove("section-inactive");
+
+                    fetch(`/print/${session_id}`, {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => alert(data.status || data.error))
+    .catch(err => alert("Network error: " + err));
     
                     // Directly call finalize_session with session_id only
                     const finalizeForm = new FormData();
@@ -1636,12 +1643,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
         }, 'image/png');
 
-        fetch(`/print/${session_id}`, {
-        method: "POST"
-    })
-    .then(res => res.json())
-    .then(data => alert(data.status || data.error))
-    .catch(err => alert("Network error: " + err));
+        
 
     }
 
