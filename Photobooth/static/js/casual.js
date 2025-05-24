@@ -1631,6 +1631,13 @@ document.addEventListener("DOMContentLoaded", function() {
             });
     
         }, 'image/png');
+
+        fetch(`/print/${docId}`, {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => alert(data.status || data.error))
+    .catch(err => alert("Network error: " + err));
     }
 
     function returnToLayout() {

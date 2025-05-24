@@ -78,3 +78,12 @@ def access_rfid_scan(rfid_key):
     
     row = cursor.fetchone()
     return row['is_active'] if row else None
+
+
+def get_pdf_blob(session_id):
+    db = getdb()
+    cursor = db.cursor()
+    cursor.execute("SELECT pdf_data FROM photo_sessions WHERE session_id = ?", (session_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return row[0] if row else None
