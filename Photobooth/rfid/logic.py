@@ -31,20 +31,40 @@ class AppState:
         self.current_rfid = None
         self.current_rfid_status = None
 
-    def manipulate_rfid(self, rfid, is_update):
-        is_exist = dbf.verify_rfid(rfid) 
-        if is_exist:
-            if is_update:
-                dbf.update_rfid_key(rfid, True)
-            elif not is_update:
-                dbf.update_rfid_key(rfid, False)
-        elif not is_exist and not is_update:
-            dbf.insert_rfid_key(rfid)
-            dbf.update_rfid_key(rfid, False)
-        elif not is_exist and is_update:
-            dbf.insert_rfid_key(rfid)
 
-    def get_customer_details(self, key):
+    ###################################
+    # Admin Page Operations
+    ##################################
+    def insert_admin(self, name, contact, key):
+        dbf.insert_rfid_key(name,contact,key)
+
+    def update_admin_details(self, name, contact, key):
+        dbf.update_rfid_key(name,contact,key)
+
+    def manipulate_rfid(self, rfid, is_update):
+        if is_update:
+            dbf.update_rfid_key_activation(rfid, True)
+        elif not is_update:
+            dbf.update_rfid_key_activation(rfid, False)
+
+
+    ###################################
+    # Customer Page Operations
+    ##################################
+    def get_customer_name(self, key):
+        name = dbf.get_customer_name(key)
+        return name
+    
+    def use_card(self, name, key):
+        dbf.use_rfid_card(name, key)
+
+    def void_card(self, name, key):
+        dbf.void_rfid_card(name, key)
+
+    ###################################
+    # History Page Operations
+    ###################################
+    def get_customer_details(self, key, offset = 0, limit = 4):
         results = dbf.get_all_customer_details(key)
         #print(results)
         return results

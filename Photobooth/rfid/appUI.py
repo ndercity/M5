@@ -242,7 +242,7 @@ class CustomerOperationsPage(ctk.CTkFrame):
         self.rfid_status = None
 
         self.register_button = ctk.CTkButton(self, height = 54, width = 181, 
-                                        text="Register/Reactivate", 
+                                        text="Use Card", 
                                         text_color = "#000000",
                                         font = ("Helvetica", 15),
                                         #corner_radius = 20,
@@ -250,12 +250,12 @@ class CustomerOperationsPage(ctk.CTkFrame):
                                         bg_color="transparent",
                                         border_color = "#FFFFFF",
                                         border_width=4,                                         
-                                        command=lambda: self.rfid_operation(self.rfid_display, True)) 
+                                        command=lambda: self.use_rfid()) 
         self.register_button.place(x=207, y=289)
         #pws.set_opacity(self.register_button, color="#000001")
 
         self.deactivate_button = ctk.CTkButton(self, height = 54, width = 181, 
-                                        text="Deactivate", 
+                                        text="Void Card", 
                                         text_color = "#000000",
                                         font = ("Helvetica", 15),
                                         #corner_radius = 20,
@@ -263,7 +263,7 @@ class CustomerOperationsPage(ctk.CTkFrame):
                                         bg_color="transparent",
                                         border_color = "#FFFFFF",
                                         border_width=4,                                         
-                                        command=lambda: self.rfid_operation(self.rfid_display, False)) 
+                                        command=lambda: self.void_rfid_session()) 
         self.deactivate_button.place(x=412, y=289)
         #pws.set_opacity(self.deactivate_button, color="#000001")
 
@@ -292,28 +292,33 @@ class CustomerOperationsPage(ctk.CTkFrame):
                                         command=lambda: self.clear())
         self.next_button.place(x=(800/2) - (181/2) + 20, y=378)
 
-    def rfid_operation(self, rfid, isUpdate):
-        #self.state.manipulate_rfid(rfid, isUpdate)
-        #self.controller.show_page("CompeleteOperation")
-        cust_name = self.customer_name_entry.get()
-        #print(cust_name)
-
-    def clear(self):
-        self.state.clear_details()
-        self.controller.show_page("HomePage")
-    
+    '''
     def get_current_rfid(self):
         self.rfid_display, self.rfid_status = self.state.get_current_rfid_details()
         return self.rfid_display
-    
+    '''
+    def clear(self):
+        self.state.clear_details()
+        self.controller.show_page("HomePage")
+
+    def use_rfid(self):
+        cust_name = self.customer_name_entry.get()
+        self.state.use_card(cust_name, self.rfid_display)
+        self.controller.show_page("CompeleteOperation")
+
+
+    def void_rfid_session(self):
+        cust_name = self.customer_name_entry.get()
+        self.state.void_card(cust_name, self.rfid_display)
+        self.controller.show_page("CompeleteOperation")
+
+
     def refresh(self):
         self.rfid_display,self.rfid_status = self.state.get_current_rfid_details()
-
-        if self.rfid_status == None:
-            self.rfid_status = "Doesn't Exist"
-
+        self.cust_name = self.state.get_customer_name(self.rfid_display)
         self.rfid_num_label.configure(text = f"RFID Number: {self.rfid_display}")
         self.rfid_status_label.configure(text = f"Status: {self.rfid_status}")
+        #ilalagay dito yung paglagay sa text box ng name ng customer
 
 
 
@@ -422,7 +427,7 @@ class AdminOperationsPage(ctk.CTkFrame):
         self.update_button.place(x=309, y=293)
         #pws.set_opacity(self.deactivate_button, color="#000001")
 
-        self.deactivate_button = ctk.CTkButton(self, width = self.button_width, height = self.button_height, 
+        self.status_button = ctk.CTkButton(self, width = self.button_width, height = self.button_height, 
                                         text="Deactivate", 
                                         text_color = "#000000",
                                         font = ("Helvetica", 15),
@@ -432,7 +437,7 @@ class AdminOperationsPage(ctk.CTkFrame):
                                         border_color = "#FFFFFF",
                                         border_width=4,                                         
                                         command=lambda: self.rfid_operation(self.rfid_display, False)) 
-        self.deactivate_button.place(x=515, y=293)
+        self.status_button.place(x=515, y=293)
         #pws.set_opacity(self.deactivate_button, color="#000001")
 
         self.back_button = ctk.CTkButton(self, width = self.button_width, height = self.button_height, 
@@ -460,8 +465,20 @@ class AdminOperationsPage(ctk.CTkFrame):
                                         command=lambda: self.clear())
         self.next_button.place(x=309 + 20, y=378)
 
-    def rfid_operation(self, rfid, isUpdate):
-        self.state.manipulate_rfid(rfid, isUpdate)
+    def rfid_operation(self, rfid):
+        self.state.manipulate_rfid(rfid, self.rfid_status)
+        self.controller.show_page("CompeleteOperation")
+
+    def insert_admin(self):
+        admin_name = self.admin_name_entry.get()
+        admin_cont = self.admin_cont_entry.get()
+        self.state.insert_admin(admin_name, admin_cont, self.rfid_display)
+        self.controller.show_page("CompeleteOperation")
+
+    def update_admin(self):
+        admin_name = self.admin_name_entry.get()
+        admin_cont = self.admin_cont_entry.get()
+        self.state.update_admin_details(admin_name, admin_cont, self.rfid_display)
         self.controller.show_page("CompeleteOperation")
 
     def clear(self):
@@ -480,7 +497,6 @@ class AdminOperationsPage(ctk.CTkFrame):
 
         self.rfid_num_label.configure(text = f"RFID Number: {self.rfid_display}")
         self.rfid_status_label.configure(text = f"Status: {self.rfid_status}")
-
 
 
 class CompeleteOperation(ctk.CTkFrame):
@@ -572,7 +588,6 @@ class HistoryPage(ctk.CTkFrame):
         self.ad_rfid = None
         self.current_index = 0         # where the visible slice starts
         self.page_size = 4             # how many cards to show at a time
-        self.results = []              # full data list from the DB
 
         self.bg_image = ctk.CTkImage(light_image = Image.open('images/light_green.png'), 
                                                                 size = (800,480)) #just to make sure
@@ -653,29 +668,27 @@ class HistoryPage(ctk.CTkFrame):
 
     def refresh(self):
         for widget in self.card_container.winfo_children():
-                widget.destroy()  # Clear previous cards
+            widget.destroy()
 
-        results = self.state.get_customer_details('04A3BC8D99')
+        results = self.state.get_customer_details('04A3BC8D99', self.current_index, self.page_size)
         for i, row in enumerate(results):
             email, name, status, date = row
             card = CustomerDetailsCard(self.card_container, date=date, name=name, email=email, status=status)
-            card.place(x=0, y=i * 55)  # Stack vertically
+            card.place(x=0, y=i * 55)
+
+        self.last_page_empty = len(results) < self.page_size  # Track end of data
 
     def scroll_up(self, event=None):
-        print("up called")
         if self.current_index - self.page_size >= 0:
             self.current_index -= self.page_size
-            print("i go up")
+            print("hehe up")
             self.refresh()
 
     def scroll_down(self, event=None):
-        print("down called")
-        if self.current_index + self.page_size < len(self.results):
+        if not getattr(self, 'last_page_empty', False):  # Avoid going past last page
             self.current_index += self.page_size
-            print("i go down")
+            print("hehe down")
             self.refresh()
-
-
 
 #this is for the customer cards
 class CustomerDetailsCard(ctk.CTkFrame):
