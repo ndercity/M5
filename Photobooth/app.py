@@ -319,7 +319,7 @@ def upload_photo():
         return jsonify({"error": str(e)}), 500
 
 #for Printing
-@app.route("/print/<int:session_id>", methods=["POST"])
+@app.route("/print/<session_id>", methods=["POST"])
 def print_route(session_id):
     pdf_data = get_pdf_blob(session_id)
     if not pdf_data:
