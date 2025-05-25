@@ -189,7 +189,7 @@ class AppState:
         reason = printer.get('printer-state-reasons', 'unknown')    # String or list of strings depending on CUPS version
 
         print(f"[DEBUG] State: {state}, Reason: {reason}")
-        return state, reason
+        return state
 
 
 
