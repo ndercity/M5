@@ -622,7 +622,7 @@ class HistoryPage(ctk.CTkFrame):
         self.bg_image_label.place(x=0, y=0)
 
         self.back_image = ctk.CTkImage(light_image = Image.open('images/back_button.png'), size = (53,20))
-        self.back_image_label = ctk.CTkLabel(self, image = self.navigaback_imagete_up_db_image, text = "", bg_color = "#198050")
+        self.back_image_label = ctk.CTkLabel(self, image = self.back_image, text = "", bg_color = "#198050")
         self.back_image_label.place(x=15, y=25)
         self.back_image_label.bind("<Button-1>", self.go_back)
 
