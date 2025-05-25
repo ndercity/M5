@@ -352,17 +352,16 @@ class CustomerOperationsPage(ctk.CTkFrame):
 
 
     def refresh(self):
+        self.customer_name_entry.delete(0, 'end')
 
-        self.customer_name_entry.delete(0, 'end') 
         self.rfid_display,self.rfid_status = self.state.get_current_rfid_details()
+
         self.cust_name, self.cust_status = self.state.get_customer_name(self.rfid_display)
         self.rfid_num_label.configure(text = f"RFID Number: {self.rfid_display}")
         self.rfid_status_label.configure(text = f"Status: {self.cust_status}")
-        #ilalagay dito yung paglagay sa text box ng name ng customer
-        cust_name = self.state.get_customer_name(self.rfid_display)
 
-        if cust_name:
-            self.customer_name_entry.insert(0, cust_name)
+        if self.cust_name:
+            self.customer_name_entry.insert(0, self.cust_name)
 
 
 class AdminOperationsPage(ctk.CTkFrame):
