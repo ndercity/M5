@@ -5,7 +5,7 @@ from sticker_filter import Sticker_Filter
 import os
 import time
 import uuid
-from db_functions import get_db, init_db, close_connection, insert_photo_session, update_photo_blob, access_rfid_scan, get_pdf_blob
+from db_functions import get_db, init_db, close_connection, insert_photo_session, update_photo_blob, access_rfid_scan, get_pdf_blob, end_rfid_access
 import base64
 import io
 from session_flow import start_photo_session, finalize_session
@@ -285,7 +285,8 @@ def start_session():
         return jsonify({"error": "Email is required"}), 400
 
     email = data['email']
-    session_id = start_photo_session(email)
+    rfid_key = data['rfidKey']
+    session_id = start_photo_session(email, rfid_key)
     return jsonify({"session_id": session_id})
 
 # Finalization
@@ -300,6 +301,16 @@ def finalize_session_route():
         return jsonify({"status": "sent"}), 200
     else:
         return jsonify({"status": "failed"}), 500
+    
+@app.route('/end_rfid_access', methods=['POST'])
+def end_rfid():
+    session_id = request.form.get('session_id')
+    if not session_id:
+        return jsonify({"status": "error", "message": "Session ID required"}), 400
+    else:
+        end_rfid_access(session_id)
+    return jsonify({"status": "success", "message": "rfid number ended"}), 500
+
     
 #Upload photo to db
 @app.route('/upload_photo', methods=['POST'])
@@ -396,6 +407,7 @@ def test_insert_session():
         })
     else:
         return jsonify({"message": "Failed to retrieve inserted session"}), 500
+'''
 
 #if using python app.py
 if __name__ == '__main__':

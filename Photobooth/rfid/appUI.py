@@ -773,8 +773,8 @@ class HistoryPage(ctk.CTkFrame):
 
         results = self.state.get_customer_details(self.ad_rfid, self.current_index, self.page_size)
         for i, row in enumerate(results):
-            email, name, status, date = row
-            card = CustomerDetailsCard(self.card_container, date=date, name=name, email=email, status=status)
+            email, session_id, name, status, date = row
+            card = CustomerDetailsCard(self.card_container, session_id = session_id, date=date, name=name, email=email, status=status)
             card.place(x=0, y=i * 55)
 
         self.last_page_empty = len(results) < self.page_size  # Track end of data
@@ -799,9 +799,11 @@ class HistoryPage(ctk.CTkFrame):
 
 #this is for the customer cards
 class CustomerDetailsCard(ctk.CTkFrame):
-    def __init__(self, parent, date, name, email, status, *args, **kwargs):
+    def __init__(self, parent, session_id, date, name, email, status, *args, **kwargs):
         super().__init__(parent, width=758, height=49, *args, **kwargs)
         self.configure(fg_color="#99FFD0", border_color="black", border_width=1)
+        self.state = AppState()
+        sess_id = session_id
 
         # Create and place Date label
         self.date_label = ctk.CTkLabel(self, text=f"Date:\n{date}", font=("Helvetica", 12), text_color="#000000", anchor="w")
@@ -820,5 +822,9 @@ class CustomerDetailsCard(ctk.CTkFrame):
         self.status_label.place(x=550, y=5)
 
         # Print Button
-        self.print_button = ctk.CTkButton(self, text="Print", width=60, height=30, font=("Helvetica", 12), fg_color="#00695C")
+        self.print_button = ctk.CTkButton(self, text="Print", width=60, height=30, font=("Helvetica", 12), fg_color="#00695C", command=lambda: self.print_card(sess_id))
         self.print_button.place(x=680, y=9)
+
+    def print_card(self, session_id):
+        #self.state.print_image_admin(session_id)
+        self.state.is_printer_ready()
