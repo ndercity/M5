@@ -29,7 +29,7 @@ def insert_photo_session(email, pdf_data, rfid_key, cust_id, status='pending', s
     cursor = db.cursor()
     cursor.execute('''
         INSERT INTO photo_sessions (email, pdf_data, status, session_id, rfid_key, cust_id)
-        VALUES (?, ?, ?, ?,?)
+        VALUES (?, ?, ?, ?,?,?)
     ''', (email, pdf_data, status, session_id, rfid_key, cust_id))
     db.commit()
     return session_id

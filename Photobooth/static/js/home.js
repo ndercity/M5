@@ -258,6 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         customer_id = get_customer_if(rfidID)
+        console.log(customer_id)
     
         try {
             const response = await fetch('/start_session', {
