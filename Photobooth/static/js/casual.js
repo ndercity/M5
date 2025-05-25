@@ -1614,6 +1614,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (toPrint) {
                     finalizeForm.append('session_id', session_id,);
                     finalizeForm.append('print_copy', toPrint);
+                    console.log([...finalizeForm.entries()]);
                     }
     
                     return fetch('/finalize_session', {
