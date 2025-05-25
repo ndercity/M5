@@ -11,7 +11,7 @@ import io
 from session_flow import start_photo_session, finalize_session
 
 #uncomment to make it work
-from rfid_reader import RFID_Reader 
+#from rfid_reader import RFID_Reader 
 
 app = Flask(__name__)
 #---------
@@ -25,7 +25,7 @@ sticker_filter = Sticker_Filter()
 
 #uncomment to make it work
 
-rfid = RFID_Reader()
+#rfid = RFID_Reader()
 #rfid.turn_on_rfid()
 
 
@@ -311,7 +311,7 @@ def upload_photo():
         return jsonify({"error": str(e)}), 500
 
 #uncomment to make it work
-
+'''
 #RFID SCAN
 @app.route('/rfid_scan')
 def rfid_scan():
@@ -334,7 +334,7 @@ def clear_scan():
     rfid.clear_scanned()
     rfid.turn_on_rfid()
     return jsonify({"rfid status": "cleared and on"}), 200
-
+'''
 
 #TEST insert
 @app.route('/test_insert_session')

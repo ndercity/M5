@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         autoScroll: false,
         capsLockActive: false,
-        allowRealKeyboard: false,
-        allowMobileKeyboard: false,
+        allowRealKeyboard: true,
+        allowMobileKeyboard: true,
         cssAnimations: true,
         cssAnimationsDuration: 360,
         cssAnimationsStyle: 'slide',
@@ -79,12 +79,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayEmail(){
-	let endTime =localStorage.getItem('countdownEnd')
-	if (!endTime) {
-		endTime = Date.now() + 10 * 60 * 1000;
-		localStorage.setItem('countdownEnd', endTime);
-	}
-
+        /*
+        let endTime =localStorage.getItem('countdownEnd')
+        if (!endTime) {
+            endTime = Date.now() + 10 * 60 * 1000;
+            localStorage.setItem('countdownEnd', endTime);
+        }
+        */
         toggleSection(emailForm, true);
         toggleSection(start, false);
         KioskBoard.run('.js-kioskboard-input');
@@ -99,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     //RFID utils. uncommetn to make it work
-    
+    /*
     function getRFIDKey(){
         fetch("/rfid_scan")
         .then(response => response.json())
@@ -166,15 +167,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });    
 
     }
-        
+    */
 
     function initialize() {
         //Page Initialization
-        cleanRFID();
+        //cleanRFID();
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
-        turnRFIDOn();
+        //turnRFIDOn();
         rfidInterval = setInterval(getRFIDKey, 1000);
     }
 

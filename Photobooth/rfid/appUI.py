@@ -172,19 +172,31 @@ class ScanPage(ctk.CTkFrame):
 
 
 
-    '''
+    
     def on_rfid_scanned(self, rfid):
         self.state.set_rfid(rfid)
         self.rfid_logic.turn_off_rfid()
-        self.controller.show_page("OperationsPage")
+        #self.controller.show_page("OperationsPage")
+
+        page_dest = self.state.get_page_destination()
+        is_exist = self.state.verify_rfid_exist(rfid)
+
+        if page_dest == "HistoryPage" and is_exist:
+            self.controller.show_page("HistoryPage")
+        elif page_dest != "HistoryPage":
+            self.controller.show_page(page_dest)
+        else:
+            print("RFID not found. Cannot go to HistoryPage.")
+
     
     def refresh(self):
         self.rfid_logic.turn_on_rfid()
-'''
+
     def go_back(self):
         self.controller.show_page("HomePage")
         #self.rfid_logic.turn_off_rfid()
         
+    #test 
     def next_page(self):
         page_dest = self.state.get_page_destination()
         self.controller.show_page(page_dest)
@@ -292,25 +304,27 @@ class CustomerOperationsPage(ctk.CTkFrame):
                                         command=lambda: self.clear())
         self.next_button.place(x=(800/2) - (181/2) + 20, y=378)
 
-    '''
+    
     def get_current_rfid(self):
         self.rfid_display, self.rfid_status = self.state.get_current_rfid_details()
         return self.rfid_display
-    '''
+    
     def clear(self):
         self.state.clear_details()
         self.controller.show_page("HomePage")
 
     def use_rfid(self):
         cust_name = self.customer_name_entry.get()
-        self.state.use_card(cust_name, self.rfid_display)
-        self.controller.show_page("CompeleteOperation")
+        if cust_name: 
+            self.state.use_card(cust_name, self.rfid_display)
+            self.controller.show_page("CompeleteOperation")
 
 
     def void_rfid_session(self):
         cust_name = self.customer_name_entry.get()
-        self.state.void_card(cust_name, self.rfid_display)
-        self.controller.show_page("CompeleteOperation")
+        if cust_name: 
+            self.state.void_card(cust_name, self.rfid_display)
+            self.controller.show_page("CompeleteOperation")
 
 
     def refresh(self):
@@ -319,7 +333,9 @@ class CustomerOperationsPage(ctk.CTkFrame):
         self.rfid_num_label.configure(text = f"RFID Number: {self.rfid_display}")
         self.rfid_status_label.configure(text = f"Status: {self.rfid_status}")
         #ilalagay dito yung paglagay sa text box ng name ng customer
-
+        cust_name = self.state.get_customer_name(self.rfid_display)
+        if cust_name:
+            self.customer_name_entry.insert(0, cust_name)
 
 
 class AdminOperationsPage(ctk.CTkFrame):
@@ -327,6 +343,12 @@ class AdminOperationsPage(ctk.CTkFrame):
         self.controller = controller
         self.state = state
         super().__init__(parent)
+
+        self.rfid_display  = None
+        self.rfid_status = None
+        self.admin_name = None
+        self.admin_cont_number = None
+
 
         self.button_width = 180
         self.button_height = 56
@@ -397,9 +419,6 @@ class AdminOperationsPage(ctk.CTkFrame):
                                             height=35,
                                             text_color="#000000")
         self.admin_cont_entry.pack(side="left")
-
-        self.rfid_display  = None
-        self.rfid_status = None
 
         self.register_button = ctk.CTkButton(self, width = self.button_width, height = self.button_height, 
                                         text="Activate", 
@@ -472,14 +491,16 @@ class AdminOperationsPage(ctk.CTkFrame):
     def insert_admin(self):
         admin_name = self.admin_name_entry.get()
         admin_cont = self.admin_cont_entry.get()
-        self.state.insert_admin(admin_name, admin_cont, self.rfid_display)
-        self.controller.show_page("CompeleteOperation")
+        if admin_name and admin_cont:
+            self.state.insert_admin(admin_name, admin_cont, self.rfid_display)
+            self.controller.show_page("CompeleteOperation")
 
     def update_admin(self):
         admin_name = self.admin_name_entry.get()
         admin_cont = self.admin_cont_entry.get()
-        self.state.update_admin_details(admin_name, admin_cont, self.rfid_display)
-        self.controller.show_page("CompeleteOperation")
+        if admin_name and admin_cont:
+            self.state.update_admin_details(admin_name, admin_cont, self.rfid_display)
+            self.controller.show_page("CompeleteOperation")
 
     def clear(self):
         self.state.clear_details()
@@ -490,10 +511,15 @@ class AdminOperationsPage(ctk.CTkFrame):
         return self.rfid_display
     
     def refresh(self):
+        self.admin_name, self.admin_cont_number,_,_= self.state.get_rfid_details()
         self.rfid_display,self.rfid_status = self.state.get_current_rfid_details()
+
 
         if self.rfid_status == None:
             self.rfid_status = "Doesn't Exist"
+        else:
+            self.admin_name_entry.insert(0, self.admin_name)
+            self.admin_cont_entry.insert(0, self.admin_cont_number)
 
         self.rfid_num_label.configure(text = f"RFID Number: {self.rfid_display}")
         self.rfid_status_label.configure(text = f"Status: {self.rfid_status}")
@@ -595,6 +621,12 @@ class HistoryPage(ctk.CTkFrame):
         self.bg_image_label = ctk.CTkLabel(self, image = self.bg_image, text = "")
         self.bg_image_label.place(x=0, y=0)
 
+        self.back_image = ctk.CTkImage(light_image = Image.open('images/back_button.png'), size = (53,20))
+        self.back_image_label = ctk.CTkLabel(self, image = self.navigaback_imagete_up_db_image, text = "", bg_color = "#198050")
+        self.back_image_label.place(x=15, y=25)
+        self.back_image_label.bind("<Button-1>", self.go_back)
+
+
         ####################
         #Admin Details Display
         ####################
@@ -667,10 +699,18 @@ class HistoryPage(ctk.CTkFrame):
         self.card_container.place(x = 20,y =216) 
 
     def refresh(self):
+        rfid_key,_= self.state.get_current_rfid_details()
+        self.ad_name, self.ad_number,_,self.ad_rfid = self.state.get_rfid_details(rfid_key)
+        self.admin_name.configure(text = f"Admin Name: : {self.ad_name}")
+        self.admin_number.configure(text = f"Contact Number: : : {self.ad_number}")
+        self.admin_rfid.configure(text = f"RFID Key: : {self.ad_rfid}")
+        self.refresh_table()
+
+    def refresh_table(self):
         for widget in self.card_container.winfo_children():
             widget.destroy()
 
-        results = self.state.get_customer_details('04A3BC8D99', self.current_index, self.page_size)
+        results = self.state.get_customer_details(self.ad_rfid, self.current_index, self.page_size)
         for i, row in enumerate(results):
             email, name, status, date = row
             card = CustomerDetailsCard(self.card_container, date=date, name=name, email=email, status=status)
@@ -678,17 +718,23 @@ class HistoryPage(ctk.CTkFrame):
 
         self.last_page_empty = len(results) < self.page_size  # Track end of data
 
+
     def scroll_up(self, event=None):
         if self.current_index - self.page_size >= 0:
             self.current_index -= self.page_size
             print("hehe up")
-            self.refresh()
+            self.refresh_table()
 
     def scroll_down(self, event=None):
         if not getattr(self, 'last_page_empty', False):  # Avoid going past last page
             self.current_index += self.page_size
             print("hehe down")
-            self.refresh()
+            self.refresh_table()
+
+    def go_back(self, event=None):
+        self.current_index = 0         # where the visible slice starts
+        self.page_size = 4             # how many cards to show at a time
+        self.controller.show_page("HomePage")
 
 #this is for the customer cards
 class CustomerDetailsCard(ctk.CTkFrame):

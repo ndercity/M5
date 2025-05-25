@@ -18,7 +18,7 @@ class AppState:
     
     def get_page_destination(self):
         return self.page_destination
-    
+
     def set_rfid(self, rfid_key):
         self.current_rfid = rfid_key
         self.current_rfid_status = dbf.get_rfid_status(rfid_key)
@@ -27,10 +27,17 @@ class AppState:
         self.current_rfid_status = dbf.get_rfid_status(self.current_rfid)
         return self.current_rfid, self.current_rfid_status
     
+    def get_rfid_details(self, key):
+        name, cont_number, status = dbf.get_admin_details(key)
+        return name, cont_number, status, self.current_rfid
+    
     def clear_details(self):
         self.current_rfid = None
         self.current_rfid_status = None
 
+    def verify_rfid_exist(self,key):
+        is_exist = dbf.verify_rfid(key)
+        return is_exist
 
     ###################################
     # Admin Page Operations

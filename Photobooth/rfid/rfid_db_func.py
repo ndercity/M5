@@ -60,6 +60,13 @@ def get_rfid_status(key):
     row = cursor.fetchone()
     return row['status'] if row else None
 
+def get_admin_details(key):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('SELECT admin_name, contact_number, status FROM rfid_db WHERE rfid_key = ?', (key,))
+    return cursor.fetchone()  
+
+
 def get_all_customer_details(key, offset=0, limit=4):
     db = get_db()
     cursor = db.cursor()
