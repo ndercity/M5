@@ -843,7 +843,6 @@ class CustomerDetailsCard(ctk.CTkFrame):
     def print_card(self, session_id):
         #self.state.print_image_admin(session_id)
         success = self.state.print_image_admin(session_id)
-        self.hide_overlay()
         if success:
             messagebox.showinfo("Success", "Printing completed!")
         else:
