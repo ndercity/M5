@@ -246,11 +246,14 @@ class CustomerOperationsPage(ctk.CTkFrame):
         self.customer_name_label.pack(pady=(10, 0))  # Add spacing above
 
         # Customer Name Text Entry
+        vcmd = (self.register(self.validate_name_input), '%P')
         self.customer_name_entry = ctk.CTkEntry(self.text_container,
                                                 font=("Helvetica", 20),
                                                 width=300,
                                                 height=35,
-                                                text_color="#000000")
+                                                text_color="#000000",
+                                                validate="key",
+                                                validatecommand=vcmd)
         self.customer_name_entry.pack(pady=(5, 0))  # Add small gap between label and entry
 
 
@@ -309,7 +312,21 @@ class CustomerOperationsPage(ctk.CTkFrame):
                                         command=lambda: self.clear())
         self.next_button.place(x=(800/2) - (181/2) + 20, y=378)
         '''
+    def validate_name_input(self, new_value):
+        # Allow empty input
+        if new_value == "":
+            return True
 
+        # Max length of 25
+        if len(new_value) > 25:
+            return False
+
+        # Only allow letters, periods, spaces
+        for char in new_value:
+            if not (char.isalpha() or char in ['.', ' ']):
+                return False
+
+        return True
     
     def get_current_rfid(self):
         self.rfid_display, self.rfid_status = self.state.get_current_rfid_details()
@@ -340,6 +357,7 @@ class CustomerOperationsPage(ctk.CTkFrame):
         self.rfid_status_label.configure(text = f"Status: {self.rfid_status}")
         #ilalagay dito yung paglagay sa text box ng name ng customer
         cust_name = self.state.get_customer_name(self.rfid_display)
+
         if cust_name:
             self.customer_name_entry.insert(0, cust_name)
 

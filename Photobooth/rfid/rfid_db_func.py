@@ -99,7 +99,7 @@ def get_customer_name(key):
         JOIN
             rfid_db rd ON rd.rfid_key = cd.rfid_key
         WHERE
-            rd.status = 'activated' AND cd.status = 'in use' AND cd.rfid_key = ?;
+            rd.status = 'activated' AND cd.use_status = 'in use' AND cd.rfid_key = ?;
         ''', (key,))
     result = cursor.fetchone()
     return result
