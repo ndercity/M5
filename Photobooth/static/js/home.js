@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentIndex = 0;
     let rfidInterval;
     let rfidID; //dapat blanko ito kapag gagamitin
+    let customerId;
     
     console.log("KioskBoard:", window.KioskBoard);
     
@@ -104,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
 
             if (response.ok && data.status === "success") {
-                console.log("Customer ID:", data.id);
                 return data.id;
             } else {
                 console.error("Error:", data.message || "Unknown error");
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function handleCustomerID(rfidID) {
         const customer_id = await get_customer_if(rfidID);
-        return customer_id;
+        customerId = customer_id
     }
 
     //HOLDS EMAIL VALUE
@@ -262,8 +262,6 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a valid email');
             return;
         }
-        customer_id = handleCustomerID(rfidID)
-        console.log(customer_id)
     
         try {
             const response = await fetch('/start_session', {
@@ -272,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify({ 
                     email: email,
                     rfidKey: rfidID, 
-                    cust_id: customer_id})
+                    cust_id: customerId})
             });
             const data = await response.json();
     
