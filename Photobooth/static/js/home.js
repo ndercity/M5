@@ -127,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.key_status === "YES") {
                 console.log("Access granted!");
                 localStorage.setItem('rfidKey', rfidID);
+                rfidID = rfidKey
                 displayEmail(); 
             } else {
                 console.log("Access denied.");
