@@ -53,9 +53,9 @@ class AppState:
         dbf.update_rfid_key(name,contact,key)
 
     def manipulate_rfid(self, rfid, is_update):
-        if is_update:
+        if is_update == 'activated':
             dbf.update_rfid_key_activation(rfid, True)
-        elif not is_update:
+        else:
             dbf.update_rfid_key_activation(rfid, False)
 
 
