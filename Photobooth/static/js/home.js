@@ -247,8 +247,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // setInterval(nextSlide, 5000);
 
-    async function handleCustomerID(rfidID) {
-        const customer_id = await get_customer_if(rfidID);
+    async function handleCustomerID(rfid_key) {
+        const customer_id = await get_customer_if(rfid_key);
         customerId = customer_id
     }
 
@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a valid email');
             return;
         }
-    
+        handleCustomerID(rfidID);
         try {
             const response = await fetch('/start_session', {
                 method: 'POST',
