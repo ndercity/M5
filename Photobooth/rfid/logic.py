@@ -176,7 +176,7 @@ class AppState:
             return False
         
 
-    def get_printer_status(printer_name="test_printer"):
+    def get_printer_status(self,printer_name="test_printer"):
         conn = cups.Connection()
         printers = conn.getPrinters()
 
