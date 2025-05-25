@@ -249,6 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function handleCustomerID(rfid_key) {
         const customer_id = await get_customer_if(rfid_key);
+        console.log("id:", customer_id);
         customerId = customer_id
     }
 
