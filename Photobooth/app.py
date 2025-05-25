@@ -339,11 +339,11 @@ def handle_print(session_id):
             "job_id": job_id,
             "details": message
         }), 500
-'''
+
 @app.route("/")
 def index():
     return app.send_static_file("index.html")  # or render_template if using templates
-
+'''
 
 #uncomment to make it work
 
