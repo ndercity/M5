@@ -826,4 +826,5 @@ class CustomerDetailsCard(ctk.CTkFrame):
         self.print_button.place(x=680, y=9)
 
     def print_card(self, session_id):
-        self.state.print_image_admin(session_id)
+        #self.state.print_image_admin(session_id)
+        self.state.is_printer_ready()

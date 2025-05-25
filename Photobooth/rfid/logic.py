@@ -1,4 +1,5 @@
 import sys
+import cups
 import os
 import threading
 import time
@@ -7,6 +8,7 @@ import rfid_db_func as dbf
 from fpdf import FPDF
 from printer import print_pdf  # Import the new printing function
 import tempfile
+import subprocess
 
 class AppState:
     def __init__(self):
@@ -160,6 +162,34 @@ class AppState:
             #update_photo_session_status(session_id, "failed")
             print(f"[Session] All operations failed for session {session_id}")
             return False
+        
+    def is_printer_online(printer_name="Your_Printer_Name"):
+        try:
+            result = subprocess.run(["lpstat", "-p", printer_name], capture_output=True, text=True)
+            output = result.stdout.strip()
+            print("[DEBUG] lpstat output:", output)
+            if "disabled" in output or "not connected" in output:
+                return False
+            return True
+        except Exception as e:
+            print(f"[Error] Could not check printer status: {e}")
+            return False
+        
+
+    def is_printer_ready(printer_name="test_printer"):
+        conn = cups.Connection()
+        printers = conn.getPrinters()
+        if printer_name not in printers:
+            print(f"[ERROR] Printer {printer_name} not found")
+            return False
+        printer = printers[printer_name]
+        state = printer['printer-state']      # 3 = idle, 4 = printing, 5 = stopped
+        reason = printer['printer-state-reasons']
+
+        print(f"[DEBUG] State: {state}, Reason: {reason}")
+        
+        return state in [3, 4]  # idle or printing = OK
+
 
 
 
