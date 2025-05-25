@@ -67,7 +67,7 @@ def get_admin_details(key):
     return cursor.fetchone()  
 
 
-def get_all_customer_details(key, offset=0, limit=4):
+def get_all_customer_details(key, offset, limit):
     db = get_db()
     cursor = db.cursor()
     cursor.execute('''
