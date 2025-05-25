@@ -18,7 +18,7 @@ def init_db():
 def insert_rfid_key(name, contact, key):
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('INSERT INTO rfid_db (admin_name, contact_number, rfid_key) VALUES (?)', (name, contact, key))
+    cursor.execute('INSERT INTO rfid_db (admin_name, contact_number, rfid_key) VALUES (?,?,?)', (name, contact, key))
     db.commit()
 
 def update_rfid_key(name, contact, key):
