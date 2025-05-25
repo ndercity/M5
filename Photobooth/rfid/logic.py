@@ -28,7 +28,11 @@ class AppState:
         return self.current_rfid, self.current_rfid_status
     
     def get_rfid_details(self, key):
-        name, cont_number, status = dbf.get_admin_details(key)
+        result = dbf.get_admin_details(key)
+        if result:
+            name, cont_number, status = result
+        else:
+            name, cont_number, status = None, None, None
         return name, cont_number, status, self.current_rfid
     
     def clear_details(self):

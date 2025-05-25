@@ -173,9 +173,6 @@ class ScanPage(ctk.CTkFrame):
         self.next_button.place(x=(800/2) - (181/2), y=378 + 20)
         '''
 
-
-
-    
     def on_rfid_scanned(self, rfid):
         self.state.set_rfid(rfid)
         self.rfid_logic.turn_off_rfid()
@@ -522,10 +519,9 @@ class AdminOperationsPage(ctk.CTkFrame):
         return self.rfid_display
     
     def refresh(self):
-        self.admin_name, self.admin_cont_number,_,_= self.state.get_rfid_details(self.rfid_display)
         self.rfid_display,self.rfid_status = self.state.get_current_rfid_details()
-
-
+        self.admin_name, self.admin_cont_number,_,_= self.state.get_rfid_details(self.rfid_display)
+        
         if self.rfid_status == None:
             self.rfid_status = "Doesn't Exist"
         else:
