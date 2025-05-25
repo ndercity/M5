@@ -63,12 +63,15 @@ class AppState:
     # Customer Page Operations
     ##################################
     def get_customer_name(self, key):
-        name, status = dbf.get_customer_name(key)
+        
+        result = dbf.get_customer_name(key)
 
-        if name:
+        if result:
+            name, status = result
             return name, status
         else:
             name = "d"
+            status = "idle"
             return name, status
     
     def use_card(self, name, key):
