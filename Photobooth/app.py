@@ -288,7 +288,7 @@ def start_session():
     email = data['email']
     rfid_key = data['rfidKey']
     customer_id = data['cust_id']
-    
+
     session_id = start_photo_session(email, rfid_key, customer_id)
     return jsonify({"session_id": session_id})
 
@@ -307,7 +307,8 @@ def finalize_session_route():
     
 @app.route('/end_rfid_access', methods=['POST'])
 def end_rfid():
-    session_id = request.form.get('session_id')
+    data = request.get_json()
+    session_id = data.get('session_id') if data else None
     print(session_id)
     if not session_id:
         return jsonify({"status": "error", "message": "Session ID required"}), 400
