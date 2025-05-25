@@ -7,10 +7,10 @@ from email_utils import send_email_with_pdf
 from fpdf import FPDF
 
 # Step 1: Initialize session
-def start_photo_session(email):
+def start_photo_session(email, rfid_key):
     session_id = str(uuid.uuid4())
     pdf_placeholder = b""  # placeholder until actual PDF is generated
-    insert_photo_session(email, pdf_placeholder, status="waiting", session_id=session_id)
+    insert_photo_session(email, pdf_placeholder, rfid_key, status="waiting", session_id=session_id)
     print(f"[Session] Started session for {email} with ID {session_id}")
     return session_id
 

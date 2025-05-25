@@ -73,6 +73,7 @@ def get_all_customer_details(key, offset=0, limit=4):
     cursor.execute('''
         SELECT 
             ps.email,
+            ps.session_id,
             cd.customer_name,
             ps.status,
             cd.session_date
