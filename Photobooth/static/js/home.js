@@ -79,13 +79,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function displayEmail(){
-        /*
-        let endTime =localStorage.getItem('countdownEnd')
-        if (!endTime) {
-            endTime = Date.now() + 10 * 60 * 1000;
-            localStorage.setItem('countdownEnd', endTime);
-        }
-        */
         toggleSection(emailForm, true);
         toggleSection(start, false);
         KioskBoard.run('.js-kioskboard-input');
@@ -100,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     //RFID utils. uncommetn to make it work
+
     /*
     function getRFIDKey(){
         fetch("/rfid_scan")
@@ -167,16 +161,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });    
 
     }
-    */
+
+        */
 
     function initialize() {
         //Page Initialization
-        //cleanRFID();
+       // cleanRFID();
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
-        //turnRFIDOn();
-        rfidInterval = setInterval(getRFIDKey, 1000);
+       // turnRFIDOn();
+       // rfidInterval = setInterval(getRFIDKey, 1000);
     }
 
     function toggleSection(section, show) {

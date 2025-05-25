@@ -5,10 +5,18 @@ from sticker_filter import Sticker_Filter
 import os
 import time
 import uuid
-from db_functions import get_db, init_db, close_connection, insert_photo_session, update_photo_blob, access_rfid_scan
+from db_functions import get_db, init_db, close_connection, insert_photo_session, update_photo_blob, access_rfid_scan, get_pdf_blob
 import base64
 import io
 from session_flow import start_photo_session, finalize_session
+from printer import print_pdf
+
+try:
+    import cups
+    cups_available = True
+except ImportError:
+    cups = None
+    cups_available = False
 
 #uncomment to make it work
 #from rfid_reader import RFID_Reader 
@@ -310,9 +318,37 @@ def upload_photo():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# For Printing
+'''@app.route("/print/<session_id>", methods=["POST"])
+def handle_print(session_id):
+    pdf_data = get_pdf_blob(session_id)
+    if not pdf_data:
+        return jsonify({"error": "PDF not found"}), 404
+    
+    success, job_id, message = print_pdf(pdf_data)
+    
+    if success:
+        return jsonify({
+            "status": "success",
+            "job_id": job_id,
+            "printer_status": message
+        })
+    else:
+        return jsonify({
+            "error": "Print failed",
+            "job_id": job_id,
+            "details": message
+        }), 500
+
+@app.route("/")
+def index():
+    return app.send_static_file("index.html")  # or render_template if using templates
+'''
+
 #uncomment to make it work
 '''
 #RFID SCAN
+'''
 @app.route('/rfid_scan')
 def rfid_scan():
     scan = rfid.get_last_scan()
