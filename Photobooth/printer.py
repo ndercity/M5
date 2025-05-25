@@ -3,7 +3,7 @@ import cups
 import tempfile
 import os
 
-def print_pdf(pdf_bytes, printer_name=None):
+def print_pdf(pdf_bytes, printer_name="test_printer"):
     """
     Print a PDF using CUPS
     Args:
