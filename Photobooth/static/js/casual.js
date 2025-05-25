@@ -1601,13 +1601,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (data.message === "Photo saved successfully") {
                     document.getElementById("sendingOverlay").classList.remove("section-inactive");
 
-                    fetch(`/print/${session_id}`, {
+                   /* fetch(`/print/${session_id}`, {
         method: "POST"
     })
     .then(res => res.json())
     .then(data => alert(data.status || data.error))
     .catch(err => alert("Network error: " + err));
-    
+    */
                     // Directly call finalize_session with session_id only
                     const finalizeForm = new FormData();
                     finalizeForm.append('session_id', session_id);
