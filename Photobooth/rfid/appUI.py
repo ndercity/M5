@@ -824,7 +824,7 @@ class CustomerDetailsCard(ctk.CTkFrame):
         self.status_label.place(x=550, y=5)
 
         # Print Button
-        self.print_button = ctk.CTkButton(self, text="Print", width=60, height=30, font=("Helvetica", 12), fg_color="#00695C", command=lambda: self.print_card(sess_id))
+        self.print_button = ctk.CTkButton(self, text="Print", width=60, height=30, font=("Helvetica", 12), fg_color="#00695C", command=lambda: self.print_with_overlay())
         self.print_button.place(x=680, y=9)
 
         self.overlay = ctk.CTkFrame(self, width=758, height=49, fg_color="#000000", bg_color="transparent")
