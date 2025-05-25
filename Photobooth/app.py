@@ -288,6 +288,7 @@ def start_session():
     email = data['email']
     rfid_key = data['rfidKey']
     customer_id = data['cust_id']
+    
     session_id = start_photo_session(email, rfid_key, customer_id)
     return jsonify({"session_id": session_id})
 
