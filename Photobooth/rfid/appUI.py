@@ -154,8 +154,8 @@ class ScanPage(ctk.CTkFrame):
                                         command=lambda: self.go_back())
         self.back_button.place(x=(800/2) - (181/2), y=378)
         ##pws.set_opacity(self.back_button, color="#000001")
-        #self.rfid_logic = RFID_Logic(self.on_rfid_scanned)
-        #self.rfid_logic.turn_on_rfid()
+        self.rfid_logic = RFID_Logic(self.on_rfid_scanned)
+        self.rfid_logic.turn_on_rfid()
 
         #will remove this shit
         '''
@@ -200,9 +200,13 @@ class ScanPage(ctk.CTkFrame):
         #self.rfid_logic.turn_off_rfid()
         
     #test 
+        '''
+
     def next_page(self):
         page_dest = self.state.get_page_destination()
         self.controller.show_page(page_dest)
+        '''
+        
 
 class CustomerOperationsPage(ctk.CTkFrame):
     def __init__(self, parent, controller, state):
@@ -379,7 +383,7 @@ class AdminOperationsPage(ctk.CTkFrame):
 
         # RFID Number label
         self.rfid_num_label = ctk.CTkLabel(self.text_container,
-                                        text="RFID Number: 000000000000",
+                                        text="RFID Number: ",
                                         font=("Helvetica", 25),
                                         text_color="#000000")
         self.rfid_num_label.pack(pady=(10, 0))
