@@ -319,7 +319,7 @@ def upload_photo():
         return jsonify({"error": str(e)}), 500
 
 # For Printing
-@app.route("/print/<session_id>", methods=["POST"])
+'''@app.route("/print/<session_id>", methods=["POST"])
 def handle_print(session_id):
     pdf_data = get_pdf_blob(session_id)
     if not pdf_data:
@@ -339,7 +339,7 @@ def handle_print(session_id):
             "job_id": job_id,
             "details": message
         }), 500
-
+'''
 @app.route("/")
 def index():
     return app.send_static_file("index.html")  # or render_template if using templates
