@@ -1649,7 +1649,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function stopRFIDSession(sessionID) {
-        fetch('/end_rfid_session', {
+        fetch('/end_rfid_access', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
