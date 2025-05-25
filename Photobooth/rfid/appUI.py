@@ -802,7 +802,7 @@ class CustomerDetailsCard(ctk.CTkFrame):
     def __init__(self, parent, session_id, date, name, email, status, *args, **kwargs):
         super().__init__(parent, width=758, height=49, *args, **kwargs)
         self.configure(fg_color="#99FFD0", border_color="black", border_width=1)
-
+        self.state = AppState()
         sess_id = session_id
 
         # Create and place Date label
@@ -822,5 +822,8 @@ class CustomerDetailsCard(ctk.CTkFrame):
         self.status_label.place(x=550, y=5)
 
         # Print Button
-        self.print_button = ctk.CTkButton(self, text="Print", width=60, height=30, font=("Helvetica", 12), fg_color="#00695C")
+        self.print_button = ctk.CTkButton(self, text="Print", width=60, height=30, font=("Helvetica", 12), fg_color="#00695C", command=self.print_card)
         self.print_button.place(x=680, y=9)
+
+    def print_card(self, session_id):
+        self.state.print_image_admin(session_id)
