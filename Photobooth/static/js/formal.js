@@ -455,10 +455,42 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error(error);
                 alert('Error during photo save or email sending: ' + error.message + ' Redirecting to home...');
                 window.location.href = "/";
+            })
+             .finally(() => {
+                document.getElementById("sendingOverlay").classList.add("section-inactive");
+                window.location.href = "/";
+                stopRFIDSession(session_id);  
             });
     
         }, 'image/png');
     }    
+
+        function stopRFIDSession(sessionID) {
+            fetch('/end_rfid_session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ session_id: sessionID })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to end session');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('RFID session ended:', data);
+                alert('RFID session has been successfully ended.');
+                // Optionally clear session from localStorage
+                localStorage.removeItem('session_id');
+            })
+            .catch(error => {
+                console.error('Error ending session:', error);
+                alert('There was an error ending the session.');
+            });
+    }
+
 
     function showDownloadConfirmation() {
         const confirmation = document.createElement('div');
