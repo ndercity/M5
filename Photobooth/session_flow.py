@@ -5,7 +5,7 @@ import tempfile
 from db_functions import insert_photo_session, update_photo_session_status, get_photo_session_by_id
 from email_utils import send_email_with_pdf
 from fpdf import FPDF
-from printer import print_pdf  # Import the new printing function
+from printer import print_pdf, check_printer_status  # Import the new printing function
 
 # Step 1: Initialize session
 def start_photo_session(email, rfid_key):
@@ -25,6 +25,9 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
     Returns:
         bool: True if all requested operations succeeded
     """
+    status = get_printer_status()
+    return jsonify({"status": status})
+
     session = get_photo_session_by_id(session_id)
     if not session:
         print(f"[Error] No session found with ID {session_id}")
@@ -34,6 +37,8 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
 
     email = session['email']
     photo_blob = session['pdf_data']
+
+    return jsonify(check_printer_status())
 
     # Create PDF from the image blob
     try:

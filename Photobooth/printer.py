@@ -3,7 +3,40 @@ import cups
 import tempfile
 import os
 
+def check_printer_status(printer_name=None):
+    conn = cups.Connection()
+    printers = conn.getPrinters()
+
+    debug_info = {
+        "printer_name": None,
+        "state": None,
+        "reason": None,
+        "status": "error",
+        "message": ""
+    }
+
+    if not printer_name:
+        printer_name = conn.getDefault()
+        if not printer_name:
+            debug_info["message"] = "No default printer found"
+            return debug_info
+
+    printer = printers[printer_name]
+    state = printer['printer-state']
+    reason = printer['printer-state-reasons']
+
+    debug_info.update({
+        "printer_name": printer_name,
+        "state": state,
+        "reason": reason,
+        "status": "ok" if state in [3, 4] else "not_ready",
+        "message": f"State: {state}, Reason: {reason}"
+    })
+
+    return debug_info
+
 def print_pdf(pdf_bytes, printer_name="test_printer"):
+    
     """
     Print a PDF using CUPS
     Args:
