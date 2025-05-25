@@ -6,7 +6,7 @@ from db_functions import insert_photo_session, update_photo_session_status, get_
 from email_utils import send_email_with_pdf
 from fpdf import FPDF
 from printer import print_pdf, is_printer_online  # Import the new printing function
-
+from flask import jsonify
 # Step 1: Initialize session
 def start_photo_session(email, rfid_key):
     session_id = str(uuid.uuid4())
