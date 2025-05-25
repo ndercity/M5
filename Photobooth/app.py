@@ -10,6 +10,7 @@ import base64
 import io
 from session_flow import start_photo_session, finalize_session
 from printer import print_pdf
+from rfid_reader import RFID_Reader
 
 try:
     import cups
@@ -33,7 +34,7 @@ sticker_filter = Sticker_Filter()
 
 #uncomment to make it work
 
-#rfid = RFID_Reader()
+rfid = RFID_Reader()
 #rfid.turn_on_rfid()
 
 

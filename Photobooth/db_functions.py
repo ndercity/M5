@@ -89,6 +89,7 @@ def end_rfid_access(session_id):
         WHERE rfid_key = (
             SELECT rfid_key FROM photo_sessions WHERE session_id = ?
         )
+        AND use_status = 'in use';
     ''', (session_id,))
 
     db.commit()
