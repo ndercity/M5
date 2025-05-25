@@ -88,8 +88,8 @@ class AppState:
     ###################################
     # History Page Operations
     ###################################
-    def get_customer_details(self, key, offset = 0, limit = 4):
-        results = dbf.get_all_customer_details(key)
+    def get_customer_details(self, key, offset, limit):
+        results = dbf.get_all_customer_details(key, offset, limit)
         #print(results)
         return results
     
