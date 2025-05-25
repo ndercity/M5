@@ -839,6 +839,9 @@ class CustomerDetailsCard(ctk.CTkFrame):
         printer_status = self.state.get_printer_status("test_printer")
         if printer_status == 3:
             self.print_card(self.sess_id)
+        else:
+            messagebox.showerror("Failure", "Printer is disconnected.")
+
 
     def print_card(self, session_id):
         #self.state.print_image_admin(session_id)
