@@ -268,8 +268,19 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a valid email');
             return;
         }
-        handleCustomerID(rfidID);
-        console.log("Customer id:", cust);
+
+
+        get_customer_if(rfidID).then(cust_Id => {
+            if (cust_Id) {
+                customerId = cust_Id;
+                // Use customerId here
+                console.log("Customer ID:", customerId);
+            } else {
+                console.error("Customer ID fetch failed");
+            }
+        });
+
+        
         try {
             const response = await fetch('/start_session', {
                 method: 'POST',
