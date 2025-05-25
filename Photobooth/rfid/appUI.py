@@ -402,11 +402,14 @@ class AdminOperationsPage(ctk.CTkFrame):
                                             text_color="#000000")
         self.admin_name_label.pack(side="left", padx=(0, 10))
 
+        vcmd = (self.register(self.validate_name_input), '%P')
         self.admin_name_entry = ctk.CTkEntry(self.admin_name_container,
                                             font=("Helvetica", 20),
                                             width=300,
                                             height=35,
-                                            text_color="#000000")
+                                            text_color="#000000",
+                                            validate="key",
+                                            validatecommand=vcmd)
         self.admin_name_entry.pack(side="left")
 
         # Contact (Label + Entry in one row)
@@ -419,11 +422,14 @@ class AdminOperationsPage(ctk.CTkFrame):
                                             text_color="#000000")
         self.admin_cont_label.pack(side="left", padx=(0, 10))
 
+        vcmd = (self.register(self.validate_number_input), "%P")
         self.admin_cont_entry = ctk.CTkEntry(self.admin_cont_container,
                                             font=("Helvetica", 20),
                                             width=300,
                                             height=35,
-                                            text_color="#000000")
+                                            text_color="#000000",
+                                            validate="key",
+                                            validatecommand=vcmd)
         self.admin_cont_entry.pack(side="left")
 
         self.register_button = ctk.CTkButton(self, width = self.button_width, height = self.button_height, 
@@ -461,7 +467,7 @@ class AdminOperationsPage(ctk.CTkFrame):
                                         bg_color="transparent",
                                         border_color = "#FFFFFF",
                                         border_width=4,                                         
-                                        command=lambda: self.rfid_operation(self.rfid_display, False)) 
+                                        command=lambda: self.rfid_operation(self.rfid_display)) 
         self.status_button.place(x=515, y=293)
         #pws.set_opacity(self.deactivate_button, color="#000001")
 
@@ -492,6 +498,31 @@ class AdminOperationsPage(ctk.CTkFrame):
         self.next_button.place(x=309 + 20, y=378)
         '''
 
+    def validate_name_input(self, new_value):
+        # Allow empty input
+        if new_value == "":
+            return True
+
+        # Max length of 25
+        if len(new_value) > 25:
+            return False
+
+        # Only allow letters, periods, spaces
+        for char in new_value:
+            if not (char.isalpha() or char in ['.', ' ']):
+                return False
+
+        return True
+    
+    def validate_number_input(self, value_if_allowed):
+        """Allow only digits and max 11 characters."""
+        if value_if_allowed.isdigit() and len(value_if_allowed) <= 11:
+            return True
+        elif value_if_allowed == "":  # Allow backspace
+            return True
+        else:
+            return False
+
     def rfid_operation(self, rfid):
         self.state.manipulate_rfid(rfid, self.rfid_status)
         self.controller.show_page("CompeleteOperation")
@@ -519,6 +550,9 @@ class AdminOperationsPage(ctk.CTkFrame):
         return self.rfid_display
     
     def refresh(self):
+        self.admin_name_entry.delete(0, 'end')
+        self.admin_cont_entry.delete(0, 'end') 
+
         self.rfid_display,self.rfid_status = self.state.get_current_rfid_details()
         self.admin_name, self.admin_cont_number,_,_= self.state.get_rfid_details(self.rfid_display)
         
