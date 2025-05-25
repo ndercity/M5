@@ -5,8 +5,7 @@ import tempfile
 from db_functions import insert_photo_session, update_photo_session_status, get_photo_session_by_id
 from email_utils import send_email_with_pdf
 from fpdf import FPDF
-from printer import print_pdf, check_printer_status  # Import the new printing function
-from flask import jsonify
+from printer import print_pdf  # Import the new printing function
 
 # Step 1: Initialize session
 def start_photo_session(email, rfid_key):
@@ -26,10 +25,6 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
     Returns:
         bool: True if all requested operations succeeded
     """
-
-    status = check_printer_status()
-    
-
     session = get_photo_session_by_id(session_id)
     if not session:
         print(f"[Error] No session found with ID {session_id}")
@@ -39,7 +34,6 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
 
     email = session['email']
     photo_blob = session['pdf_data']
-
 
     # Create PDF from the image blob
     try:
@@ -68,6 +62,9 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
 
     # Printing operation
     if print_copy:
+        online = is_printer_online()
+            message = "Printer is online." if online else "Printer is offline or not connected."
+            return jsonify({"alert": message})
         print("[Print] Attempting to print...")
         operations_success['print'] = print_pdf(pdf_bytes)
         if not operations_success['print']:
@@ -102,5 +99,3 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
         update_photo_session_status(session_id, "failed")
         print(f"[Session] All operations failed for session {session_id}")
         return False
-
-    return jsonify({"status": status})

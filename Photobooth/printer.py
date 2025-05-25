@@ -2,38 +2,19 @@
 import cups
 import tempfile
 import os
+import subprocess
 
-def check_printer_status(printer_name=None):
-    conn = cups.Connection()
-    printers = conn.getPrinters()
-
-    debug_info = {
-        "printer_name": None,
-        "state": None,
-        "reason": None,
-        "status": "error",
-        "message": ""
-    }
-
-    if not printer_name:
-        printer_name = conn.getDefault()
-        if not printer_name:
-            debug_info["message"] = "No default printer found"
-            return debug_info
-
-    printer = printers[printer_name]
-    state = printer['printer-state']
-    reason = printer['printer-state-reasons']
-
-    debug_info.update({
-        "printer_name": printer_name,
-        "state": state,
-        "reason": reason,
-        "status": "ok" if state in [3, 4] else "not_ready",
-        "message": f"State: {state}, Reason: {reason}"
-    })
-
-    return debug_info
+def is_printer_online(printer_name="Your_Printer_Name"):
+    try:
+        result = subprocess.run(["lpstat", "-p", printer_name], capture_output=True, text=True)
+        output = result.stdout.strip()
+        print("[DEBUG] lpstat output:", output)
+        if "disabled" in output or "not connected" in output:
+            return False
+        return True
+    except Exception as e:
+        print(f"[Error] Could not check printer status: {e}")
+        return False
 
 def print_pdf(pdf_bytes, printer_name="test_printer"):
     
