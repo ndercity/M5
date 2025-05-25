@@ -28,7 +28,7 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
     """
 
     status = check_printer_status()
-    return jsonify({"status": status})
+    
 
     session = get_photo_session_by_id(session_id)
     if not session:
@@ -102,3 +102,5 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
         update_photo_session_status(session_id, "failed")
         print(f"[Session] All operations failed for session {session_id}")
         return False
+
+    return jsonify({"status": status})
