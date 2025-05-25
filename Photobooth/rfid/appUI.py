@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from logic import AppState
-#from logic import RFID_Logic
+from logic import RFID_Logic
 from PIL import Image
 #import pywinstyles as #pws
 
@@ -140,7 +140,7 @@ class ScanPage(ctk.CTkFrame):
         self.bg_image_label.place(x=(800/2) - (167/2), y=223)
         ##pws.set_opacity(self.bg_image_label, color="#000001")
 
-        #self.rfid_logic = RFID_Logic(self.on_rfid_scanned)
+        self.rfid_logic = RFID_Logic(self.on_rfid_scanned)
 
         self.back_button = ctk.CTkButton(self, height = 54, width = 181, 
                                         text="Back", 
