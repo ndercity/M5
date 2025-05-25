@@ -95,27 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("carouselProMax").scrollIntoView({behavior:'smooth' , block: 'center'});
     }
 
-    function get_customer_if(rfid_key) {
-        return fetch('/get_cust_id', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ rfidKey: rfid_key })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                console.log("Customer ID:", data.id);
-                return data.id;
-            } else {
-                console.error("Error:", data.message || "Unknown error");
-                return null;
-            }
-        })
-        .catch(error => {
-            console.error("Fetch error:", error);
-            return null;
-        });
-    }
     
     //RFID utils. uncommetn to make it work
 
@@ -152,6 +131,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log("Access granted!");
                 localStorage.setItem('rfidKey', rfidID);
                 rfidID = rfidKey
+
+
+
+                get_customer_if(rfidID).then(cust_Id => {
+                    if (cust_Id) {
+                        customerId = cust_Id;
+                        // Use customerId here
+                        console.log("Customer ID:", customerId);
+                    } else {
+                        console.error("Customer ID fetch failed");
+                    }
+                });
+
+
+
+
+
                 displayEmail(); 
             } else {
                 console.log("Access denied.");
@@ -236,6 +232,30 @@ document.addEventListener('DOMContentLoaded', function() {
     nextBtn.addEventListener('click', nextSlide);
     prevBtn.addEventListener('click', prevSlide);
     scanbtn.addEventListener('click', displayEmail)
+
+
+    function get_customer_if(rfid_key) {
+        return fetch('/get_cust_id', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rfidKey: rfid_key })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                console.log("Customer ID:", data.id);
+                return data.id;
+            } else {
+                console.error("Error:", data.message || "Unknown error");
+                return null;
+            }
+        })
+        .catch(error => {
+            console.error("Fetch error:", error);
+            return null;
+        });
+    }
+
     
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
@@ -248,15 +268,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // setInterval(nextSlide, 5000);
 
-    get_customer_if(rfidID).then(cust_Id => {
-        if (cust_Id) {
-            customerId = cust_Id;
-            // Use customerId here
-            console.log("Customer ID:", customerId);
-        } else {
-            console.error("Customer ID fetch failed");
-        }
-    });
 
     //HOLDS EMAIL VALUE
     document.querySelector('.email-form').addEventListener('submit', async function(e) {
