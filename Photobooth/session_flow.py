@@ -24,6 +24,9 @@ def finalize_session(session_id, print_copy, email_copy=True):
     Returns:
         bool: True if all requested operations succeeded
     """
+    print_copy_str = request.form.get("print_copy", "false")
+    print_copy = print_copy_str.lower() == "true"
+
     session = get_photo_session_by_id(session_id)
     if not session:
         print(f"[Error] No session found with ID {session_id}")

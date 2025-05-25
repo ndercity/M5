@@ -1612,7 +1612,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     // Directly call finalize_session with session_id only
                     const finalizeForm = new FormData();
                     if (toPrint) {
-                    finalizeForm.append('session_id', session_id, 'print_copy', print_copy=true);
+                    finalizeForm.append('session_id', session_id,);
+                    finalizeForm.append('print_copy', toPrint);
                     }
     
                     return fetch('/finalize_session', {
