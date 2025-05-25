@@ -2,8 +2,22 @@
 import cups
 import tempfile
 import os
+import subprocess
+
+def is_printer_online(printer_name="test_printer"):
+    try:
+        result = subprocess.run(["lpstat", "-p", printer_name], capture_output=True, text=True)
+        output = result.stdout.strip()
+        print("[DEBUG] lpstat output:", output)
+        if "disabled" in output or "not connected" in output:
+            return False
+        return True
+    except Exception as e:
+        print(f"[Error] Could not check printer status: {e}")
+        return False
 
 def print_pdf(pdf_bytes, printer_name="test_printer"):
+    
     """
     Print a PDF using CUPS
     Args:

@@ -432,7 +432,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     return fetch('/finalize_session', {
                         method: 'POST',
                         body: finalizeForm
-                    });
+                    })
                 } else {
                     throw new Error(data.error || 'Failed to save photo');
                 }
