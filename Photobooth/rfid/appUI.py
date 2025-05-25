@@ -838,14 +838,7 @@ class CustomerDetailsCard(ctk.CTkFrame):
     def print_with_overlay(self):
         printer_status = self.state.get_printer_status("test_printer")
         if printer_status == 3:
-            self.show_overlay()
-            self.after(100,self.print_card(self.sess_id))
-
-    def show_overlay(self):
-        self.overlay.lift()
-
-    def hide_overlay(self):
-        self.overlay.lower()
+            self.print_card(self.sess_id)
 
     def print_card(self, session_id):
         #self.state.print_image_admin(session_id)
