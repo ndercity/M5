@@ -4,7 +4,7 @@ import tempfile
 import os
 import subprocess
 
-def is_printer_online(printer_name="Your_Printer_Name"):
+def is_printer_online(printer_name="test_printer"):
     try:
         result = subprocess.run(["lpstat", "-p", printer_name], capture_output=True, text=True)
         output = result.stdout.strip()
