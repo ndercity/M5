@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         autoScroll: false,
         capsLockActive: false,
-        allowRealKeyboard: false,
-        allowMobileKeyboard: false,
+        allowRealKeyboard: true,
+        allowMobileKeyboard: true,
         cssAnimations: true,
         cssAnimationsDuration: 360,
         cssAnimationsStyle: 'slide',
@@ -93,8 +93,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     //RFID utils. uncommetn to make it work
-    
-   /* function getRFIDKey(){
+
+    /*
+    function getRFIDKey(){
         fetch("/rfid_scan")
         .then(response => response.json())
         .then(data => {
@@ -160,6 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });    
 
     }
+
         */
 
     function initialize() {

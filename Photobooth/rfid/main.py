@@ -3,7 +3,7 @@ import customtkinter as ctk
 
 def main():
     root = ctk.CTk()
-    root.attributes("-fullscreen", True)
+    #root.attributes("-fullscreen", True)
     app = AppUI(root)
     root.mainloop()
 

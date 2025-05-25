@@ -7,8 +7,17 @@ import rfid_db_func as dbf
 
 class AppState:
     def __init__(self):
+        dbf.get_db()
+        dbf.init_db()
         self.current_rfid = None
         self.current_rfid_status = None
+        self.page_destination = None
+
+    def set_page_destination(self, page):
+        self.page_destination = page
+    
+    def get_page_destination(self):
+        return self.page_destination
 
     def set_rfid(self, rfid_key):
         self.current_rfid = rfid_key
@@ -18,26 +27,69 @@ class AppState:
         self.current_rfid_status = dbf.get_rfid_status(self.current_rfid)
         return self.current_rfid, self.current_rfid_status
     
+    def get_rfid_details(self, key):
+        result = dbf.get_admin_details(key)
+        if result:
+            name, cont_number, status = result
+        else:
+            name, cont_number, status = None, None, None
+        return name, cont_number, status, self.current_rfid
+    
     def clear_details(self):
         self.current_rfid = None
         self.current_rfid_status = None
 
+    def verify_rfid_exist(self,key):
+        is_exist = dbf.verify_rfid(key)
+        return is_exist
+
+    ###################################
+    # Admin Page Operations
+    ##################################
+    def insert_admin(self, name, contact, key):
+        dbf.insert_rfid_key(name,contact,key)
+
+    def update_admin_details(self, name, contact, key):
+        dbf.update_rfid_key(name,contact,key)
+
     def manipulate_rfid(self, rfid, is_update):
-        is_exist = dbf.verify_rfid(rfid) 
-        if is_exist:
-            if is_update:
-                dbf.update_rfid_key(rfid, True)
-            elif not is_update:
-                dbf.update_rfid_key(rfid, False)
-        elif not is_exist and not is_update:
-            dbf.insert_rfid_key(rfid)
-            dbf.update_rfid_key(rfid, False)
-        elif not is_exist and is_update:
-            dbf.insert_rfid_key(rfid)
+        if is_update == 'activated':
+            dbf.update_rfid_key_activation(rfid, False)
+        else:
+            dbf.update_rfid_key_activation(rfid, True)
+
+
+    ###################################
+    # Customer Page Operations
+    ##################################
+    def get_customer_name(self, key):
+        
+        result = dbf.get_customer_name(key)
+
+        if result:
+            name, status = result
+            return name, status
+        else:
+            name = "d"
+            status = "idle"
+            return name, status
+    
+    def use_card(self, name, key):
+        dbf.use_rfid_card(name, key)
+
+    def void_card(self, name, key):
+        dbf.void_rfid_card(name, key)
+
+    ###################################
+    # History Page Operations
+    ###################################
+    def get_customer_details(self, key, offset = 0, limit = 4):
+        results = dbf.get_all_customer_details(key)
+        #print(results)
+        return results
 
 class RFID_Logic:
     def __init__(self, on_scan_callback):
-        dbf.get_db()
         self.reader = None
         self.thread = None
         self.on_scan_callback = on_scan_callback

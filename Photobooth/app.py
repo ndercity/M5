@@ -346,7 +346,7 @@ def index():
 '''
 
 #uncomment to make it work
-
+'''
 #RFID SCAN
 '''
 @app.route('/rfid_scan')
