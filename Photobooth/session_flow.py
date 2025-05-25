@@ -14,7 +14,7 @@ def start_photo_session(email):
     print(f"[Session] Started session for {email} with ID {session_id}")
     return session_id
 
-def finalize_session(session_id, print_copy=True, email_copy=True):
+def finalize_session(session_id, print_copy, email_copy=True):
     """
     Finalize a photo session by creating PDF and sending to printer/email
     Args:
