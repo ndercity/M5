@@ -2,7 +2,7 @@ import sys
 import os
 import threading
 import time
-#from mfrc522 import SimpleMFRC522 #uncomment this in raspi
+from mfrc522 import SimpleMFRC522 #uncomment this in raspi
 import rfid_db_func as dbf
 
 class AppState:
