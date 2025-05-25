@@ -25,7 +25,8 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
     Returns:
         bool: True if all requested operations succeeded
     """
-    status = get_printer_status()
+
+    status = check_printer_status()
     return jsonify({"status": status})
 
     session = get_photo_session_by_id(session_id)
@@ -38,7 +39,6 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
     email = session['email']
     photo_blob = session['pdf_data']
 
-    return jsonify(check_printer_status())
 
     # Create PDF from the image blob
     try:
