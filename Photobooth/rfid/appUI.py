@@ -158,6 +158,8 @@ class ScanPage(ctk.CTkFrame):
         #self.rfid_logic.turn_on_rfid()
 
         #will remove this shit
+        '''
+
         self.next_button = ctk.CTkButton(self, height = 54, width = 181, 
                                         text="next", 
                                         text_color = "#000000",
@@ -169,6 +171,7 @@ class ScanPage(ctk.CTkFrame):
                                         border_width=4,                                         
                                         command=lambda: self.next_page())
         self.next_button.place(x=(800/2) - (181/2), y=378 + 20)
+        '''
 
 
 
@@ -291,6 +294,7 @@ class CustomerOperationsPage(ctk.CTkFrame):
                                         command=lambda: self.clear())
         self.back_button.place(x=(800/2) - (181/2), y=378)
         #pws.set_opacity(self.back_button, color="#000001")
+        '''
 
         self.next_button = ctk.CTkButton(self, height = 54, width = 181, 
                                         text="Back", 
@@ -303,6 +307,7 @@ class CustomerOperationsPage(ctk.CTkFrame):
                                         border_width=4,                                         
                                         command=lambda: self.clear())
         self.next_button.place(x=(800/2) - (181/2) + 20, y=378)
+        '''
 
     
     def get_current_rfid(self):
@@ -429,7 +434,7 @@ class AdminOperationsPage(ctk.CTkFrame):
                                         bg_color="transparent",
                                         border_color = "#FFFFFF",
                                         border_width=4,                                         
-                                        command=lambda: self.rfid_operation(self.rfid_display, True)) 
+                                        command=lambda: self.insert_admin()) 
         self.register_button.place(x=105, y=293)
         #pws.set_opacity(self.register_button, color="#000001")
 
@@ -442,7 +447,7 @@ class AdminOperationsPage(ctk.CTkFrame):
                                         bg_color="transparent",
                                         border_color = "#FFFFFF",
                                         border_width=4,                                         
-                                        command=lambda: self.rfid_operation(self.rfid_display, False)) 
+                                        command=lambda: self.update_admin()) 
         self.update_button.place(x=309, y=293)
         #pws.set_opacity(self.deactivate_button, color="#000001")
 
@@ -472,6 +477,7 @@ class AdminOperationsPage(ctk.CTkFrame):
         self.back_button.place(x=309, y=378)
         #pws.set_opacity(self.back_button, color="#000001")
 
+        '''
         self.next_button = ctk.CTkButton(self, height = 54, width = 181, 
                                         text="Back", 
                                         text_color = "#000000",
@@ -483,6 +489,7 @@ class AdminOperationsPage(ctk.CTkFrame):
                                         border_width=4,                                         
                                         command=lambda: self.clear())
         self.next_button.place(x=309 + 20, y=378)
+        '''
 
     def rfid_operation(self, rfid):
         self.state.manipulate_rfid(rfid, self.rfid_status)
