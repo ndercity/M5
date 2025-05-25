@@ -78,3 +78,32 @@ def access_rfid_scan(rfid_key):
     
     row = cursor.fetchone()
     return row['is_active'] if row else None
+
+
+def get_pdf_blob(session_id):
+    """
+    Retrieve PDF binary data from database for given session ID
+    
+    Args:
+        session_id: The session identifier string
+        
+    Returns:
+        bytes: Raw PDF binary data or None if not found
+    """
+    cursor = get_db().cursor()
+    cursor.execute(
+        'SELECT pdf_data FROM photo_sessions WHERE session_id = ?', 
+        (session_id,)
+    )
+    row = cursor.fetchone()
+    
+    if not row or row[0] is None:
+        return None
+        
+    # Convert whatever blob format we get to bytes
+    pdf_data = row['pdf_data']
+    if isinstance(pdf_data, memoryview):
+        return pdf_data.tobytes()
+    if isinstance(pdf_data, str):
+        return pdf_data.encode('latin1')  # Fallback for text storage
+    return bytes(pdf_data)

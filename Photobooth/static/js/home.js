@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     //RFID utils. uncommetn to make it work
     
-    function getRFIDKey(){
+   /* function getRFIDKey(){
         fetch("/rfid_scan")
         .then(response => response.json())
         .then(data => {
@@ -160,16 +160,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });    
 
     }
-        
+        */
 
     function initialize() {
         //Page Initialization
-        cleanRFID();
+       // cleanRFID();
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
-        turnRFIDOn();
-        rfidInterval = setInterval(getRFIDKey, 1000);
+       // turnRFIDOn();
+       // rfidInterval = setInterval(getRFIDKey, 1000);
     }
 
     function toggleSection(section, show) {
