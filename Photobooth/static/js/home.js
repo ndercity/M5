@@ -247,6 +247,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // setInterval(nextSlide, 5000);
 
+    async function handleCustomerID(rfidID) {
+        const customer_id = await get_customer_if(rfidID);
+        return customer_id;
+    }
+
     //HOLDS EMAIL VALUE
     document.querySelector('.email-form').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -257,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a valid email');
             return;
         }
-        customer_id = get_customer_if(rfidID)
+        customer_id = handleCustomerID(rfidID)
         console.log(customer_id)
     
         try {
