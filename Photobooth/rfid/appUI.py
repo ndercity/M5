@@ -455,7 +455,7 @@ class AdminOperationsPage(ctk.CTkFrame):
         self.admin_cont_entry.pack(side="left")
 
         self.register_button = ctk.CTkButton(self, width = self.button_width, height = self.button_height, 
-                                        text="Activate", 
+                                        text="Register", 
                                         text_color = "#000000",
                                         font = ("Helvetica", 15),
                                         #corner_radius = 20,
@@ -481,7 +481,7 @@ class AdminOperationsPage(ctk.CTkFrame):
         #pws.set_opacity(self.deactivate_button, color="#000001")
 
         self.status_button = ctk.CTkButton(self, width = self.button_width, height = self.button_height, 
-                                        text="Deactivate", 
+                                        text="Activate/Deactivate", 
                                         text_color = "#000000",
                                         font = ("Helvetica", 15),
                                         #corner_radius = 20,
