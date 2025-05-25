@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS photo_sessions (
     status TEXT NOT NULL,
     session_id TEXT UNIQUE NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    rfid_key VARCHAR NOT NULL
+    rfid_key VARCHAR NOT NULL,
     cust_id INTEGER NOT NULL
 );
 

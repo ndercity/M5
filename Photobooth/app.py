@@ -321,9 +321,10 @@ def get_cust_transacion_id():
     if not rfid_key:
         return jsonify({"status": "error", "message": "rfid_key required"}), 400
     
-    customer_id = get_cust_id(rfid_key)  # Assuming this returns the ID
+    row = get_cust_id(rfid_key)  # Assuming this returns the ID
 
-    if customer_id is not None:
+    if row is not None:
+        customer_id = row['id'] 
         return jsonify({"status": "success", "id": customer_id}), 200
     else:
         return jsonify({"status": "error", "message": "Customer not found"}), 404
