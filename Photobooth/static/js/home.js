@@ -263,6 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         handleCustomerID(rfidID);
+        console.log("Customer id:", customerId);
         try {
             const response = await fetch('/start_session', {
                 method: 'POST',
