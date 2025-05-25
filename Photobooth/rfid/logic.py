@@ -176,19 +176,20 @@ class AppState:
             return False
         
 
-    def is_printer_ready(printer_name="test_printer"):
+    def get_printer_status(printer_name="test_printer"):
         conn = cups.Connection()
         printers = conn.getPrinters()
+
         if printer_name not in printers:
-            print(f"[ERROR] Printer {printer_name} not found")
-            return False
+            print(f"[ERROR] Printer '{printer_name}' not found.")
+            return None, None  # or consider raising an exception
+
         printer = printers[printer_name]
-        state = printer['printer-state']      # 3 = idle, 4 = printing, 5 = stopped
-        reason = printer['printer-state-reasons']
+        state = printer.get('printer-state', None)                   # 3 = idle, 4 = printing, 5 = stopped
+        reason = printer.get('printer-state-reasons', 'unknown')    # String or list of strings depending on CUPS version
 
         print(f"[DEBUG] State: {state}, Reason: {reason}")
-        
-        return state in [3, 4]  # idle or printing = OK
+        return state, reason
 
 
 
