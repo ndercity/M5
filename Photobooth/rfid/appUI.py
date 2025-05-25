@@ -360,7 +360,7 @@ class CustomerOperationsPage(ctk.CTkFrame):
         self.rfid_num_label.configure(text=f"RFID Number: {self.rfid_display}")
         self.rfid_status_label.configure(text=f"Status: {self.cust_status}")
 
-        if self.cust_name == "d":
+        if self.cust_name != "d":
             self.customer_name_entry.insert(0, self.cust_name)
 
 

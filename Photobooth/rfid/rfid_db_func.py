@@ -93,7 +93,7 @@ def get_customer_name(key):
     cursor = db.cursor()
     cursor.execute('''
         SELECT
-            cd.customer_name cd.use_status
+            cd.customer_name, cd.use_status
         FROM
             cust_db cd
         JOIN
