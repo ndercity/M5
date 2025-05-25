@@ -8,10 +8,10 @@ from fpdf import FPDF
 from printer import print_pdf  # Import the new printing function
 
 # Step 1: Initialize session
-def start_photo_session(email, rfid_key):
+def start_photo_session(email, rfid_key, cust_id):
     session_id = str(uuid.uuid4())
     pdf_placeholder = b""  # placeholder until actual PDF is generated
-    insert_photo_session(email, pdf_placeholder, rfid_key, status="waiting", session_id=session_id)
+    insert_photo_session(email, pdf_placeholder, rfid_key, cust_id, status="waiting", session_id=session_id)
     print(f"[Session] Started session for {email} with ID {session_id}")
     return session_id
 

@@ -93,6 +93,29 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("carouselProMax").scrollIntoView({behavior:'smooth' , block: 'center'});
     }
 
+    async function get_customer_if(rfid_key) {
+        try {
+            const response = await fetch('/get_cust_id', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rfidKey: rfid_key })  // Make sure your Flask route uses request.get_json()
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.status === "success") {
+                console.log("Customer ID:", data.id);
+                return data.id;
+            } else {
+                console.error("Error:", data.message || "Unknown error");
+                return null;
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            return null;
+        }
+    }
+    
     //RFID utils. uncommetn to make it work
 
     function getRFIDKey(){
@@ -234,6 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a valid email');
             return;
         }
+        customer_id = get_customer_if(rfidID)
     
         try {
             const response = await fetch('/start_session', {
@@ -241,7 +265,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     email: email,
-                    rfidKey: rfidID })
+                    rfidKey: rfidID, 
+                    cust_id: customer_id})
             });
             const data = await response.json();
     

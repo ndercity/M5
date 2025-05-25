@@ -1646,9 +1646,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 stopRFIDSession(session_id);  
             });
         }, 'image/png');
-
-        
-
     }
 
     function stopRFIDSession(sessionID) {

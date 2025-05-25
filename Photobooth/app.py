@@ -5,7 +5,7 @@ from sticker_filter import Sticker_Filter
 import os
 import time
 import uuid
-from db_functions import get_db, init_db, close_connection, insert_photo_session, update_photo_blob, access_rfid_scan, get_pdf_blob, end_rfid_access
+from db_functions import get_db, init_db, close_connection, insert_photo_session, update_photo_blob, access_rfid_scan, get_pdf_blob, end_rfid_access, get_cust_id
 import base64
 import io
 from session_flow import start_photo_session, finalize_session
@@ -287,7 +287,8 @@ def start_session():
 
     email = data['email']
     rfid_key = data['rfidKey']
-    session_id = start_photo_session(email, rfid_key)
+    customer_id = data['cust_id']
+    session_id = start_photo_session(email, rfid_key, customer_id)
     return jsonify({"session_id": session_id})
 
 # Finalization
@@ -306,11 +307,26 @@ def finalize_session_route():
 @app.route('/end_rfid_access', methods=['POST'])
 def end_rfid():
     session_id = request.form.get('session_id')
+    print(session_id)
     if not session_id:
         return jsonify({"status": "error", "message": "Session ID required"}), 400
     else:
         end_rfid_access(session_id)
     return jsonify({"status": "success", "message": "rfid number ended"}), 500
+
+@app.route('/get_cust_id', methods=['POST'])
+def get_cust_transacion_id():
+    data = request.get_json()
+    rfid_key = data.get('rfidKey')
+    if not rfid_key:
+        return jsonify({"status": "error", "message": "rfid_key required"}), 400
+    
+    customer_id = get_cust_id(rfid_key)  # Assuming this returns the ID
+
+    if customer_id is not None:
+        return jsonify({"status": "success", "id": customer_id}), 200
+    else:
+        return jsonify({"status": "error", "message": "Customer not found"}), 404
 
     
 #Upload photo to db
