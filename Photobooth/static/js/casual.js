@@ -1714,8 +1714,8 @@ document.addEventListener("DOMContentLoaded", function() {
         // Navigation
         backToLayoutBtn.addEventListener('click', returnToLayout);
         saveBtn.addEventListener('click', saveLayout);
-        downloadBtn.addEventListener('click', downloadResult(false));
-        downloadBtnPrint.addEventListener('click',downloadResult(true))
+        downloadBtn.addEventListener('click', ()=> {downloadResult(false)});
+        downloadBtnPrint.addEventListener('click', ()=> {downloadResult(true)});
         backToPreviewBtn.addEventListener('click', () => {
             finalResultSection.classList.remove("section-active");
             finalResultSection.classList.add("section-inactive");
