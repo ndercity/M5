@@ -431,15 +431,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     return fetch('/finalize_session', {
                         method: 'POST',
                         body: finalizeForm
-                        .then(response => response.json())
-                .then(data => {
+                    })
+                    .then(response => response.json())
+            .then(data => {
                 document.getElementById('debug-output').textContent =
                     `Printer: ${data.printer_name}\nState: ${data.state}\nReason: ${data.reason}\nStatus: ${data.status}\nMessage: ${data.message}`;
-                })
-                .catch(error => {
+            })
+            .catch(error => {
                 document.getElementById('debug-output').textContent = "Failed to load printer info.";
-                })
-                    });
+            });
                 } else {
                     throw new Error(data.error || 'Failed to save photo');
                 }
