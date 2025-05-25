@@ -222,7 +222,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // Final Result Elements
     const finalResultSection = document.getElementById('final-result-section');
     const downloadBtn = document.getElementById('download-btn');
-    const downloadBtnPrint = document.getElementById('download-print-btn');
     const backToPreviewBtn = document.getElementById('back-to-preview');
     
     // Edit Mode Elements
@@ -1560,7 +1559,7 @@ document.addEventListener("DOMContentLoaded", function() {
         finalResultSection.classList.add("section-active");
     }
 
-    function downloadResult(toPrint) {
+    function downloadResult() {
         localStorage.removeItem('countdownEnd');    //RESET TIMER
         stopCamera();
 
@@ -1611,11 +1610,7 @@ document.addEventListener("DOMContentLoaded", function() {
     */
                     // Directly call finalize_session with session_id only
                     const finalizeForm = new FormData();
-                    if (toPrint) {
-                    finalizeForm.append('session_id', session_id,);
-                    finalizeForm.append('print_copy', toPrint);
-                    console.log([...finalizeForm.entries()]);
-                    }
+                    finalizeForm.append('session_id', session_id);
     
                     return fetch('/finalize_session', {
                         method: 'POST',
@@ -1716,8 +1711,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Navigation
         backToLayoutBtn.addEventListener('click', returnToLayout);
         saveBtn.addEventListener('click', saveLayout);
-        downloadBtn.addEventListener('click', ()=> {downloadResult(false)});
-        downloadBtnPrint.addEventListener('click', ()=> {downloadResult(true)});
+        downloadBtn.addEventListener('click', downloadResult);
         backToPreviewBtn.addEventListener('click', () => {
             finalResultSection.classList.remove("section-active");
             finalResultSection.classList.add("section-inactive");
