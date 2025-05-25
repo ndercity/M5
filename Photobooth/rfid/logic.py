@@ -68,7 +68,8 @@ class AppState:
         if name:
             return name, status
         else:
-            return None, status
+            name = "d"
+            return name, status
     
     def use_card(self, name, key):
         dbf.use_rfid_card(name, key)
