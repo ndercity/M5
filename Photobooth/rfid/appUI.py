@@ -259,6 +259,7 @@ class CustomerOperationsPage(ctk.CTkFrame):
 
         self.rfid_display  = None
         self.rfid_status = None
+        self.cust_status = None
 
         self.register_button = ctk.CTkButton(self, height = 54, width = 181, 
                                         text="Use Card", 
@@ -351,10 +352,12 @@ class CustomerOperationsPage(ctk.CTkFrame):
 
 
     def refresh(self):
+
+        self.customer_name_entry.delete(0, 'end') 
         self.rfid_display,self.rfid_status = self.state.get_current_rfid_details()
-        self.cust_name = self.state.get_customer_name(self.rfid_display)
+        self.cust_name, self.cust_status = self.state.get_customer_name(self.rfid_display)
         self.rfid_num_label.configure(text = f"RFID Number: {self.rfid_display}")
-        self.rfid_status_label.configure(text = f"Status: {self.rfid_status}")
+        self.rfid_status_label.configure(text = f"Status: {self.cust_status}")
         #ilalagay dito yung paglagay sa text box ng name ng customer
         cust_name = self.state.get_customer_name(self.rfid_display)
 

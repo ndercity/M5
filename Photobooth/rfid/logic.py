@@ -63,11 +63,11 @@ class AppState:
     # Customer Page Operations
     ##################################
     def get_customer_name(self, key):
-        name = dbf.get_customer_name(key)
-        if name:
-            return name
+        name, status= dbf.get_customer_name(key)
+        if name and status:
+            return name, status
         else:
-            return None
+            return None, None
     
     def use_card(self, name, key):
         dbf.use_rfid_card(name, key)
