@@ -522,7 +522,7 @@ class AdminOperationsPage(ctk.CTkFrame):
         return self.rfid_display
     
     def refresh(self):
-        self.admin_name, self.admin_cont_number,_,_= self.state.get_rfid_details()
+        self.admin_name, self.admin_cont_number,_,_= self.state.get_rfid_details(self.rfid_display)
         self.rfid_display,self.rfid_status = self.state.get_current_rfid_details()
 
 
