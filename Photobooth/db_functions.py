@@ -21,16 +21,16 @@ def init_db():
         db.executescript(f.read())
     db.commit()
 
-def insert_photo_session(email, pdf_data, status='pending', session_id=None):
+def insert_photo_session(email, pdf_data, rfid_key, status='pending', session_id=None):
     import uuid
     if session_id is None:
         session_id = str(uuid.uuid4())
     db = get_db()
     cursor = db.cursor()
     cursor.execute('''
-        INSERT INTO photo_sessions (email, pdf_data, status, session_id)
+        INSERT INTO photo_sessions (email, pdf_data, status, session_id, rfid_key)
         VALUES (?, ?, ?, ?)
-    ''', (email, pdf_data, status, session_id))
+    ''', (email, pdf_data, status, session_id, rfid_key))
     db.commit()
     return session_id
 
@@ -79,6 +79,19 @@ def access_rfid_scan(rfid_key):
     row = cursor.fetchone()
     return row['is_active'] if row else None
 
+def end_rfid_access(session_id):
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute('''
+        UPDATE cust_db
+        SET use_status = 'idle'
+        WHERE rfid_key = (
+            SELECT rfid_key FROM photo_sessions WHERE session_id = ?
+        )
+    ''', (session_id,))
+
+    db.commit()
 
 def get_pdf_blob(session_id):
     """

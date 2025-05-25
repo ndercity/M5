@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const wave = document.querySelector('.wave');
     let currentIndex = 0;
     let rfidInterval;
+    let rfidID = "291911225638"; //dapat blanko ito kapag gagamitin
     
     console.log("KioskBoard:", window.KioskBoard);
     
@@ -26,8 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         autoScroll: false,
         capsLockActive: false,
-        allowRealKeyboard: false,
-        allowMobileKeyboard: false,
+        allowRealKeyboard: true,
+        allowMobileKeyboard: true,
         cssAnimations: true,
         cssAnimationsDuration: 360,
         cssAnimationsStyle: 'slide',
@@ -93,8 +94,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     //RFID utils. uncommetn to make it work
-    
-   /* function getRFIDKey(){
+
+    /*
+    function getRFIDKey(){
         fetch("/rfid_scan")
         .then(response => response.json())
         .then(data => {
@@ -125,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.key_status === "YES") {
                 console.log("Access granted!");
+                localStorage.setItem('rfidKey', rfidID);
                 displayEmail(); 
             } else {
                 console.log("Access denied.");
@@ -160,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });    
 
     }
+
         */
 
     function initialize() {
@@ -237,7 +241,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch('/start_session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
+                body: JSON.stringify({ 
+                    email: email,
+                    rfidKey: rfidID })
             });
             const data = await response.json();
     
