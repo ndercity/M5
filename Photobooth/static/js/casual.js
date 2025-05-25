@@ -1,4 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
+    //START COUNTDOWN
+    let endTime = localStorage.getItem('countdownEnd')
+	if (!endTime) {
+		endTime = Date.now() + 10 * 60 * 1000;
+		localStorage.setItem('countdownEnd', endTime);
+	}
+
     // =============================================
     // CONSTANTS AND CONFIGURATION
     // =============================================
@@ -1553,6 +1560,10 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function downloadResult() {
+        localStorage.removeItem('countdownEnd');    //RESET TIMER
+        stopCamera();
+
+        
         /*
         const link = document.createElement('a');
         link.download = `photo-booth-${currentTemplate.name.toLowerCase().replace(/ /g, '-')}-${new Date().getTime()}.png`;
@@ -1565,9 +1576,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         const session_id = localStorage.getItem('session_id');
+        console.log(session_id);
+        
 
         resultCanvas.toBlob(blob => {
-	    stopCamera();
             if (!blob) {
                 alert("Failed to get image blob!");
                 return;
@@ -1588,7 +1600,14 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 if (data.message === "Photo saved successfully") {
                     document.getElementById("sendingOverlay").classList.remove("section-inactive");
-    
+
+                   /* fetch(`/print/${session_id}`, {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => alert(data.status || data.error))
+    .catch(err => alert("Network error: " + err));
+    */
                     // Directly call finalize_session with session_id only
                     const finalizeForm = new FormData();
                     finalizeForm.append('session_id', session_id);
@@ -1627,6 +1646,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 stopRFIDSession(session_id);  
             });
         }, 'image/png');
+
+        
+
     }
 
     function stopRFIDSession(sessionID) {
