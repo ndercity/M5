@@ -88,8 +88,8 @@ class AppState:
     ###################################
     # History Page Operations
     ###################################
-    def get_customer_details(self, key, offset = 0, limit = 4):
-        results = dbf.get_all_customer_details(key)
+    def get_customer_details(self, key, offset, limit):
+        results = dbf.get_all_customer_details(key, offset, limit)
         #print(results)
         return results
     
@@ -176,7 +176,7 @@ class AppState:
             return False
         
 
-    def get_printer_status(printer_name="test_printer"):
+    def get_printer_status(self,printer_name="test_printer"):
         conn = cups.Connection()
         printers = conn.getPrinters()
 
@@ -189,7 +189,7 @@ class AppState:
         reason = printer.get('printer-state-reasons', 'unknown')    # String or list of strings depending on CUPS version
 
         print(f"[DEBUG] State: {state}, Reason: {reason}")
-        return state, reason
+        return state
 
 
 

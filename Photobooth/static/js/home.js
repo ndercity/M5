@@ -12,7 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const wave = document.querySelector('.wave');
     let currentIndex = 0;
     let rfidInterval;
-    let rfidID = "291911225638"; //dapat blanko ito kapag gagamitin
+    let rfidID; //dapat blanko ito kapag gagamitin
+    let customerId;
+    let cust;
     
     console.log("KioskBoard:", window.KioskBoard);
     
@@ -93,9 +95,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("carouselProMax").scrollIntoView({behavior:'smooth' , block: 'center'});
     }
 
+    
     //RFID utils. uncommetn to make it work
 
-    /*
     function getRFIDKey(){
         fetch("/rfid_scan")
         .then(response => response.json())
@@ -128,6 +130,24 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.key_status === "YES") {
                 console.log("Access granted!");
                 localStorage.setItem('rfidKey', rfidID);
+                rfidID = rfidKey
+
+
+
+                get_customer_if(rfidID).then(cust_Id => {
+                    if (cust_Id) {
+                        customerId = cust_Id;
+                        // Use customerId here
+                        console.log("Customer ID:", customerId);
+                    } else {
+                        console.error("Customer ID fetch failed");
+                    }
+                });
+
+
+
+
+
                 displayEmail(); 
             } else {
                 console.log("Access denied.");
@@ -164,16 +184,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     }
 
-        */
-
     function initialize() {
         //Page Initialization
-       // cleanRFID();
+        cleanRFID();
         emailForm.style.display = "none";
         carouselProMax.style.display = "none";
         start.classList.add("section-active");
-       // turnRFIDOn();
-       // rfidInterval = setInterval(getRFIDKey, 1000);
+        turnRFIDOn();
+        rfidInterval = setInterval(getRFIDKey, 1000);
     }
 
     function toggleSection(section, show) {
@@ -214,6 +232,30 @@ document.addEventListener('DOMContentLoaded', function() {
     nextBtn.addEventListener('click', nextSlide);
     prevBtn.addEventListener('click', prevSlide);
     scanbtn.addEventListener('click', displayEmail)
+
+
+    function get_customer_if(rfid_key) {
+        return fetch('/get_cust_id', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rfidKey: rfid_key })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                console.log("Customer ID:", data.id);
+                return data.id;
+            } else {
+                console.error("Error:", data.message || "Unknown error");
+                return null;
+            }
+        })
+        .catch(error => {
+            console.error("Fetch error:", error);
+            return null;
+        });
+    }
+
     
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
@@ -226,6 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // setInterval(nextSlide, 5000);
 
+
     //HOLDS EMAIL VALUE
     document.querySelector('.email-form').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -236,14 +279,27 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a valid email');
             return;
         }
-    
+
+
+        get_customer_if(rfidID).then(cust_Id => {
+            if (cust_Id) {
+                customerId = cust_Id;
+                // Use customerId here
+                console.log("Customer ID:", customerId);
+            } else {
+                console.error("Customer ID fetch failed");
+            }
+        });
+
+        
         try {
             const response = await fetch('/start_session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     email: email,
-                    rfidKey: rfidID })
+                    rfidKey: rfidID, 
+                    cust_id: customerId})
             });
             const data = await response.json();
     

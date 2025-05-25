@@ -67,7 +67,7 @@ def get_admin_details(key):
     return cursor.fetchone()  
 
 
-def get_all_customer_details(key, offset=0, limit=4):
+def get_all_customer_details(key, offset, limit):
     db = get_db()
     cursor = db.cursor()
     cursor.execute('''
@@ -76,15 +76,15 @@ def get_all_customer_details(key, offset=0, limit=4):
             ps.session_id,
             cd.customer_name,
             ps.status,
-            cd.session_date
+            ps.created_at
         FROM 
             photo_sessions ps
         JOIN 
-            cust_db cd ON ps.rfid_key = cd.rfid_key
+            cust_db cd ON ps.cust_id = cd.id
         WHERE 
             cd.rfid_key = ?
         ORDER BY 
-            cd.session_date DESC
+            ps.created_at DESC
         LIMIT ? OFFSET ?;
         ''', (key, limit, offset))
     return cursor.fetchall()  

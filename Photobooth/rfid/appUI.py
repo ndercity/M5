@@ -1,7 +1,9 @@
 import customtkinter as ctk
 from logic import AppState
 from logic import RFID_Logic
+from tkinter import messagebox
 from PIL import Image
+
 #import pywinstyles as #pws
 
 class AppUI:
@@ -803,7 +805,7 @@ class CustomerDetailsCard(ctk.CTkFrame):
         super().__init__(parent, width=758, height=49, *args, **kwargs)
         self.configure(fg_color="#99FFD0", border_color="black", border_width=1)
         self.state = AppState()
-        sess_id = session_id
+        self.sess_id = session_id
 
         # Create and place Date label
         self.date_label = ctk.CTkLabel(self, text=f"Date:\n{date}", font=("Helvetica", 12), text_color="#000000", anchor="w")
@@ -822,9 +824,31 @@ class CustomerDetailsCard(ctk.CTkFrame):
         self.status_label.place(x=550, y=5)
 
         # Print Button
-        self.print_button = ctk.CTkButton(self, text="Print", width=60, height=30, font=("Helvetica", 12), fg_color="#00695C", command=lambda: self.print_card(sess_id))
+        self.print_button = ctk.CTkButton(self, text="Print", width=60, height=30, font=("Helvetica", 12), fg_color="#00695C", command=lambda: self.print_with_overlay())
         self.print_button.place(x=680, y=9)
+
+        self.overlay = ctk.CTkFrame(self, width=758, height=49, fg_color="#000000", bg_color="transparent")
+        self.overlay.place(x=0, y=0)
+        self.overlay.lower()  # Start hidden
+
+        self.overlay_label = ctk.CTkLabel(self.overlay, text="Printing...", font=("Helvetica", 16),
+                                          text_color="#FFFFFF")
+        self.overlay_label.place(relx=0.5, rely=0.5, anchor="center")
+
+    def print_with_overlay(self):
+        printer_status = self.state.get_printer_status("test_printer")
+        if printer_status == 3:
+            self.print_card(self.sess_id)
+        else:
+            messagebox.showerror("Failure", "Printer is disconnected.")
+
 
     def print_card(self, session_id):
         #self.state.print_image_admin(session_id)
-        self.state.is_printer_ready()
+        success = self.state.print_image_admin(session_id)
+        if success:
+            messagebox.showinfo("Success", "Printing completed!")
+        else:
+            messagebox.showerror("Failure", "Printing failed.")
+
+
