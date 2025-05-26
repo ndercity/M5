@@ -24,9 +24,14 @@ document.addEventListener('DOMContentLoaded', function() {
         language: 'en',
         theme: 'light',
 
-        keysSpecialCharsArrayOfStrings: ['!', '@', '#', '$' ,'.'],
-        keysNumpadArrayOfNumbers: [1, 2, 3, 0, 4, 5, 6, 7, 8, 9],
+        keysSpecialCharsArrayOfStrings: [
+            "@", ".", "_", "-", "+", "!", "#", "$", "%", "&", "'", "*", "=", "^",
+            "`", "{", "}", "|", "~", "(", ")", "[", "]", "\\", "/", ":", ";", "\""
+        ],
+        allowedSpecialCharacters: true,
+        specialCharactersButtonText: "&?123",
 
+        keysNumpadArrayOfNumbers: [1, 2, 3, 0, 4, 5, 6, 7, 8, 9],
         autoScroll: false,
         capsLockActive: false,
         allowRealKeyboard: true,
