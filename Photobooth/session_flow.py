@@ -63,9 +63,9 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
     # Printing operation
     if print_copy:
         online = is_printer_online()
-        message = "Printer is online." if online else "Printer is offline or not connected."
-        print(f"[Printer Status] {message}")
-        
+        print_message = "Printer is online." if online else "Printer is offline or not connected."
+        print(f"[Printer Status] {print_message}")
+
         # Proceed with printing only if online
         if online:
             print("[Print] Attempting to print...")
@@ -73,9 +73,10 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
             if not operations_success['print']:
                 print("[Print] Printing failed")
         else:
-            operations_success['print'] = False  # Optional: mark as failed
+            operations_success['print'] = False  
+    else:
+        print_message = "Printing was not requested."
 
-    return jsonify({"alert": message})
 
     # Email operation
     if email_copy:
@@ -94,15 +95,16 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
                 print(f"[Email] Failed attempt {attempt}: {e}")
 
     # Update session status based on operations
+    # Final return block
     if all(operations_success.values()):
         update_photo_session_status(session_id, "completed")
         print(f"[Session] Successfully completed all operations for session {session_id}")
-        return True
+        return {"status": "completed", "print_message": print_message}
     elif any(operations_success.values()):
         update_photo_session_status(session_id, "partial_complete")
         print(f"[Session] Some operations completed for session {session_id}")
-        return True  # or False depending on your requirements
+        return {"status": "partial", "print_message": print_message}
     else:
         update_photo_session_status(session_id, "failed")
         print(f"[Session] All operations failed for session {session_id}")
-        return False
+        return {"status": "failed", "print_message": print_message}

@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const prevBtn = document.querySelector('.carousel-control.prev');
     const nextBtn = document.querySelector('.carousel-control.next');
     const indicatorsContainer = document.querySelector('.carousel-indicators');
-    const scanbtn = document.querySelector('.scan');
     const start = document.querySelector('.start-section');
     const emailForm = document.querySelector('.email-form');
     const carouselProMax = document.querySelector('.carouselProMax');
@@ -24,9 +23,14 @@ document.addEventListener('DOMContentLoaded', function() {
         language: 'en',
         theme: 'light',
 
-        keysSpecialCharsArrayOfStrings: ['!', '@', '#', '$' ,'.'],
-        keysNumpadArrayOfNumbers: [1, 2, 3, 0, 4, 5, 6, 7, 8, 9],
+        keysSpecialCharsArrayOfStrings: [
+            "@", ".", "_", "-", "+", "!", "#", "$", "%", "&", "'", "*", "=", "^",
+            "`", "{", "}", "|", "~", "(", ")", "[", "]", "\\", "/", ":", ";", "\""
+        ],
+        allowedSpecialCharacters: true,
+        specialCharactersButtonText: "&?123",
 
+        keysNumpadArrayOfNumbers: [1, 2, 3, 0, 4, 5, 6, 7, 8, 9],
         autoScroll: false,
         capsLockActive: false,
         allowRealKeyboard: true,
@@ -85,7 +89,6 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleSection(emailForm, true);
         toggleSection(start, false);
         KioskBoard.run('.js-kioskboard-input');
-        document.getElementById("email-form").scrollIntoView({behavior:'smooth' , block: 'center'});
     }
 
     function displayCarousel(){
@@ -231,7 +234,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listeners
     nextBtn.addEventListener('click', nextSlide);
     prevBtn.addEventListener('click', prevSlide);
-    scanbtn.addEventListener('click', displayEmail)
 
 
     function get_customer_if(rfid_key) {

@@ -442,16 +442,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then(finalizeData => {
-                if (finalizeData.status === 'sent') {
-                    alert("Email sent! Redirecting to home...");
-                    document.getElementById("sendingOverlay").classList.add("section-inactive");
-                    window.location.href = "/";
-                } else {
-                    alert("Failed to send email. Redirecting to home...");
-                    document.getElementById("sendingOverlay").classList.add("section-inactive");
-                    window.location.href = "/";
+                if (finalizeData.print_message) {
+                    alert(finalizeData.print_message);  // <-- show the print status
                 }
+
+                if (finalizeData.status === 'completed' || finalizeData.status === 'partial') {
+                    alert("Email sent! Redirecting to home...");
+                } else {
+                    alert("Failed to complete session. Redirecting to home...");
+                }
+
+                document.getElementById("sendingOverlay").classList.add("section-inactive");
+                window.location.href = "/";
             })
+
             .catch(error => {
                 console.error(error);
                 alert('Error during photo save or email sending: ' + error.message + ' Redirecting to home...');
