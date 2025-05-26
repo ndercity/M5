@@ -311,10 +311,10 @@ def end_rfid():
     session_id = data.get('session_id') if data else None
     print(session_id)
     if not session_id:
-        return jsonify({"status": "error", "message": "Session ID required"}), 400
+        return jsonify({"status": "error", "message": "Session ID required"}), 500
     else:
         end_rfid_access(session_id)
-    return jsonify({"status": "success", "message": "rfid number ended"}), 500
+    return jsonify({"status": "success", "message": "rfid number ended"}), 200
 
 @app.route('/get_cust_id', methods=['POST'])
 def get_cust_transacion_id():
