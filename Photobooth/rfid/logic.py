@@ -9,6 +9,8 @@ from fpdf import FPDF
 from printer import print_pdf  # Import the new printing function
 import tempfile
 import subprocess
+from email_utils import send_email_with_pdf
+
 
 class AppState:
     def __init__(self):
@@ -190,8 +192,77 @@ class AppState:
 
         print(f"[DEBUG] State: {state}, Reason: {reason}")
         return state
+    
+
+    def send_image_to_email (session_id, print_copy=True, email_copy=True):
+        """
+        Finalize a photo session by creating PDF and sending to printer/email
+        Args:
+            session_id: The session ID to finalize
+            print_copy: Whether to print a physical copy
+            email_copy: Whether to email a digital copy
+        Returns:
+            bool: True if all requested operations succeeded
+        """
+        session = dbf.get_photo_session_by_id(session_id)
+        if not session:
+            print(f"[Error] No session found with ID {session_id}")
+            return False
 
 
+        email = session['email']
+        photo_blob = session['pdf_data']
+
+        # Create PDF from the image blob
+        try:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp_img_file:
+                tmp_img_file.write(photo_blob)
+                tmp_img_file_path = tmp_img_file.name
+
+            pdf = FPDF(unit='pt', format=[1800, 1200])
+            pdf.add_page()
+            pdf.image(tmp_img_file_path, x=0, y=0, w=1800, h=1200)
+            pdf_bytes = pdf.output(dest='S').encode('latin1')
+
+            # Cleanup temp image file
+            os.remove(tmp_img_file_path)
+
+        except Exception as e:
+            print(f"[PDF ERROR] Failed to create PDF: {e}")
+            return False
+
+        # Track success status for both operations
+        operations_success = {
+            'print': not print_copy,  # If not printing, consider it "successful"
+            'email': not email_copy   # If not emailing, consider it "successful"
+        }
+
+        # Email operation
+        if email_copy:
+            max_retries = 3
+            for attempt in range(1, max_retries + 1):
+                try:
+                    print(f"[Email] Attempt {attempt} to send PDF to {email}")
+                    sent = send_email_with_pdf(email, pdf_bytes, session_id)
+                    if sent:
+                        operations_success['email'] = True
+                        print(f"[Email] Sent successfully to {email}")
+                        break
+                    else:
+                        print(f"[Email] Sending failed (status false) on attempt {attempt}")
+                except Exception as e:
+                    print(f"[Email] Failed attempt {attempt}: {e}")
+
+        # Update session status based on operations
+        if all(operations_success.values()):
+            print(f"[Session] Successfully completed all operations for session {session_id}")
+            return True
+        elif any(operations_success.values()):
+            print(f"[Session] Some operations completed for session {session_id}")
+            return True  # or False depending on your requirements
+        else:
+            print(f"[Session] All operations failed for session {session_id}")
+            return False
 
 
 class RFID_Logic:
