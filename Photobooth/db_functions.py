@@ -69,10 +69,10 @@ def access_rfid_scan(rfid_key):
     cursor.execute("""
         SELECT 
             CASE 
-                WHEN status = 'activated' THEN 'YES'
+                WHEN use_status = 'in use' THEN 'YES'
                 ELSE 'NO'
             END AS is_active 
-        FROM rfid_db 
+        FROM cust_db 
         WHERE rfid_key = ?
     """, (rfid_key,))
     
