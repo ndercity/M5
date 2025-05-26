@@ -65,7 +65,8 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
         online = is_printer_online()
         message = "Printer is online." if online else "Printer is offline or not connected."
         print(f"[Printer Status] {message}")
-        
+        return jsonify({"alert": message})
+
         # Proceed with printing only if online
         if online:
             print("[Print] Attempting to print...")
@@ -75,7 +76,6 @@ def finalize_session(session_id, print_copy=True, email_copy=True):
         else:
             operations_success['print'] = False  # Optional: mark as failed
 
-    return jsonify({"alert": message})
 
     # Email operation
     if email_copy:
